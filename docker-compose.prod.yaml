@@ -14,3 +14,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  server:
+    image: ${DOCKER_USERNAME}/climbup-server:latest
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/${POSTGRES_DB:-db}
+      - DB_USERNAME=${POSTGRES_USER:-root}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-password}
+    ports:
+      - 9090:8080
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped

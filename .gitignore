@@ -39,3 +39,4 @@ out/
 
 .env
 climbup-db-data
+.claude
