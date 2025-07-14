@@ -45,7 +45,7 @@ jobs:
           host: ${{secrets.HOST}}
           username: ${{secrets.USERNAME}}
           password: ${{secrets.PASSWORD}}
-          script: mkdir -p /app/climbup-server/
+          script: mkdir -p ~/apps/climbup-server/
 
       - name: Copy Project Files to Server
         uses: appleboy/scp-action@v1
@@ -54,7 +54,7 @@ jobs:
           username: ${{secrets.USERNAME}}
           password: ${{secrets.PASSWORD}}
           source: "docker-compose.prod.yaml"
-          target: "/app/climbup-server/"
+          target: "~/apps/climbup-server/"
           strip_components: 0
 
       - name: Deploy Application
@@ -65,7 +65,7 @@ jobs:
           password: ${{secrets.PASSWORD}}
           script_stop: true
           script: |
-            cd /app/climbup-server
+            cd ~/apps/climbup-server
             docker compose -f docker-compose.prod.yaml down
             docker compose -f docker-compose.prod.yaml pull
             docker compose -f docker-compose.prod.yaml up -d
