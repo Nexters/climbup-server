@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-db}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_USER=${POSTGRES_USER:-root}
+    volumes:
+      - ./climbup-db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
