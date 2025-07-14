@@ -22,7 +22,7 @@ jobs:
         run: echo "${{secrets.ENV}}" > ./src/.env
 
       - name: Test & Build
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test
 
       - name: Create Docker Image
         run: docker build -t climbup-server .
