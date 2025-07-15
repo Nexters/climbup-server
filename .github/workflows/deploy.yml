@@ -12,18 +12,6 @@ jobs:
       - name: Get Github Repository Files
         uses: actions/checkout@v4
 
-      - name: Install JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Copy Environment Variables
-        run: echo "${{secrets.ENV}}" > ./src/.env
-
-      - name: Test & Build
-        run: ./gradlew clean build -x test
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
