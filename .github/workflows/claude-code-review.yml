@@ -1,0 +1,35 @@
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code for code review
+        uses: anthropics/claude-code-action@beta
+        with:
+          claude_code_oauth_token: ${{secrets.CLAUDE_TOKEN}}
+          direct_prompt: |
+            Please review this pull request and provide feedback on:
+            - Code quality and best practices
+            - Potential bugs or issues
+            - Performance considerations
+            
+            Be constructive and helpful in your feedback.
+            
+            The authors of this codebase are junior backend developers, so it'll be nice if you could perform like a senior developer and give extra advice on our growth and improvement.   
+            
+            Write the review in Korean.
