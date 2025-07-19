@@ -34,7 +34,8 @@ jobs:
         with:
           host: ${{secrets.HOST}}
           username: ${{secrets.USERNAME}}
-          password: ${{secrets.PASSWORD}}
+          # password: ${{secrets.PASSWORD}}
+          key: ${{secrets.KEY}}
           script: mkdir -p ~/apps/climbup-server/
 
       - name: Copy Project Files to Server
@@ -42,7 +43,8 @@ jobs:
         with:
           host: ${{secrets.HOST}}
           username: ${{secrets.USERNAME}}
-          password: ${{secrets.PASSWORD}}
+          # password: ${{secrets.PASSWORD}}
+          key: ${{secrets.KEY}}
           source: "docker-compose.prod.yaml"
           target: "~/apps/climbup-server/"
           strip_components: 0
@@ -52,7 +54,8 @@ jobs:
         with:
           host: ${{secrets.HOST}}
           username: ${{secrets.USERNAME}}
-          password: ${{secrets.PASSWORD}}
+          # password: ${{secrets.PASSWORD}}
+          key: ${{secrets.KEY}}
           script_stop: true
           script: |
             cd ~/apps/climbup-server
