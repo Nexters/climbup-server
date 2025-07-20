@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 public class ClimbingGym extends BaseEntity {
 
     @Id
@@ -36,10 +38,4 @@ public class ClimbingGym extends BaseEntity {
 
     @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL)
     private List<RouteMission> routeMissions = new ArrayList<>();
-
-    public ClimbingGym(String name, String location, String sectorInfo) {
-        this.name = name;
-        this.location = location;
-        this.sectorInfo = sectorInfo;
-    }
 }

@@ -6,10 +6,8 @@ import com.climbup.climbup.gym.entity.ClimbingGym;
 import com.climbup.climbup.recommendation.entity.ChallengeRecommendation;
 import com.climbup.climbup.sector.entity.Sector;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 public class RouteMission extends BaseEntity {
 
     @Id
@@ -50,11 +49,4 @@ public class RouteMission extends BaseEntity {
 
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL)
     private List<ChallengeRecommendation> recommendations = new ArrayList<>();
-
-    public RouteMission(ClimbingGym gym, Sector sector, String difficulty, Integer score) {
-        this.gym = gym;
-        this.sector = sector;
-        this.difficulty = difficulty;
-        this.score = score;
-    }
 }

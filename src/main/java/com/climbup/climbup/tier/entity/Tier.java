@@ -6,12 +6,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "tiers")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 public class Tier extends BaseEntity {
 
     @Id
@@ -29,10 +31,4 @@ public class Tier extends BaseEntity {
 
     @Column(name = "sr_max")
     private Integer srMax;
-
-    public Tier(String name, Integer srMin, Integer srMax) {
-        this.name = name;
-        this.srMin = srMin;
-        this.srMax = srMax;
-    }
 }

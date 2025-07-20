@@ -8,12 +8,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "challenge_recommendations")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 public class ChallengeRecommendation extends BaseEntity {
 
     @Id
@@ -34,11 +36,5 @@ public class ChallengeRecommendation extends BaseEntity {
     // Join 없이 미션 난이도 조회
     public String getDifficulty() {
         return mission != null ? mission.getDifficulty() : null;
-    }
-
-    public ChallengeRecommendation(UserSession session, RouteMission mission, Integer recommendedOrder) {
-        this.session = session;
-        this.mission = mission;
-        this.recommendedOrder = recommendedOrder;
     }
 }

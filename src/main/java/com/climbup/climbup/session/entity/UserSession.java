@@ -1,6 +1,7 @@
 package com.climbup.climbup.session.entity;
 
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
+import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.recommendation.entity.ChallengeRecommendation;
 import com.climbup.climbup.sr.entity.SRHistory;
 import com.climbup.climbup.user.entity.User;
@@ -9,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,7 +24,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserSession {
+@SuperBuilder
+public class UserSession extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,9 +64,4 @@ public class UserSession {
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     private List<SRHistory> srHistories = new ArrayList<>();
-
-    public UserSession(User user, LocalDate sessionDate) {
-        this.user = user;
-        this.sessionDate = sessionDate;
-    }
 }

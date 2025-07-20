@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 public class Sector extends BaseEntity {
 
     @Id
@@ -30,9 +32,4 @@ public class Sector extends BaseEntity {
 
     @OneToMany(mappedBy = "sector", cascade = CascadeType.ALL)
     private List<RouteMission> routeMissions = new ArrayList<>();
-
-    public Sector(String name, String imageUrl) {
-        this.name = name;
-        this.imageUrl = imageUrl;
-    }
 }

@@ -9,12 +9,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "sr_histories")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 public class SRHistory extends BaseEntity {
 
     @Id
@@ -38,12 +40,4 @@ public class SRHistory extends BaseEntity {
 
     @Column(name = "sr_after", nullable = false)
     private Integer srAfter;
-
-    public SRHistory(User user, UserSession session, RouteMission mission, Integer srBefore, Integer srAfter) {
-        this.user = user;
-        this.session = session;
-        this.mission = mission;
-        this.srBefore = srBefore;
-        this.srAfter = srAfter;
-    }
 }

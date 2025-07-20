@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "user_mission_attempts", indexes = {
@@ -17,6 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 public class UserMissionAttempt extends BaseEntity {
 
     @Id
@@ -40,11 +42,4 @@ public class UserMissionAttempt extends BaseEntity {
 
     @Column(name = "video_url", columnDefinition = "TEXT")
     private String videoUrl;
-
-    public UserMissionAttempt(User user, UserSession session, RouteMission mission, Boolean success) {
-        this.user = user;
-        this.session = session;
-        this.mission = mission;
-        this.success = success;
-    }
 }
