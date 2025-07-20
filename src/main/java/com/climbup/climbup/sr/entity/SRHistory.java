@@ -1,5 +1,6 @@
 package com.climbup.climbup.sr.entity;
 
+import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.route.entity.RouteMission;
 import com.climbup.climbup.user.entity.User;
 import com.climbup.climbup.session.entity.UserSession;
@@ -8,16 +9,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sr_histories")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SRHistory {
+public class SRHistory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,10 +32,6 @@ public class SRHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mission_id", nullable = false)
     private RouteMission mission;
-
-    @CreatedDate
-    @Column(name = "changed_at", nullable = false)
-    private LocalDateTime changedAt;
 
     @Column(name = "sr_before")
     private Integer srBefore;
