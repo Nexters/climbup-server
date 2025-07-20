@@ -8,7 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +35,7 @@ public class SRHistory {
     @JoinColumn(name = "mission_id", nullable = false)
     private RouteMission mission;
 
-    @CreationTimestamp
+    @CreatedDate
     @Column(name = "changed_at", nullable = false)
     private LocalDateTime changedAt;
 

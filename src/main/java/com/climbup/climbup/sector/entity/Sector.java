@@ -1,5 +1,6 @@
 package com.climbup.climbup.sector.entity;
 
+import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.route.entity.RouteMission;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -15,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Sector {
+public class Sector extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,18 +25,14 @@ public class Sector {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "score", nullable = false)
-    private Integer score; //todo: RouteMission에 score가 있는데 Sector에도 필요한가?
-
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageUrl;
 
     @OneToMany(mappedBy = "sector", cascade = CascadeType.ALL)
     private List<RouteMission> routeMissions = new ArrayList<>();
 
-    public Sector(String name, Integer score, String imageUrl) {
+    public Sector(String name, String imageUrl) {
         this.name = name;
-        this.score = score;
         this.imageUrl = imageUrl;
     }
 }

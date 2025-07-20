@@ -1,5 +1,6 @@
 package com.climbup.climbup.attempt.entity;
 
+import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.route.entity.RouteMission;
 import com.climbup.climbup.session.entity.UserSession;
 import com.climbup.climbup.user.entity.User;
@@ -9,14 +10,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "user_mission_attempts")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserMissionAttempt {
+public class UserMissionAttempt extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,9 +33,6 @@ public class UserMissionAttempt {
     @JoinColumn(name = "mission_id", nullable = false)
     private RouteMission mission;
 
-    @Column(name = "attempted_at", nullable = false)
-    private LocalDateTime attemptedAt;
-
     @Column(name = "success", nullable = false)
     private Boolean success;
 
@@ -48,6 +44,5 @@ public class UserMissionAttempt {
         this.session = session;
         this.mission = mission;
         this.success = success;
-        this.attemptedAt = LocalDateTime.now();
     }
 }

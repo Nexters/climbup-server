@@ -1,5 +1,6 @@
 package com.climbup.climbup.recommendation.entity;
 
+import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.route.entity.RouteMission;
 import com.climbup.climbup.session.entity.UserSession;
 import jakarta.persistence.*;
@@ -13,30 +14,31 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChallengeRecommendation {
+public class ChallengeRecommendation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "session_id")
+    @JoinColumn(name = "session_id", nullable = false)
     private UserSession session;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mission_id")
+    @JoinColumn(name = "mission_id", nullable = false)
     private RouteMission mission;
 
     @Column(name = "recommended_order", nullable = false)
     private Integer recommendedOrder;
 
-    @Column(name = "difficulty", nullable = false, length = 10)
-    private String difficulty;
+    // Join 없이 미션 난이도 조회
+    public String getDifficulty() {
+        return mission != null ? mission.getDifficulty() : null;
+    }
 
     public ChallengeRecommendation(UserSession session, RouteMission mission, Integer recommendedOrder, String difficulty) {
         this.session = session;
         this.mission = mission;
         this.recommendedOrder = recommendedOrder;
-        this.difficulty = difficulty;
     }
 }
