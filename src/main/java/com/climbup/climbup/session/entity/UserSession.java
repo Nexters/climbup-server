@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user_sessions")
+@Table(name = "user_sessions", indexes = {
+        @Index(name = "idx_session_user_date", columnList = "user_id, session_date")
+})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,7 +41,7 @@ public class UserSession {
     @Column(name = "ended_at")
     private LocalDateTime endedAt;
 
-    @Column(name = "total_duration", nullable = false)
+    @Column(name = "total_duration")
     private Integer totalDuration;
 
     @Column(name = "sr_gained", nullable = false, columnDefinition = "INT DEFAULT 0")

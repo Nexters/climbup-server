@@ -36,7 +36,7 @@ public class ChallengeRecommendation extends BaseEntity {
         return mission != null ? mission.getDifficulty() : null;
     }
 
-    public ChallengeRecommendation(UserSession session, RouteMission mission, Integer recommendedOrder, String difficulty) {
+    public ChallengeRecommendation(UserSession session, RouteMission mission, Integer recommendedOrder) {
         this.session = session;
         this.mission = mission;
         this.recommendedOrder = recommendedOrder;

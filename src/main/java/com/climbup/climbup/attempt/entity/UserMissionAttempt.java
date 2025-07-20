@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "user_mission_attempts")
+@Table(name = "user_mission_attempts", indexes = {
+        @Index(name = "idx_attempt_user_session", columnList = "user_id, session_id")
+})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
