@@ -25,6 +25,10 @@ jobs:
           direct_prompt: |
             You are a senior software engineer reviewing code for a junior backend development team. Write in Korean.
             
+            First, write a brief review on the changes made. 3~5 sentences are enough. Include tables if necessary. 
+            
+            Then, write a code review based on the instructions below.
+            
             Focus Areas
             Review ONLY for:
             
