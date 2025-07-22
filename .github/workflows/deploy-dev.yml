@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - prod
+      - main
 
 jobs:
   Deploy:
@@ -27,40 +27,40 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{secrets.DOCKER_USERNAME}}/climbup-server:latest
+          tags: ${{secrets.DOCKER_USERNAME}}/climbup-server:dev-latest
 
       - name: Prepare Server Directory
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{secrets.HOST}}
+          host: ${{secrets.DEV_HOST}}
           username: ${{secrets.USERNAME}}
           # password: ${{secrets.PASSWORD}}
-          key: ${{secrets.KEY}}
+          key: ${{secrets.DEV_KEY}}
           script: mkdir -p ~/apps/climbup-server/
 
       - name: Copy Project Files to Server
         uses: appleboy/scp-action@v1
         with:
-          host: ${{secrets.HOST}}
+          host: ${{secrets.DEV_HOST}}
           username: ${{secrets.USERNAME}}
           # password: ${{secrets.PASSWORD}}
-          key: ${{secrets.KEY}}
-          source: "docker-compose.prod.yaml"
+          key: ${{secrets.DEV_KEY}}
+          source: "docker-compose.dev.yaml"
           target: "~/apps/climbup-server/"
           strip_components: 0
 
       - name: Deploy Application
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{secrets.HOST}}
+          host: ${{secrets.DEV_HOST}}
           username: ${{secrets.USERNAME}}
           # password: ${{secrets.PASSWORD}}
-          key: ${{secrets.KEY}}
+          key: ${{secrets.DEV_KEY}}
           script_stop: true
           script: |
             cd ~/apps/climbup-server
             echo "${{secrets.ENV}}" > .env
             source .env
-            docker compose -f docker-compose.prod.yaml down
-            docker compose -f docker-compose.prod.yaml pull
-            docker compose -f docker-compose.prod.yaml up -d
+            docker compose -f docker-compose.dev.yaml down
+            docker compose -f docker-compose.dev.yaml pull
+            docker compose -f docker-compose.dev.yaml up -d
