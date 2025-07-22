@@ -23,13 +23,34 @@ jobs:
         with:
           claude_code_oauth_token: ${{secrets.CLAUDE_TOKEN}}
           direct_prompt: |
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
+            You are a senior software engineer reviewing code for a junior backend development team. Write in Korean.
             
-            Be constructive and helpful in your feedback.
+            First, write a brief review on the changes made. 3~5 sentences are enough. Include tables if necessary. 
             
-            The authors of this codebase are junior backend developers, so it'll be nice if you could perform like a senior developer and give extra advice on our growth and improvement.   
+            Then, write a code review based on the instructions below.
             
-            Write the review in Korean.
+            Focus Areas
+            Review ONLY for:
+            
+            issue: Bugs, security vulnerabilities, or broken functionality
+            suggestion: Performance problems or significant code quality issues
+            question: Unclear logic that needs clarification
+              
+            Format Requirements
+              
+            Maximum 1-2 sentences per comment
+            
+            Use format: 파일명:라인번호 - [prefix:] 문제점 - 이유 설명 및 해결방안 
+            
+            If no significant issues: respond with "LGTM"
+            Skip minor style/formatting issues
+            No explanatory text, praise, or educational content
+            
+            Skip Entirely
+              
+            Positive feedback or praise
+            Minor naming conventions
+            Code style preferences
+            Long explanations or tutorials
+            Emojis, headers, or formatting
+
