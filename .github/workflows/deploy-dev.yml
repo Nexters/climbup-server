@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - prod
+      - main
 
 jobs:
   Deploy:
@@ -32,19 +32,19 @@ jobs:
       - name: Prepare Server Directory
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{secrets.HOST}}
+          host: ${{secrets.DEV_HOST}}
           username: ${{secrets.USERNAME}}
           # password: ${{secrets.PASSWORD}}
-          key: ${{secrets.KEY}}
+          key: ${{secrets.DEV_KEY}}
           script: mkdir -p ~/apps/climbup-server/
 
       - name: Copy Project Files to Server
         uses: appleboy/scp-action@v1
         with:
-          host: ${{secrets.HOST}}
+          host: ${{secrets.DEV_HOST}}
           username: ${{secrets.USERNAME}}
           # password: ${{secrets.PASSWORD}}
-          key: ${{secrets.KEY}}
+          key: ${{secrets.DEV_KEY}}
           source: "docker-compose.prod.yaml"
           target: "~/apps/climbup-server/"
           strip_components: 0
@@ -52,10 +52,10 @@ jobs:
       - name: Deploy Application
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{secrets.HOST}}
+          host: ${{secrets.DEV_HOST}}
           username: ${{secrets.USERNAME}}
           # password: ${{secrets.PASSWORD}}
-          key: ${{secrets.KEY}}
+          key: ${{secrets.DEV_KEY}}
           script_stop: true
           script: |
             cd ~/apps/climbup-server
