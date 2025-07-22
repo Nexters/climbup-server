@@ -9,6 +9,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,4 +51,10 @@ public class RouteMission extends BaseEntity {
 
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL)
     private List<ChallengeRecommendation> recommendations = new ArrayList<>();
+
+    @Column(name = "posted_at", nullable = false)
+    private LocalDateTime postedAt;
+
+    @Column(name = "removed_at")
+    private LocalDateTime removedAt;
 }

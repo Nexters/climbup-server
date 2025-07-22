@@ -27,6 +27,9 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "kakao_id", nullable = false, unique = true, length = 50)
+    private String kakaoId;
+
     @Column(name = "nickname", nullable = false, unique = true, length = 50)
     private String nickname;
 
@@ -40,6 +43,9 @@ public class User extends BaseEntity {
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageUrl;
 
+    @Column(name = "onboarding_completed", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean onboardingCompleted = false;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserSession> sessions = new ArrayList<>();
 
@@ -48,4 +54,13 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SRHistory> srHistories = new ArrayList<>();
+
+    public void completeOnboarding(Tier selectedTier) {
+        this.tier = selectedTier;
+        this.onboardingCompleted = true;
+    }
+
+    public boolean needsOnboarding() {
+        return !this.onboardingCompleted;
+    }
 }
