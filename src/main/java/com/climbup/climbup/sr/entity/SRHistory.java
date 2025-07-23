@@ -35,7 +35,7 @@ public class SRHistory extends BaseEntity {
     @JoinColumn(name = "mission_id", nullable = false)
     private RouteMission mission;
 
-    @Column(name = "sr_before")
+    @Column(name = "sr_before", nullable = false)
     private Integer srBefore;
 
     @Column(name = "sr_after", nullable = false)
