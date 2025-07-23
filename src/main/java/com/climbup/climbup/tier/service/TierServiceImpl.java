@@ -16,10 +16,16 @@ public class TierServiceImpl implements TierService {
     private final TierRepository tierRepository;
 
     @Override
-    @Transactional()
+    @Transactional
     public List<TierResponse> getAllTiers() {
         List<Tier> tiers = tierRepository.findAll();
 
         return tiers.stream().map(TierResponse::toDto).toList();
+    }
+
+    @Override
+    @Transactional
+    public Tier getTierById(Long id){
+        return tierRepository.findById(id).orElseThrow();
     }
 }
