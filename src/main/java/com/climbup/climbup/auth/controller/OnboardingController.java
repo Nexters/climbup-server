@@ -3,6 +3,7 @@ package com.climbup.climbup.auth.controller;
 import com.climbup.climbup.auth.dto.OnboardingDto;
 import com.climbup.climbup.auth.service.OnboardingService;
 import com.climbup.climbup.auth.util.JwtUtil;
+import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.user.docs.UserApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Onboarding", description = "사용자 온보딩 API")
@@ -22,6 +24,7 @@ public class OnboardingController {
     private final OnboardingService onboardingService;
     private final JwtUtil jwtUtil;
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "온보딩 완료",
             description = "암장과 레벨을 동시에 설정하여 온보딩을 완료합니다.",
@@ -38,14 +41,14 @@ public class OnboardingController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody OnboardingDto.CompleteRequest request) {
 
-        String token = authorization.replace("Bearer ", "");
-        Long userId = jwtUtil.getUserId(token);
+        Long userId = SecurityUtil.getCurrentUserId();
 
         onboardingService.completeOnboarding(userId, request.getGymId(), request.getLevelId());
 
         return ResponseEntity.ok(new OnboardingDto.Response("온보딩이 완료되었습니다."));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "암장 선택",
             description = "사용자의 암장을 설정합니다.",
@@ -62,14 +65,14 @@ public class OnboardingController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody OnboardingDto.GymRequest request) {
 
-        String token = authorization.replace("Bearer ", "");
-        Long userId = jwtUtil.getUserId(token);
+        Long userId = SecurityUtil.getCurrentUserId();
 
         onboardingService.setUserGym(userId, request.getGymId());
 
         return ResponseEntity.ok(new OnboardingDto.Response("암장이 설정되었습니다."));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "레벨 선택",
             description = "사용자의 레벨을 설정합니다.",
@@ -86,8 +89,7 @@ public class OnboardingController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody OnboardingDto.LevelRequest request) {
 
-        String token = authorization.replace("Bearer ", "");
-        Long userId = jwtUtil.getUserId(token);
+        Long userId = SecurityUtil.getCurrentUserId();
 
         onboardingService.setUserLevel(userId, request.getLevelId());
 

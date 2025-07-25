@@ -1,5 +1,6 @@
 package com.climbup.climbup.global.config;
 
+import com.climbup.climbup.auth.filter.JwtAuthenticationFilter;
 import com.climbup.climbup.auth.handler.OAuth2SuccessHandler;
 import com.climbup.climbup.auth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -17,6 +19,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -40,7 +43,9 @@ public class SecurityConfig {
                         )
                         .successHandler(oAuth2SuccessHandler)
                         .failureUrl("/login?error")
-                );
+                )
+                // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 앞에 추가
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
