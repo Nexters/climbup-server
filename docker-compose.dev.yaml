@@ -21,6 +21,10 @@ services:
       - DB_URL=jdbc:postgresql://db:5432/${POSTGRES_DB:-db}
       - DB_USERNAME=${POSTGRES_USER:-root}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
+      - KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - APP_OAUTH2_AUTHORIZED_REDIRECT_URI=${OAUTH_REDIRECT_URI}
     ports:
       - 9090:8080
     depends_on:
