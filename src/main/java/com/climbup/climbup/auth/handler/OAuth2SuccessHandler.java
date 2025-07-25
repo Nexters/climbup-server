@@ -44,8 +44,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
         } catch (Exception e) {
-            log.error("❌ OAuth2 성공 핸들러 오류", e);
-            String errorUrl = redirectUri.replace("/auth/callback", "/login?error=oauth_error");
+            log.error("OAuth2 인증 처리 중 오류 발생: {}", e.getClass().getSimpleName());
+            String errorUrl = redirectUri.replace("/auth/callback", "/login?error=auth_failed");
             response.sendRedirect(errorUrl);
         }
     }

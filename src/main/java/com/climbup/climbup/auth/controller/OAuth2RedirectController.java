@@ -15,7 +15,6 @@ public class OAuth2RedirectController {
     @GetMapping("/oauth2/redirect")
     public ResponseEntity<Map<String, Object>> handleOAuth2Redirect(@RequestParam String token) {
         log.info("JWT 토큰 발급 완료");
-        log.info("토큰: {}", token.substring(0, 20) + "...");
 
         return ResponseEntity.ok(Map.of(
                 "success", true,

@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtUtil {
 
     private final SecretKey key;
@@ -52,7 +54,11 @@ public class JwtUtil {
         try {
             Claims claims = parseClaims(token);
             return !claims.getExpiration().before(new Date());
+        } catch (io.jsonwebtoken.JwtException e) {
+            log.debug("JWT 토큰 검증 실패: {}", e.getMessage());
+            return false;
         } catch (Exception e) {
+            log.error("JWT 토큰 검증 중 예상치 못한 오류: {}", e.getClass().getSimpleName());
             return false;
         }
     }
