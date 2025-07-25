@@ -1,36 +1,29 @@
 package com.climbup.climbup.user.service;
 
-import com.climbup.climbup.tier.entity.Tier;
+import com.climbup.climbup.user.dto.response.UserStatusResponse;
 import com.climbup.climbup.user.entity.User;
-import com.climbup.climbup.user.exception.UserOnboardingAlreadyCompleteException;
 import com.climbup.climbup.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow();
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
 
     @Override
-    @Transactional
-    public void setUserTier(Tier tier){
-        Long userId = 1L;
-
-        User user = this.getUserById(userId);
-
-        if(user.getOnboardingCompleted()){
-            throw new UserOnboardingAlreadyCompleteException("유저가 온보딩을 이미 완료했습니다.");
-        }
-
-        user.completeOnboarding(tier);
-        userRepository.save(user);
+    @Transactional(readOnly = true)
+    public UserStatusResponse getUserStatus(Long userId) {
+        User user = getUserById(userId);
+        return UserStatusResponse.fromEntity(user);
     }
 }
