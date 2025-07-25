@@ -1,13 +1,11 @@
 package com.climbup.climbup.user.controller;
 
-import com.climbup.climbup.auth.util.JwtUtil;
 import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.user.docs.UserApiDocs;
 import com.climbup.climbup.user.docs.UserApiExamples;
 import com.climbup.climbup.user.dto.response.UserStatusResponse;
 import com.climbup.climbup.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final JwtUtil jwtUtil;
 
     @PreAuthorize("isAuthenticated()")
     @Operation(
@@ -82,13 +79,7 @@ public class UserController {
             )
     })
     @GetMapping("/me")
-    public ResponseEntity<UserStatusResponse> getCurrentUserStatus(
-            @Parameter(
-                    description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
-                    required = true,
-                    example = UserApiDocs.AUTHORIZATION_EXAMPLE
-            )
-            @RequestHeader("Authorization") String authorization) {
+    public ResponseEntity<UserStatusResponse> getCurrentUserStatus() {
 
         Long userId = SecurityUtil.getCurrentUserId();
 

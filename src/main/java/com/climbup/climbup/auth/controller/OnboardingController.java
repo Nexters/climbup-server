@@ -2,11 +2,8 @@ package com.climbup.climbup.auth.controller;
 
 import com.climbup.climbup.auth.dto.OnboardingDto;
 import com.climbup.climbup.auth.service.OnboardingService;
-import com.climbup.climbup.auth.util.JwtUtil;
 import com.climbup.climbup.auth.util.SecurityUtil;
-import com.climbup.climbup.user.docs.UserApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class OnboardingController {
 
     private final OnboardingService onboardingService;
-    private final JwtUtil jwtUtil;
 
     @PreAuthorize("isAuthenticated()")
     @Operation(
@@ -33,12 +29,6 @@ public class OnboardingController {
     @ApiResponse(responseCode = "200", description = "온보딩 완료 성공")
     @PostMapping("/complete")
     public ResponseEntity<OnboardingDto.Response> completeOnboarding(
-            @Parameter(
-                    description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
-                    required = true,
-                    example = UserApiDocs.AUTHORIZATION_EXAMPLE
-            )
-            @RequestHeader("Authorization") String authorization,
             @RequestBody OnboardingDto.CompleteRequest request) {
 
         Long userId = SecurityUtil.getCurrentUserId();
@@ -57,12 +47,6 @@ public class OnboardingController {
     @ApiResponse(responseCode = "200", description = "암장 설정 성공")
     @PostMapping("/gym")
     public ResponseEntity<OnboardingDto.Response> setGym(
-            @Parameter(
-                    description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
-                    required = true,
-                    example = UserApiDocs.AUTHORIZATION_EXAMPLE
-            )
-            @RequestHeader("Authorization") String authorization,
             @RequestBody OnboardingDto.GymRequest request) {
 
         Long userId = SecurityUtil.getCurrentUserId();
@@ -81,12 +65,6 @@ public class OnboardingController {
     @ApiResponse(responseCode = "200", description = "레벨 설정 성공")
     @PostMapping("/level")
     public ResponseEntity<OnboardingDto.Response> setLevel(
-            @Parameter(
-                    description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
-                    required = true,
-                    example = UserApiDocs.AUTHORIZATION_EXAMPLE
-            )
-            @RequestHeader("Authorization") String authorization,
             @RequestBody OnboardingDto.LevelRequest request) {
 
         Long userId = SecurityUtil.getCurrentUserId();
