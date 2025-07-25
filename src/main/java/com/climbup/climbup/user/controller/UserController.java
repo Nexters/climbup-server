@@ -2,6 +2,7 @@ package com.climbup.climbup.user.controller;
 
 import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.common.dto.ApiResult;
+import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.user.docs.UserApiDocs;
 import com.climbup.climbup.user.docs.UserApiExamples;
 import com.climbup.climbup.user.dto.response.UserStatusResponse;
