@@ -20,21 +20,18 @@ public class SecurityUtil {
     public static Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication.isAuthenticated() &&
-                !authentication.getPrincipal().equals("anonymousUser")) {
-
+        if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
 
-            // JWT 인증의 경우 Long 타입
             if (principal instanceof Long) {
                 return (Long) principal;
+            } else if (principal instanceof CustomOAuth2User customUser) {
+                return customUser.getUserId();
+            } else if (principal instanceof String str && str.equals("anonymousUser")) {
+                log.debug("익명 사용자입니다.");
+            } else {
+                log.warn("예상하지 못한 Principal 타입: {}", principal.getClass().getName());
             }
-            // OAuth2 인증의 경우 CustomOAuth2User 타입
-            else if (principal instanceof CustomOAuth2User) {
-                return ((CustomOAuth2User) principal).getUserId();
-            }
-
-            log.warn("예상하지 못한 Principal 타입: {}", principal.getClass().getSimpleName());
         }
 
         return null;
