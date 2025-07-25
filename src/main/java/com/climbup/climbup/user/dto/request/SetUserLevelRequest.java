@@ -7,9 +7,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SetUserTierRequest {
+public class SetUserLevelRequest {
 
     @NotNull
-    @Schema(name = "tierId", description = "티어 id")
-    private Long tierId;
+    @Schema(name = "levelId", description = "레벨 id")
+    private Long levelId;
 }
