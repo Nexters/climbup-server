@@ -1,4 +1,4 @@
-package com.climbup.climbup.auth.dto;
+package com.climbup.climbup.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

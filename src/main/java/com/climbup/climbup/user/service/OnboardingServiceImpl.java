@@ -1,4 +1,4 @@
-package com.climbup.climbup.auth.service;
+package com.climbup.climbup.user.service;
 
 import com.climbup.climbup.gym.entity.ClimbingGym;
 import com.climbup.climbup.gym.repository.ClimbingGymRepository;
@@ -12,12 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class OnboardingService {
+public class OnboardingServiceImpl implements OnboardingService {
 
     private final UserRepository userRepository;
     private final LevelRepository levelRepository;
     private final ClimbingGymRepository climbingGymRepository;
 
+    @Override
     @Transactional
     public void completeOnboarding(Long userId, Long gymId, Long levelId) {
         User user = findUserById(userId);
@@ -35,6 +36,7 @@ public class OnboardingService {
         userRepository.save(user);
     }
 
+    @Override
     @Transactional
     public void setUserGym(Long userId, Long gymId) {
         User user = findUserById(userId);
@@ -43,6 +45,7 @@ public class OnboardingService {
         userRepository.save(user);
     }
 
+    @Override
     @Transactional
     public void setUserLevel(Long userId, Long levelId) {
         User user = findUserById(userId);
@@ -51,7 +54,6 @@ public class OnboardingService {
         userRepository.save(user);
     }
 
-    // 헬퍼 메서드들
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));

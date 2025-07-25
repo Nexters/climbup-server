@@ -22,7 +22,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final JwtUtil jwtUtil;
 
-    @Value("${app.oauth2.authorized-redirect-uri:http://localhost:3000/auth/callback}")
+    @Value("${app.oauth2.authorized-redirect-uri:http://localhost:9090/auth/callback}")
     private String redirectUri;
 
     @Override
@@ -39,12 +39,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             // 프론트엔드 콜백 페이지로 리다이렉트
             String targetUrl = redirectUri + "?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
 
-            log.info("프론트엔드로 리다이렉트: {}", targetUrl);
-            response.sendRedirect(targetUrl);
+            clearAuthenticationAttributes(request);
+
+            getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
         } catch (Exception e) {
-            log.error("❌ OAuth2 성공 핸들러 오류", e);
-            String errorUrl = redirectUri.replace("/auth/callback", "/login?error=oauth_error");
+            log.error("OAuth2 인증 처리 중 오류 발생: {}", e.getClass().getSimpleName());
+            String errorUrl = redirectUri.replace("/auth/callback", "/login?error=auth_failed");
             response.sendRedirect(errorUrl);
         }
     }
