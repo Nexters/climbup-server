@@ -1,5 +1,6 @@
 package com.climbup.climbup.level.controller;
 
+import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.level.dto.response.LevelResponse;
 import com.climbup.climbup.level.service.LevelService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,8 +25,8 @@ public class LevelController {
     @Operation(summary = "모든 레벨 반환", description = "존재하는 모든 레벨 리스트를 반환합니다")
     @ApiResponse(responseCode = "200", description = "성공적으로 모든 레벨 종류의 리스트를 반환")
     @GetMapping
-    public ResponseEntity<List<LevelResponse>> getAllLevelList() {
-        return ResponseEntity.ok(levelService.getAllLevels());
+    public ResponseEntity<ApiResult<List<LevelResponse>>> getAllLevelList() {
+        return ResponseEntity.ok(ApiResult.success(levelService.getAllLevels()));
     }
 
 }

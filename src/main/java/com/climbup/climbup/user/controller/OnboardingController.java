@@ -1,5 +1,6 @@
 package com.climbup.climbup.user.controller;
 
+import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.user.dto.OnboardingDto;
 import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.user.service.OnboardingService;
@@ -50,14 +51,14 @@ public class OnboardingController {
             )
     })
     @PostMapping("/complete")
-    public ResponseEntity<OnboardingDto.Response> completeOnboarding(
+    public ResponseEntity<ApiResult<OnboardingDto.Response>> completeOnboarding(
             @RequestBody OnboardingDto.CompleteRequest request) {
 
         Long userId = SecurityUtil.getCurrentUserId();
 
         onboardingService.completeOnboarding(userId, request.getGymId(), request.getLevelId());
 
-        return ResponseEntity.ok(new OnboardingDto.Response("온보딩이 완료되었습니다."));
+        return ResponseEntity.ok(ApiResult.success(new OnboardingDto.Response("온보딩이 완료되었습니다.")));
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -87,14 +88,14 @@ public class OnboardingController {
             )
     })
     @PostMapping("/gym")
-    public ResponseEntity<OnboardingDto.Response> setGym(
+    public ResponseEntity<ApiResult<OnboardingDto.Response>> setGym(
             @RequestBody OnboardingDto.GymRequest request) {
 
         Long userId = SecurityUtil.getCurrentUserId();
 
         onboardingService.setUserGym(userId, request.getGymId());
 
-        return ResponseEntity.ok(new OnboardingDto.Response("암장이 설정되었습니다."));
+        return ResponseEntity.ok(ApiResult.success(new OnboardingDto.Response("암장이 설정되었습니다.")));
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -124,13 +125,13 @@ public class OnboardingController {
             )
     })
     @PostMapping("/level")
-    public ResponseEntity<OnboardingDto.Response> setLevel(
+    public ResponseEntity<ApiResult<OnboardingDto.Response>> setLevel(
             @RequestBody OnboardingDto.LevelRequest request) {
 
         Long userId = SecurityUtil.getCurrentUserId();
 
         onboardingService.setUserLevel(userId, request.getLevelId());
 
-        return ResponseEntity.ok(new OnboardingDto.Response("레벨이 설정되었습니다."));
+        return ResponseEntity.ok(ApiResult.success(new OnboardingDto.Response("레벨이 설정되었습니다.")));
     }
 }
