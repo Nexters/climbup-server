@@ -9,5 +9,5 @@ RUN gradle clean build -x test --no-daemon
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/build/libs/*SNAPSHOT.jar project.jar
-EXPOSE 8080
+EXPOSE 9090
 ENTRYPOINT ["java", "-jar", "project.jar"]
