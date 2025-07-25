@@ -42,27 +42,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(token) && jwtUtil.isTokenValid(token)) {
                 Long userId = jwtUtil.getUserId(token);
 
-                userRepository.findById(userId)
-                        .ifPresentOrElse(
-                                user -> {
-                                    UsernamePasswordAuthenticationToken authentication =
-                                            new UsernamePasswordAuthenticationToken(
-                                                    userId, // principal
-                                                    null,   // credentials
-                                                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")) // 권한
-                                            );
+                var user = userRepository.findById(userId)
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다. userId=" + userId));
 
-                                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                                    SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                                    log.debug("JWT 인증 성공: userId={}", userId);
-                                },
-                                () -> {
-                                    log.warn("존재하지 않는 사용자 ID로 인증 시도: {}", userId);
-                                    SecurityContextHolder.clearContext();
-                                }
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userId,
+                                null,
+                                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
                         );
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                log.debug("JWT 인증 성공: userId={}", userId);
             }
         } catch (Exception e) {
             log.error("JWT 인증 처리 중 오류 발생: {}", e.getClass().getSimpleName());
