@@ -9,13 +9,32 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
 
   flyway:
     enabled: false
     locations: classpath:db/migration
     validate-on-migrate: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+            scope: profile_nickname, profile_image
+            client-name: Kakao
+            client-authentication-method: client_secret_post
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
 
 server:
   forward-headers-strategy: native
@@ -25,3 +44,18 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /docs
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  access-token-validity-in-seconds: 3600
+
+app:
+  oauth2:
+    authorized-redirect-uri: ${OAUTH_REDIRECT_URI}
+
+logging:
+  level:
+    com.climbup.climbup: DEBUG
+    org.springframework.security: TRACE
+    org.hibernate.SQL: DEBUG
+    root: ERROR
