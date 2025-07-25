@@ -8,8 +8,8 @@ import com.climbup.climbup.session.repository.UserSessionRepository;
 import com.climbup.climbup.user.entity.User;
 import com.climbup.climbup.user.exception.UserNotFoundException;
 import com.climbup.climbup.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +49,22 @@ public class UserSessionServiceImpl implements UserSessionService {
                 .build();
         
         return userSessionRepository.save(session);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserSession getSession(Long userId, Long sessionId) {
+        UserSession session = userSessionRepository.findById(sessionId).orElseThrow(() -> new UserSessionNotFoundException("세션이 존재하지 않습니다."));
+
+        if(!session.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("해당 세션에 접근할 수 없습니다.");
+        }
+
+        if(session.getEndedAt() == null) {
+            throw new UserSessionNotYetFinishedException("해당 세션이 아직 진행중입니다.");
+        }
+
+        return session;
     }
 
     @Override

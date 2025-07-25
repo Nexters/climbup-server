@@ -27,6 +27,17 @@ public class UserSessionResponses {
     @Data
     public static class FinishUserSession {
 
+        private Long id;
+        
+        public static FinishUserSession toDto(UserSession session) {
+            FinishUserSession response = new FinishUserSession();
+            response.id = session.getId();
+            return response;
+        }
+    }
+
+    @Data
+    public static class UserSessionState {
         private LocalDate sessionDate;
 
         private LocalDateTime startedAt;
@@ -40,9 +51,9 @@ public class UserSessionResponses {
         private Integer completedCount;
 
         private Integer attemptedCount;
-        
-        public static FinishUserSession toDto(UserSession session) {
-            FinishUserSession response = new FinishUserSession();
+
+        public static UserSessionState toDto(UserSession session) {
+            UserSessionState response = new UserSessionState();
             response.sessionDate = session.getSessionDate();
             response.startedAt = session.getStartedAt();
             response.endedAt = session.getEndedAt();

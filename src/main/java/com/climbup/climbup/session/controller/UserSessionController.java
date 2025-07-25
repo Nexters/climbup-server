@@ -15,10 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user-sessions")
@@ -55,6 +52,56 @@ public class UserSessionController {
         UserSession session = userSessionService.startSession(userId);
         UserSessionResponses.CreateUserSession response = UserSessionResponses.CreateUserSession.toDto(session);
         
+        return ResponseEntity.ok(ApiResult.success(response));
+    }
+
+    @Operation(summary = "특정 세션 받아오기", description = "유저의 특정 세션 받아오기", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공적으로 세션을 반환"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "id에 맞는 세션이 존재하지 않는 경우",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                                "errorCode": "SESSION_001",
+                                                "message": "세션이 존재하지 않습니다.",
+                                                "timestamp": "2025-07-25T10:30:00",
+                                                "path": "/api/user-sessions/{id}"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "해당 세션이 아직 종료되지 않은 경우",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                                "errorCode": "SESSION_003",
+                                                "message": "해당 세션이 아직 진행중입니다.",
+                                                "timestamp": "2025-07-25T10:30:00",
+                                                "path": "/api/user-sessions/{id}"
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResult<UserSessionResponses.UserSessionState>> getUserSession(
+            @PathVariable(name = "id") Long id
+    ) {
+        Long userId = 1L;
+
+        UserSession session = userSessionService.getSession(userId, id);
+        UserSessionResponses.UserSessionState response = UserSessionResponses.UserSessionState.toDto(session);
+
         return ResponseEntity.ok(ApiResult.success(response));
     }
 
