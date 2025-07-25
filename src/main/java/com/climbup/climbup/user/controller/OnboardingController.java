@@ -1,8 +1,8 @@
-package com.climbup.climbup.auth.controller;
+package com.climbup.climbup.user.controller;
 
-import com.climbup.climbup.auth.dto.OnboardingDto;
-import com.climbup.climbup.auth.service.OnboardingService;
+import com.climbup.climbup.user.dto.OnboardingDto;
 import com.climbup.climbup.auth.util.SecurityUtil;
+import com.climbup.climbup.user.service.OnboardingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
