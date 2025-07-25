@@ -6,6 +6,7 @@ import com.climbup.climbup.session.exception.UserSessionNotFoundException;
 import com.climbup.climbup.session.exception.UserSessionNotYetFinishedException;
 import com.climbup.climbup.session.repository.UserSessionRepository;
 import com.climbup.climbup.user.entity.User;
+import com.climbup.climbup.user.exception.UserNotFoundException;
 import com.climbup.climbup.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class UserSessionServiceImpl implements UserSessionService {
     @Transactional
     public UserSession startSession(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         var incompleteSessions = user.getSessions().stream().filter(userSession -> userSession.getEndedAt() == null).toList();
 
@@ -67,7 +68,7 @@ public class UserSessionServiceImpl implements UserSessionService {
         session.setEndedAt(endTime);
 
         Duration duration = Duration.between(session.getStartedAt(), endTime);
-        session.setTotalDuration((int) duration.toMillis());
+        session.setTotalDuration((int) duration.toMinutes());
         
         userSessionRepository.save(session);
 
