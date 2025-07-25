@@ -1,5 +1,6 @@
 package com.climbup.climbup.test.controller;
 
+import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.gym.entity.ClimbingGym;
 import com.climbup.climbup.gym.repository.ClimbingGymRepository;
 import com.climbup.climbup.level.entity.Level;
@@ -32,18 +33,18 @@ public class TestController {
     @Operation(summary = "랜덤 숫자 생성", description = "0-99 사이의 랜덤한 정수를 반환합니다")
     @ApiResponse(responseCode = "200", description = "성공적으로 랜덤 숫자를 생성함")
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getRandomNumber() {
+    public ResponseEntity<ApiResult<Map<String, Object>>> getRandomNumber() {
         Map<String, Object> response = new HashMap<>();
         response.put("randomNumber", (int)(Math.random() * 100));
         response.put("timestamp", LocalDateTime.now());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 
     @Operation(summary = "테스트 데이터 초기화", description = "개발/테스트용 기본 레벨 및 암장 데이터를 생성합니다")
     @ApiResponse(responseCode = "200", description = "테스트 데이터 생성 완료")
     @PostMapping("/init-data")
     @Transactional
-    public ResponseEntity<Map<String, Object>> initTestData() {
+    public ResponseEntity<ApiResult<Map<String, Object>>> initTestData() {
         int levelsCreated = 0;
         int gymsCreated = 0;
 
@@ -116,26 +117,26 @@ public class TestController {
         response.put("gymsCreated", gymsCreated);
         response.put("timestamp", LocalDateTime.now());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 
     @Operation(summary = "데이터 현황 조회", description = "현재 DB에 있는 레벨/암장 데이터 개수를 확인합니다")
     @ApiResponse(responseCode = "200", description = "데이터 현황 조회 완료")
     @GetMapping("/data-status")
-    public ResponseEntity<Map<String, Object>> getDataStatus() {
+    public ResponseEntity<ApiResult<Map<String, Object>>> getDataStatus() {
         Map<String, Object> response = new HashMap<>();
         response.put("levelCount", levelRepository.count());
         response.put("gymCount", climbingGymRepository.count());
         response.put("timestamp", LocalDateTime.now());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 
     @Operation(summary = "테스트 데이터 삭제", description = "모든 테스트 데이터를 삭제합니다 (개발용)")
     @ApiResponse(responseCode = "200", description = "테스트 데이터 삭제 완료")
     @PostMapping("/clear-data")
     @Transactional
-    public ResponseEntity<Map<String, Object>> clearTestData() {
+    public ResponseEntity<ApiResult<Map<String, Object>>> clearTestData() {
         long levelCount = levelRepository.count();
         long gymCount = climbingGymRepository.count();
 
@@ -148,6 +149,6 @@ public class TestController {
         response.put("deletedGyms", gymCount);
         response.put("timestamp", LocalDateTime.now());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 }

@@ -3,6 +3,7 @@ package com.climbup.climbup.auth.controller;
 import com.climbup.climbup.auth.dto.OnboardingDto;
 import com.climbup.climbup.auth.service.OnboardingService;
 import com.climbup.climbup.auth.util.JwtUtil;
+import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.user.docs.UserApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -51,7 +52,7 @@ public class OnboardingController {
             )
     })
     @PostMapping("/complete")
-    public ResponseEntity<OnboardingDto.Response> completeOnboarding(
+    public ResponseEntity<ApiResult<OnboardingDto.Response>> completeOnboarding(
             @Parameter(
                     description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
                     required = true,
@@ -65,7 +66,7 @@ public class OnboardingController {
 
         onboardingService.completeOnboarding(userId, request.getGymId(), request.getLevelId());
 
-        return ResponseEntity.ok(new OnboardingDto.Response("온보딩이 완료되었습니다."));
+        return ResponseEntity.ok(ApiResult.success(new OnboardingDto.Response("온보딩이 완료되었습니다.")));
     }
 
     @Operation(
@@ -94,7 +95,7 @@ public class OnboardingController {
             )
     })
     @PostMapping("/gym")
-    public ResponseEntity<OnboardingDto.Response> setGym(
+    public ResponseEntity<ApiResult<OnboardingDto.Response>> setGym(
             @Parameter(
                     description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
                     required = true,
@@ -108,7 +109,7 @@ public class OnboardingController {
 
         onboardingService.setUserGym(userId, request.getGymId());
 
-        return ResponseEntity.ok(new OnboardingDto.Response("암장이 설정되었습니다."));
+        return ResponseEntity.ok(ApiResult.success(new OnboardingDto.Response("암장이 설정되었습니다.")));
     }
 
     @Operation(
@@ -137,7 +138,7 @@ public class OnboardingController {
             )
     })
     @PostMapping("/level")
-    public ResponseEntity<OnboardingDto.Response> setLevel(
+    public ResponseEntity<ApiResult<OnboardingDto.Response>> setLevel(
             @Parameter(
                     description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
                     required = true,
@@ -151,6 +152,6 @@ public class OnboardingController {
 
         onboardingService.setUserLevel(userId, request.getLevelId());
 
-        return ResponseEntity.ok(new OnboardingDto.Response("레벨이 설정되었습니다."));
+        return ResponseEntity.ok(ApiResult.success(new OnboardingDto.Response("레벨이 설정되었습니다.")));
     }
 }
