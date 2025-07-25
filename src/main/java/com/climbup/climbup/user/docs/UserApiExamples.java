@@ -74,20 +74,18 @@ public class UserApiExamples {
 
     public static final String UNAUTHORIZED_ERROR = """
             {
-                "timestamp": "2024-01-15T10:30:00.000+00:00",
-                "status": 401,
-                "error": "Unauthorized",
-                "message": "JWT 토큰이 유효하지 않습니다",
+                "errorCode": "AUTH_001",
+                "message": "필수 헤더가 누락되었습니다: Authorization",
+                "timestamp": "2024-01-15T10:30:00",
                 "path": "/api/users/me"
             }
             """;
 
     public static final String NOT_FOUND_ERROR = """
             {
-                "timestamp": "2024-01-15T10:30:00.000+00:00",
-                "status": 404,
-                "error": "Not Found",
-                "message": "사용자를 찾을 수 없습니다",
+                "errorCode": "RESOURCE_001",
+                "message": "요청한 리소스를 찾을 수 없습니다.",
+                "timestamp": "2024-01-15T10:30:00",
                 "path": "/api/users/me"
             }
             """;

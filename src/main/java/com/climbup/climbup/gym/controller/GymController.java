@@ -1,5 +1,6 @@
 package com.climbup.climbup.gym.controller;
 
+import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.gym.dto.response.GymResponse;
 import com.climbup.climbup.gym.service.GymService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,7 +25,7 @@ public class GymController {
     @Operation(summary = "모든 암장 반환", description = "존재하는 모든 암장의 리스트를 반환합니다")
     @ApiResponse(responseCode = "200", description = "성공적으로 모든 암장 리스트를 반환")
     @GetMapping
-    public ResponseEntity<List<GymResponse>> getAllGyms() {
-        return ResponseEntity.ok(gymService.getAllGyms());
+    public ResponseEntity<ApiResult<List<GymResponse>>> getAllGyms() {
+        return ResponseEntity.ok(ApiResult.success(gymService.getAllGyms()));
     }
 }

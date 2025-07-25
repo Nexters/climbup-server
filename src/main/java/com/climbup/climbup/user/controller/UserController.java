@@ -1,6 +1,7 @@
 package com.climbup.climbup.user.controller;
 
 import com.climbup.climbup.auth.util.JwtUtil;
+import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.user.docs.UserApiDocs;
 import com.climbup.climbup.user.docs.UserApiExamples;
 import com.climbup.climbup.user.dto.response.UserStatusResponse;
@@ -79,7 +80,7 @@ public class UserController {
             )
     })
     @GetMapping("/me")
-    public ResponseEntity<UserStatusResponse> getCurrentUserStatus(
+    public ResponseEntity<ApiResult<UserStatusResponse>> getCurrentUserStatus(
             @Parameter(
                     description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
                     required = true,
@@ -91,6 +92,6 @@ public class UserController {
         Long userId = jwtUtil.getUserId(token);
 
         UserStatusResponse userStatus = userService.getUserStatus(userId);
-        return ResponseEntity.ok(userStatus);
+        return ResponseEntity.ok(ApiResult.success(userStatus));
     }
 }
