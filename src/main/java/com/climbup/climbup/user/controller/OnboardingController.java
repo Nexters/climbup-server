@@ -1,12 +1,10 @@
-package com.climbup.climbup.auth.controller;
+package com.climbup.climbup.user.controller;
 
-import com.climbup.climbup.auth.dto.OnboardingDto;
-import com.climbup.climbup.auth.service.OnboardingService;
-import com.climbup.climbup.auth.util.JwtUtil;
 import com.climbup.climbup.common.dto.ApiResult;
-import com.climbup.climbup.user.docs.UserApiDocs;
+import com.climbup.climbup.user.dto.OnboardingDto;
+import com.climbup.climbup.auth.util.SecurityUtil;
+import com.climbup.climbup.user.service.OnboardingService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,6 +13,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Onboarding", description = "사용자 온보딩 API")
@@ -24,8 +23,8 @@ import org.springframework.web.bind.annotation.*;
 public class OnboardingController {
 
     private final OnboardingService onboardingService;
-    private final JwtUtil jwtUtil;
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "온보딩 완료",
             description = "암장과 레벨을 동시에 설정하여 온보딩을 완료합니다.",
@@ -34,8 +33,8 @@ public class OnboardingController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "온보딩 완료 성공"),
             @ApiResponse(
-                    responseCode = "400", 
-                    description = "이미 온보딩 완료된 사용자", 
+                    responseCode = "400",
+                    description = "이미 온보딩 완료된 사용자",
                     content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(
@@ -53,22 +52,16 @@ public class OnboardingController {
     })
     @PostMapping("/complete")
     public ResponseEntity<ApiResult<OnboardingDto.Response>> completeOnboarding(
-            @Parameter(
-                    description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
-                    required = true,
-                    example = UserApiDocs.AUTHORIZATION_EXAMPLE
-            )
-            @RequestHeader("Authorization") String authorization,
             @RequestBody OnboardingDto.CompleteRequest request) {
 
-        String token = authorization.replace("Bearer ", "");
-        Long userId = jwtUtil.getUserId(token);
+        Long userId = SecurityUtil.getCurrentUserId();
 
         onboardingService.completeOnboarding(userId, request.getGymId(), request.getLevelId());
 
         return ResponseEntity.ok(ApiResult.success(new OnboardingDto.Response("온보딩이 완료되었습니다.")));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "암장 선택",
             description = "사용자의 암장을 설정합니다.",
@@ -77,8 +70,8 @@ public class OnboardingController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "암장 설정 성공"),
             @ApiResponse(
-                    responseCode = "400", 
-                    description = "이미 온보딩 완료된 사용자", 
+                    responseCode = "400",
+                    description = "이미 온보딩 완료된 사용자",
                     content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(
@@ -96,22 +89,16 @@ public class OnboardingController {
     })
     @PostMapping("/gym")
     public ResponseEntity<ApiResult<OnboardingDto.Response>> setGym(
-            @Parameter(
-                    description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
-                    required = true,
-                    example = UserApiDocs.AUTHORIZATION_EXAMPLE
-            )
-            @RequestHeader("Authorization") String authorization,
             @RequestBody OnboardingDto.GymRequest request) {
 
-        String token = authorization.replace("Bearer ", "");
-        Long userId = jwtUtil.getUserId(token);
+        Long userId = SecurityUtil.getCurrentUserId();
 
         onboardingService.setUserGym(userId, request.getGymId());
 
         return ResponseEntity.ok(ApiResult.success(new OnboardingDto.Response("암장이 설정되었습니다.")));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "레벨 선택",
             description = "사용자의 레벨을 설정합니다.",
@@ -120,8 +107,8 @@ public class OnboardingController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "레벨 설정 성공"),
             @ApiResponse(
-                    responseCode = "400", 
-                    description = "이미 온보딩 완료된 사용자", 
+                    responseCode = "400",
+                    description = "이미 온보딩 완료된 사용자",
                     content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(
@@ -139,16 +126,9 @@ public class OnboardingController {
     })
     @PostMapping("/level")
     public ResponseEntity<ApiResult<OnboardingDto.Response>> setLevel(
-            @Parameter(
-                    description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
-                    required = true,
-                    example = UserApiDocs.AUTHORIZATION_EXAMPLE
-            )
-            @RequestHeader("Authorization") String authorization,
             @RequestBody OnboardingDto.LevelRequest request) {
 
-        String token = authorization.replace("Bearer ", "");
-        Long userId = jwtUtil.getUserId(token);
+        Long userId = SecurityUtil.getCurrentUserId();
 
         onboardingService.setUserLevel(userId, request.getLevelId());
 

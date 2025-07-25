@@ -1,6 +1,7 @@
 package com.climbup.climbup.user.controller;
 
 import com.climbup.climbup.auth.util.JwtUtil;
+import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.user.docs.UserApiDocs;
 import com.climbup.climbup.user.docs.UserApiExamples;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "User", description = "사용자 정보 관리 API")
@@ -26,8 +28,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final JwtUtil jwtUtil;
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = UserApiDocs.GET_USER_STATUS_SUMMARY,
             description = UserApiDocs.GET_USER_STATUS_DESCRIPTION,
@@ -80,16 +82,8 @@ public class UserController {
             )
     })
     @GetMapping("/me")
-    public ResponseEntity<ApiResult<UserStatusResponse>> getCurrentUserStatus(
-            @Parameter(
-                    description = UserApiDocs.AUTHORIZATION_DESCRIPTION,
-                    required = true,
-                    example = UserApiDocs.AUTHORIZATION_EXAMPLE
-            )
-            @RequestHeader("Authorization") String authorization) {
-
-        String token = authorization.replace("Bearer ", "");
-        Long userId = jwtUtil.getUserId(token);
+    public ResponseEntity<ApiResult<UserStatusResponse>> getCurrentUserStatus() {
+        Long userId = SecurityUtil.getCurrentUserId();
 
         UserStatusResponse userStatus = userService.getUserStatus(userId);
         return ResponseEntity.ok(ApiResult.success(userStatus));
