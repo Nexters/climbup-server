@@ -3,6 +3,7 @@ package com.climbup.climbup.session.service;
 import com.climbup.climbup.session.entity.UserSession;
 import com.climbup.climbup.session.exception.UserSessionAlreadyFinishedException;
 import com.climbup.climbup.session.exception.UserSessionNotFoundException;
+import com.climbup.climbup.session.exception.UserSessionNotYetFinishedException;
 import com.climbup.climbup.session.repository.UserSessionRepository;
 import com.climbup.climbup.user.entity.User;
 import com.climbup.climbup.user.repository.UserRepository;
@@ -26,12 +27,19 @@ public class UserSessionServiceImpl implements UserSessionService {
     public UserSession startSession(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        
+
+        var incompleteSessions = user.getSessions().stream().filter(userSession -> userSession.getEndedAt() == null).toList();
+
+        if(!incompleteSessions.isEmpty()) {
+            throw new UserSessionNotYetFinishedException("아직 마무리되지 않은 세션이 존재합니다.");
+        }
+
         LocalDateTime now = LocalDateTime.now();
         LocalDate today = now.toLocalDate();
         
         UserSession session = UserSession.builder()
                 .user(user)
+                .gym(user.getGym())
                 .sessionDate(today)
                 .startedAt(now)
                 .srGained(0)
@@ -59,7 +67,7 @@ public class UserSessionServiceImpl implements UserSessionService {
         session.setEndedAt(endTime);
 
         Duration duration = Duration.between(session.getStartedAt(), endTime);
-        session.setTotalDuration((int) duration.toMinutes());
+        session.setTotalDuration((int) duration.toMillis());
         
         userSessionRepository.save(session);
 
