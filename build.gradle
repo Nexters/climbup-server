@@ -48,3 +48,18 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// Optimize build performance
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs.add('-Xlint:unchecked')
+        options.compilerArgs.add('-Xlint:deprecation')
+    }
+}
+
+// Enable build cache
+buildCache {
+    local {
+        enabled = true
+    }
+}
