@@ -6,12 +6,6 @@
 README.md
 docs/
 
-# Build outputs
-build/
-target/
-*.jar
-*.war
-
 # IDE files
 .idea/
 .vscode/
