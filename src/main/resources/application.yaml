@@ -47,7 +47,7 @@ springdoc:
 
 jwt:
   secret: ${JWT_SECRET_KEY}
-  access-token-validity-in-seconds: 3600
+  access-token-validity-in-seconds: 86400
 
 app:
   oauth2:
