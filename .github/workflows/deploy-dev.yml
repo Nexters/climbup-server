@@ -63,7 +63,7 @@ jobs:
           script_stop: true
           script: |
             cd ~/apps/climbup-server
-            echo "${{secrets.ENV}}" > .env
+            echo "${{secrets.DEV_ENV}}" > .env
             source .env
             docker compose -f docker-compose.dev.yaml down
             docker compose -f docker-compose.dev.yaml pull
