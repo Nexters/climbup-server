@@ -36,9 +36,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/levels/**", "/api/gyms/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/profile").authenticated()
                         .requestMatchers("/api/test/**",
-                                "/docs/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**").permitAll()
+                                "/v3/api-docs/**",
+                                "/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
