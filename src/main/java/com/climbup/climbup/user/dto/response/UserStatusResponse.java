@@ -60,11 +60,14 @@ public class UserStatusResponse {
         @Schema(description = "암장 ID", example = "1")
         private Long id;
 
-        @Schema(description = "암장 이름", example = "더클라임 강남점")
+        @Schema(description = "암장 이름", example = "더클라임")
         private String name;
 
-        @Schema(description = "암장 위치", example = "서울시 강남구")
+        @Schema(description = "지점명", example = "강남점")
         private String location;
+
+        @Schema(description = "주소", example = "서울특별시 강남구 테헤란로8길 21 지하 1층")
+        private String address;
 
         @Schema(description = "암장 이미지 URL", example = "https://example.com/gym1.jpg")
         private String imageUrl;

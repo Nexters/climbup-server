@@ -24,8 +24,9 @@ public class UserApiExamples {
                 "level": null,
                 "gym": {
                     "id": 1,
-                    "name": "더클라임 강남점",
-                    "location": "서울시 강남구",
+                    "name": "더클라임",
+                    "location": "강남점",
+                    "address": "서울특별시 강남구 테헤란로8길 21 지하 1층",
                     "imageUrl": "https://example.com/gym1.jpg"
                 }
             }
@@ -65,8 +66,9 @@ public class UserApiExamples {
                 },
                 "gym": {
                     "id": 1,
-                    "name": "더클라임 강남점",
-                    "location": "서울시 강남구",
+                    "name": "더클라임",
+                    "location": "강남점",
+                    "address": "서울특별시 강남구 테헤란로8길 21 지하 1층",
                     "imageUrl": "https://example.com/gym1.jpg"
                 }
             }

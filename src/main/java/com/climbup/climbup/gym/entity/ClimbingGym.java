@@ -30,6 +30,9 @@ public class ClimbingGym extends BaseEntity {
     @Column(name = "location", nullable = false)
     private String location;
 
+    @Column(name = "address", nullable = false)
+    private String address;
+
     @Column(name = "sector_info", columnDefinition = "TEXT")
     private String sectorInfo;
 

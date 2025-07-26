@@ -89,22 +89,18 @@ public class TestController {
         if (climbingGymRepository.count() == 0) {
             List<ClimbingGym> gyms = climbingGymRepository.saveAll(List.of(
                     ClimbingGym.builder()
-                            .name("더클라임 강남점")
-                            .location("서울시 강남구")
+                            .name("더클라임")
+                            .location("강남점")
+                            .address("서울특별시 강남구 테헤란로8길 21 지하 1층")
                             .sectorInfo("지하1층~3층, 총 4개층")
                             .imageUrl("https://example.com/gym1.jpg")
                             .build(),
                     ClimbingGym.builder()
-                            .name("더클라임 홍대점")
-                            .location("서울시 마포구")
+                            .name("더클라임")
+                            .location("홍대점")
+                            .address("서울특별시 마포구 353-5 경남관광빌딩 2층")
                             .sectorInfo("지하1층~2층, 총 3개층")
                             .imageUrl("https://example.com/gym2.jpg")
-                            .build(),
-                    ClimbingGym.builder()
-                            .name("클라이밍파크 신촌점")
-                            .location("서울시 서대문구")
-                            .sectorInfo("1층~3층, 볼더링 전용")
-                            .imageUrl("https://example.com/gym3.jpg")
                             .build()
             ));
             gymsCreated = gyms.size();
