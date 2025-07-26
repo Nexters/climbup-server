@@ -35,7 +35,10 @@ public class SecurityConfig {
                                 "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/levels/**", "/api/gyms/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/profile").authenticated()
-                        .requestMatchers("/api/test/**").permitAll()
+                        .requestMatchers("/api/test/**",
+                                "/docs/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
