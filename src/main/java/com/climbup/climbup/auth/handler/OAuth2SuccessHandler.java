@@ -22,7 +22,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final JwtUtil jwtUtil;
 
-    @Value("${app.oauth2.authorized-redirect-uri:http://localhost:9090/auth/callback}")
+    @Value("${app.oauth2.authorized-redirect-uri}")
     private String redirectUri;
 
     @Override
