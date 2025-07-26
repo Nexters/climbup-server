@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-@Tag(name = "OAuth2 Redirect", description = "암장 관련 API")
+@Tag(name = "OAuth2 Redirect", description = "OAuth2 관련 API")
 @RestController
 @Slf4j
 public class OAuth2RedirectController {
