@@ -94,6 +94,7 @@ public class UserStatusResponse {
                         .id(user.getGym().getId())
                         .name(user.getGym().getName())
                         .location(user.getGym().getLocation())
+                        .address(user.getGym().getAddress())
                         .imageUrl(user.getGym().getImageUrl())
                         .build() : null)
                 .build();

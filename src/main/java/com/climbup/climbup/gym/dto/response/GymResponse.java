@@ -30,6 +30,7 @@ public class GymResponse {
                 .id(gym.getId())
                 .name(gym.getName())
                 .location(gym.getLocation())
+                .address(gym.getAddress())
                 .imageUrl(gym.getImageUrl())
                 .build();
     }
