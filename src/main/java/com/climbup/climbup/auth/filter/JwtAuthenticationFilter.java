@@ -1,6 +1,9 @@
 package com.climbup.climbup.auth.filter;
 
+import com.climbup.climbup.auth.exception.InvalidTokenException;
+import com.climbup.climbup.auth.exception.TokenExpiredException;
 import com.climbup.climbup.auth.util.JwtUtil;
+import com.climbup.climbup.user.exception.UserNotFoundException;
 import com.climbup.climbup.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -40,25 +43,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = extractTokenFromRequest(request);
 
             if (StringUtils.hasText(token) && jwtUtil.isTokenValid(token)) {
-                Long userId = jwtUtil.getUserId(token);
-
-                var user = userRepository.findById(userId)
-                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다. userId=" + userId));
-
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userId,
-                                null,
-                                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-                        );
-
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                log.debug("JWT 인증 성공: userId={}", userId);
+                authenticateUser(request, token);
             }
+        } catch (InvalidTokenException e) {
+            log.debug("유효하지 않은 토큰으로 인한 인증 실패: {}", e.getMessage());
+            SecurityContextHolder.clearContext();
+        } catch (TokenExpiredException e) {
+            log.debug("만료된 토큰으로 인한 인증 실패: {}", e.getMessage());
+            SecurityContextHolder.clearContext();
+        } catch (UserNotFoundException e) {
+            log.warn("토큰은 유효하지만 사용자를 찾을 수 없음: {}", e.getMessage());
+            SecurityContextHolder.clearContext();
         } catch (Exception e) {
-            log.error("JWT 인증 처리 중 오류 발생: {}", e.getClass().getSimpleName());
+            log.error("JWT 인증 처리 중 예상치 못한 오류 발생: {}", e.getClass().getSimpleName(), e);
             SecurityContextHolder.clearContext();
         }
 
@@ -66,8 +63,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
+     * 사용자 인증 처리
+     * @param request HTTP 요청
+     * @param token JWT 토큰
+     */
+    private void authenticateUser(HttpServletRequest request, String token) {
+        Long userId = jwtUtil.getUserId(token);
+
+        // 사용자 존재 여부 확인
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        // Spring Security 인증 객체 생성
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userId,
+                        null,
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                );
+
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        log.debug("JWT 인증 성공: userId={}", userId);
+    }
+
+    /**
      * HTTP 요청 헤더에서 JWT 토큰 추출
      * Authorization: Bearer {token} 형식에서 토큰 부분만 추출
+     * @param request HTTP 요청
+     * @return JWT 토큰 (없으면 null)
      */
     private String extractTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
@@ -81,7 +106,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * 특정 요청에 대해 필터를 적용하지 않을 조건 설정
-     * 현재는 모든 요청에 적용하지만, 필요시 제외할 경로 설정 가능
+     * @param request HTTP 요청
+     * @return 필터 적용 제외 여부
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -91,7 +117,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return path.startsWith("/css/") ||
                 path.startsWith("/js/") ||
                 path.startsWith("/images/") ||
+                path.startsWith("/favicon.ico") ||
                 path.startsWith("/oauth2/") ||
-                path.startsWith("/login/");
+                path.startsWith("/login/") ||
+                path.startsWith("/api/auth/") ||
+                path.startsWith("/swagger-ui/") ||
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/api/test/");
     }
 }

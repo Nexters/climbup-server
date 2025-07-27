@@ -1,11 +1,15 @@
 package com.climbup.climbup.common.exception;
 
+import com.climbup.climbup.auth.exception.AuthHeaderMissingException;
+import com.climbup.climbup.auth.exception.InvalidTokenException;
+import com.climbup.climbup.auth.exception.TokenExpiredException;
 import com.climbup.climbup.common.dto.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -14,8 +18,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import jakarta.servlet.http.HttpServletRequest;
-
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
@@ -24,145 +28,142 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(
             BusinessException ex, HttpServletRequest request) {
-        log.warn("Business exception occurred: {} - {}", ex.getErrorCode(), ex.getMessage());
-        
-        ErrorResponse errorResponse = ErrorResponse.of(
-                ex.getErrorCode(), 
-                ex.getMessage(), 
-                request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(ex.getHttpStatus()).body(errorResponse);
+
+        ErrorCode errorCode = ex.getErrorCode();
+        log.warn("Business exception occurred: {} - {}", errorCode.getCode(), ex.getMessage());
+
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(ErrorResponse.of(errorCode, request.getRequestURI(), ex.getMessageArgs()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(
             MethodArgumentNotValidException ex, HttpServletRequest request) {
+
         log.warn("Validation error occurred: {}", ex.getMessage());
-        
-        String message = ex.getBindingResult().getFieldErrors().stream()
-                .findFirst()
-                .map(error -> error.getDefaultMessage())
-                .orElse("입력값이 올바르지 않습니다.");
-        
-        ErrorResponse errorResponse = ErrorResponse.of(
-                "VALIDATION_001", 
-                message, 
-                request.getRequestURI()
+
+        Map<String, Object> details = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                details.put(error.getField(), error.getDefaultMessage())
         );
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        FieldError firstError = ex.getBindingResult().getFieldErrors().get(0);
+        String errorMessage = firstError.getDefaultMessage();
+
+        ErrorResponse response = ErrorResponse.builder()
+                .errorCode(ErrorCode.VALIDATION_ERROR.getCode())
+                .message(ErrorCode.VALIDATION_ERROR.getMessage(errorMessage))
+                .timestamp(java.time.LocalDateTime.now())
+                .path(request.getRequestURI())
+                .details(details)
+                .build();
+
+        return ResponseEntity
+                .status(ErrorCode.VALIDATION_ERROR.getHttpStatus())
+                .body(response);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException ex, HttpServletRequest request) {
-        log.warn("HTTP message not readable: {}", ex.getMessage());
-        
-        ErrorResponse errorResponse = ErrorResponse.of(
-                "REQUEST_001", 
-                "요청 형식이 올바르지 않습니다.", 
-                request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        log.warn("Malformed JSON request: {}", ex.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.MALFORMED_JSON.getHttpStatus())
+                .body(ErrorResponse.of(ErrorCode.MALFORMED_JSON, request.getRequestURI()));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
             MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
-        log.warn("Method argument type mismatch: {}", ex.getMessage());
-        
-        ErrorResponse errorResponse = ErrorResponse.of(
-                "REQUEST_002", 
-                "요청 파라미터 타입이 올바르지 않습니다.", 
-                request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        log.warn("Parameter type mismatch: {}", ex.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.PARAM_TYPE_MISMATCH.getHttpStatus())
+                .body(ErrorResponse.of(ErrorCode.PARAM_TYPE_MISMATCH, request.getRequestURI(), ex.getName()));
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
     public ResponseEntity<ErrorResponse> handleMissingRequestHeaderException(
             MissingRequestHeaderException ex, HttpServletRequest request) {
-        log.warn("Missing request header: {}", ex.getMessage());
-        
-        ErrorResponse errorResponse = ErrorResponse.of(
-                "AUTH_001", 
-                "필수 헤더가 누락되었습니다: " + ex.getHeaderName(), 
-                request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        log.warn("Missing required header: {}", ex.getHeaderName());
+        return ResponseEntity
+                .status(ErrorCode.AUTH_HEADER_MISSING.getHttpStatus())
+                .body(ErrorResponse.of(ErrorCode.AUTH_HEADER_MISSING, request.getRequestURI(), ex.getHeaderName()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(
             AccessDeniedException ex, HttpServletRequest request) {
+
         log.warn("Access denied: {}", ex.getMessage());
-        
-        ErrorResponse errorResponse = ErrorResponse.of(
-                "AUTH_002", 
-                "접근이 거부되었습니다.", 
-                request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+        return ResponseEntity
+                .status(ErrorCode.ACCESS_DENIED.getHttpStatus())
+                .body(ErrorResponse.of(ErrorCode.ACCESS_DENIED, request.getRequestURI()));
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(
             NoHandlerFoundException ex, HttpServletRequest request) {
-        log.warn("No handler found: {}", ex.getMessage());
-        
-        ErrorResponse errorResponse = ErrorResponse.of(
-                "RESOURCE_001", 
-                "요청한 리소스를 찾을 수 없습니다.", 
-                request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+
+        log.warn("No handler found for: {} {}", ex.getHttpMethod(), ex.getRequestURL());
+        return ResponseEntity
+                .status(ErrorCode.RESOURCE_NOT_FOUND.getHttpStatus())
+                .body(ErrorResponse.of(ErrorCode.RESOURCE_NOT_FOUND, request.getRequestURI()));
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(
             HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
-        log.warn("HTTP method not supported: {}", ex.getMessage());
-        
-        ErrorResponse errorResponse = ErrorResponse.of(
-                "METHOD_001", 
-                "지원하지 않는 HTTP 메서드입니다: " + ex.getMethod(), 
-                request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorResponse);
+
+        log.warn("Method not supported: {}", ex.getMethod());
+        return ResponseEntity
+                .status(ErrorCode.METHOD_NOT_SUPPORTED.getHttpStatus())
+                .body(ErrorResponse.of(ErrorCode.METHOD_NOT_SUPPORTED, request.getRequestURI(), ex.getMethod()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
             IllegalArgumentException ex, HttpServletRequest request) {
+
         log.warn("Illegal argument: {}", ex.getMessage());
-        
-        ErrorResponse errorResponse = ErrorResponse.of(
-                "ARGUMENT_001", 
-                ex.getMessage(), 
-                request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return ResponseEntity
+                .status(ErrorCode.ILLEGAL_ARGUMENT.getHttpStatus())
+                .body(ErrorResponse.of(ErrorCode.ILLEGAL_ARGUMENT, request.getRequestURI(), ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex, HttpServletRequest request) {
-        log.error("Unexpected error occurred", ex);
-        
-        ErrorResponse errorResponse = ErrorResponse.of(
-                "INTERNAL_001", 
-                "서버 내부 오류가 발생했습니다.", 
-                request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+
+        log.error("Unexpected exception occurred", ex);
+        return ResponseEntity
+                .status(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus())
+                .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, request.getRequestURI()));
+    }
+
+    @ExceptionHandler({InvalidTokenException.class, TokenExpiredException.class})
+    public ResponseEntity<ErrorResponse> handleJwtException(
+            BusinessException ex, HttpServletRequest request) {
+
+        ErrorCode errorCode = ex.getErrorCode();
+        log.warn("JWT 관련 예외 발생: {} - {}", errorCode.getCode(), ex.getMessage());
+
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(ErrorResponse.of(errorCode, request.getRequestURI(), ex.getMessageArgs()));
+    }
+
+    @ExceptionHandler(AuthHeaderMissingException.class)
+    public ResponseEntity<ErrorResponse> handleAuthHeaderMissingException(
+            AuthHeaderMissingException ex, HttpServletRequest request) {
+
+        log.warn("Authorization 헤더 누락: {}", ex.getMessage());
+
+        return ResponseEntity
+                .status(ex.getHttpStatus())
+                .body(ErrorResponse.of(ex.getErrorCode(), request.getRequestURI(), ex.getMessageArgs()));
     }
 }

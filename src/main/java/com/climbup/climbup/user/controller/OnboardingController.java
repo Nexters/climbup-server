@@ -50,7 +50,7 @@ public class OnboardingController {
                     )
             )
     })
-    @PostMapping("/complete")
+    @PostMapping
     public ResponseEntity<ApiResult<OnboardingDto.Response>> completeOnboarding(
             @RequestBody OnboardingDto.CompleteRequest request) {
 

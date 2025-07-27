@@ -73,6 +73,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 return nickname;
             }
         }
-        throw new NicknameGenerationException("랜덤 닉네임 생성 실패: 중복이 너무 많습니다.");
+        throw new NicknameGenerationException();
     }
 }

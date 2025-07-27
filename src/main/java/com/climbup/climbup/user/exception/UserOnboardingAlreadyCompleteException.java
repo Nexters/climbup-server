@@ -1,10 +1,10 @@
 package com.climbup.climbup.user.exception;
 
 import com.climbup.climbup.common.exception.BusinessException;
-import org.springframework.http.HttpStatus;
+import com.climbup.climbup.common.exception.ErrorCode;
 
 public class UserOnboardingAlreadyCompleteException extends BusinessException {
-    public UserOnboardingAlreadyCompleteException(String message) {
-        super("USER_001", message, HttpStatus.CONFLICT);
+    public UserOnboardingAlreadyCompleteException() {
+        super(ErrorCode.USER_ONBOARDING_ALREADY_COMPLETE);
     }
 }
