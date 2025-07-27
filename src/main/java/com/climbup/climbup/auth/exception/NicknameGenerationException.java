@@ -1,7 +1,14 @@
 package com.climbup.climbup.auth.exception;
 
-public class NicknameGenerationException extends RuntimeException {
-    public NicknameGenerationException(String message) {
-        super(message);
+import com.climbup.climbup.common.exception.BusinessException;
+import com.climbup.climbup.common.exception.ErrorCode;
+
+public class NicknameGenerationException extends BusinessException {
+    public NicknameGenerationException() {
+        super(ErrorCode.NICKNAME_GENERATE_ERROR);
+    }
+
+    public NicknameGenerationException(String reason) {
+        super(ErrorCode.NICKNAME_GENERATE_ERROR, reason);
     }
 }
