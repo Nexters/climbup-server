@@ -2,6 +2,7 @@ package com.climbup.climbup.auth.service;
 
 import com.climbup.climbup.auth.dto.CustomOAuth2User;
 import com.climbup.climbup.auth.dto.KakaoOAuth2UserInfo;
+import com.climbup.climbup.auth.exception.NicknameGenerationException;
 import com.climbup.climbup.auth.util.RandomNicknameGenerator;
 import com.climbup.climbup.user.entity.User;
 import com.climbup.climbup.user.repository.UserRepository;
@@ -67,11 +68,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private String generateUniqueNickname() {
         for (int i = 0; i < maxRetries; i++) {
             String base = RandomNicknameGenerator.generate();
-            String nickname = base + ThreadLocalRandom.current().nextInt(1000);
+            String nickname = base + (ThreadLocalRandom.current().nextInt(900) + 100);
             if (!userRepository.existsByNickname(nickname)) {
                 return nickname;
             }
         }
-        throw new RuntimeException("랜덤 닉네임 생성 실패: 중복이 너무 많습니다.");
+        throw new NicknameGenerationException("랜덤 닉네임 생성 실패: 중복이 너무 많습니다.");
     }
 }
