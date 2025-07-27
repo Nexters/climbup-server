@@ -82,6 +82,7 @@ public class UserStatusResponse {
 
         return UserStatusResponse.builder()
                 .id(user.getId())
+                .name(user.getName())
                 .nickname(user.getNickname())
                 .imageUrl(user.getImageUrl())
                 .sr(user.getSr())

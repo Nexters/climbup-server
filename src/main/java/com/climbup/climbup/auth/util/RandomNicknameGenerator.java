@@ -2,6 +2,7 @@ package com.climbup.climbup.auth.util;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomNicknameGenerator {
 
@@ -13,11 +14,10 @@ public class RandomNicknameGenerator {
             "고양이", "다람쥐", "꽃사슴", "여우", "독수리", "팬더", "고릴라", "햄스터", "너구리", "치타", "돌고래", "오랑우탄", "카피바라"
     );
 
-    private static final Random RANDOM = new Random();
-
     public static String generate() {
-        String adjective = ADJECTIVES.get(RANDOM.nextInt(ADJECTIVES.size()));
-        String animal = ANIMALS.get(RANDOM.nextInt(ANIMALS.size()));
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        String adjective = ADJECTIVES.get(random.nextInt(ADJECTIVES.size()));
+        String animal = ANIMALS.get(random.nextInt(ANIMALS.size()));
         return adjective + animal;
     }
 }

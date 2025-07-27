@@ -59,3 +59,7 @@ logging:
     org.springframework.security: TRACE
     org.hibernate.SQL: DEBUG
     root: ERROR
+
+auth:
+  nickname:
+    max-retries: 50

@@ -7,6 +7,7 @@ import com.climbup.climbup.user.entity.User;
 import com.climbup.climbup.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -14,10 +15,15 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+
+    @Value("${auth.nickname.max-retries:50}")
+    private int maxRetries;
 
     private final UserRepository userRepository;
 
@@ -59,13 +65,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private String generateUniqueNickname() {
-        String nickname;
-        int tryCount = 0;
-        do {
-            nickname = RandomNicknameGenerator.generate();
-            tryCount++;
-            if (tryCount > 50) throw new RuntimeException("랜덤 닉네임 생성 실패: 중복이 너무 많습니다.");
-        } while (userRepository.existsByNickname(nickname));
-        return nickname;
+        for (int i = 0; i < maxRetries; i++) {
+            String base = RandomNicknameGenerator.generate();
+            String nickname = base + ThreadLocalRandom.current().nextInt(1000);
+            if (!userRepository.existsByNickname(nickname)) {
+                return nickname;
+            }
+        }
+        throw new RuntimeException("랜덤 닉네임 생성 실패: 중복이 너무 많습니다.");
     }
 }
