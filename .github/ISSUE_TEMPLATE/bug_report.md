@@ -1,8 +1,8 @@
 ---
-name: Feature request
-about: 기능 추가 이슈 템플릿
-title: "[FEATURE] "
-labels: enhancement
+name: Bug report
+about: 버그 리포트 이슈 템플릿
+title: "[BUG]"
+labels: bug
 assignees: ''
 
 ---
