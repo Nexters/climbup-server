@@ -31,6 +31,9 @@ public class User extends BaseEntity {
     @Column(name = "kakao_id", nullable = false, unique = true, length = 50)
     private String kakaoId;
 
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
+
     @Column(name = "nickname", nullable = false, unique = true, length = 50)
     private String nickname;
 
