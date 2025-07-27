@@ -2,6 +2,7 @@ package com.climbup.climbup.auth.service;
 
 import com.climbup.climbup.auth.dto.CustomOAuth2User;
 import com.climbup.climbup.auth.dto.KakaoOAuth2UserInfo;
+import com.climbup.climbup.auth.util.RandomNicknameGenerator;
 import com.climbup.climbup.user.entity.User;
 import com.climbup.climbup.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,12 +43,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User createUser(KakaoOAuth2UserInfo userInfo) {
-        String baseNickname = "클라이머" + userInfo.getNickname();
-        String uniqueNickname = generateUniqueNickname(baseNickname);
+        String nickname = generateUniqueNickname();
 
         User user = User.builder()
                 .kakaoId(userInfo.getId())
-                .nickname(uniqueNickname)
+                .name(userInfo.getName())
+                .nickname(nickname)
                 .imageUrl(userInfo.getProfileImageUrl())
                 .sr(600)
                 .level(null)
@@ -57,14 +58,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return userRepository.save(user);
     }
 
-    private String generateUniqueNickname(String baseNickname) {
-        String nickname = baseNickname;
-        int suffix = 1;
-
-        while (userRepository.existsByNickname(nickname)) {
-            nickname = baseNickname + suffix++;
-        }
-
+    private String generateUniqueNickname() {
+        String nickname;
+        int tryCount = 0;
+        do {
+            nickname = RandomNicknameGenerator.generate();
+            tryCount++;
+            if (tryCount > 50) throw new RuntimeException("랜덤 닉네임 생성 실패: 중복이 너무 많습니다.");
+        } while (userRepository.existsByNickname(nickname));
         return nickname;
     }
 }

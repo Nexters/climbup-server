@@ -15,12 +15,12 @@ public class KakaoOAuth2UserInfo {
         return String.valueOf(attributes.get("id"));
     }
 
-    public String getNickname() {
+    public String getName() {
         if (properties == null) {
-            return "클라이머" + getId().substring(0, 4);
+            return getId().substring(0, 4);
         }
         String nickname = (String) properties.get("nickname");
-        return nickname != null ? nickname : "클라이머" + getId().substring(0, 4);
+        return nickname != null ? nickname : getId().substring(0, 4);
     }
 
     public String getProfileImageUrl() {

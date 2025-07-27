@@ -5,7 +5,8 @@ public class UserApiExamples {
     public static final String NEW_USER = """
             {
                 "id": 1,
-                "nickname": "클라이머이예림",
+                "name": "이예림"
+                "nickname": "당당한카피바라",
                 "imageUrl": "https://k.kakaocdn.net/dn/profile.jpg",
                 "sr": 600,
                 "onboardingCompleted": false,
@@ -17,7 +18,8 @@ public class UserApiExamples {
     public static final String GYM_SELECTED = """
             {
                 "id": 1,
-                "nickname": "클라이머이예림",
+                "name": "이예림"
+                "nickname": "당당한카피바라",
                 "imageUrl": "https://k.kakaocdn.net/dn/profile.jpg",
                 "sr": 600,
                 "onboardingCompleted": false,
@@ -35,7 +37,8 @@ public class UserApiExamples {
     public static final String LEVEL_SELECTED = """
             {
                 "id": 1,
-                "nickname": "클라이머이예림",
+                "name": "이예림"
+                "nickname": "당당한카피바라",
                 "imageUrl": "https://k.kakaocdn.net/dn/profile.jpg",
                 "sr": 600,
                 "onboardingCompleted": false,
@@ -53,7 +56,8 @@ public class UserApiExamples {
     public static final String COMPLETED_USER = """
             {
                 "id": 1,
-                "nickname": "클라이머이예림",
+                "name": "이예림"
+                "nickname": "당당한카피바라",
                 "imageUrl": "https://k.kakaocdn.net/dn/profile.jpg",
                 "sr": 600,
                 "onboardingCompleted": true,

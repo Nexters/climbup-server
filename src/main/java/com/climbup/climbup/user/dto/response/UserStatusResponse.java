@@ -13,7 +13,10 @@ public class UserStatusResponse {
     @Schema(description = "사용자 ID", example = "1")
     private Long id;
 
-    @Schema(description = "닉네임", example = "클라이머이예림")
+    @Schema(description = "이름", example = "이예림")
+    private String name;
+
+    @Schema(description = "닉네임", example = "당당한카피바라")
     private String nickname;
 
     @Schema(description = "프로필 이미지 URL", example = "https://k.kakaocdn.net/dn/profile.jpg")
