@@ -20,7 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user-sessions")
+@RequestMapping("/api/sessions")
 @Tag(name = "User Session", description = "오늘의 세션 관련 API")
 @RequiredArgsConstructor
 public class UserSessionController {

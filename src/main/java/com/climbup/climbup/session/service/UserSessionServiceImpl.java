@@ -29,9 +29,9 @@ public class UserSessionServiceImpl implements UserSessionService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        var incompleteSessions = user.getSessions().stream().filter(userSession -> userSession.getEndedAt() == null).toList();
+        var activeSession = userSessionRepository.findByUserIdAndEndedAtIsNull(userId).orElse(null);
 
-        if(!incompleteSessions.isEmpty()) {
+        if(activeSession != null) {
             throw new UserSessionNotYetFinishedException();
         }
 
