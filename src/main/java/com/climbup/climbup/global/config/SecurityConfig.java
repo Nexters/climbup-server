@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/login/**", "/oauth2/**",
                                 "/login/oauth2/code/*", "/error", "/css/**", "/js/**",
                                 "/images/**", "/favicon.ico").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/levels/**", "/api/gyms/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/levels/**", "/api/gyms/**", "/api/brands/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/profile").authenticated()
                         .requestMatchers("/api/test/**",
                                 "/swagger-ui/**",
