@@ -2,6 +2,8 @@ package com.climbup.climbup.gym.entity;
 
 import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.route.entity.RouteMission;
+import com.climbup.climbup.session.entity.UserSession;
+import com.climbup.climbup.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -41,4 +43,10 @@ public class ClimbingGym extends BaseEntity {
 
     @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL)
     private List<RouteMission> routeMissions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL)
+    private List<UserSession> sessions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL)
+    private List<User> users = new ArrayList<>();
 }

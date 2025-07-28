@@ -2,6 +2,7 @@ package com.climbup.climbup.session.entity;
 
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.common.entity.BaseEntity;
+import com.climbup.climbup.gym.entity.ClimbingGym;
 import com.climbup.climbup.recommendation.entity.ChallengeRecommendation;
 import com.climbup.climbup.sr.entity.SRHistory;
 import com.climbup.climbup.user.entity.User;
@@ -19,7 +20,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "user_sessions", indexes = {
-        @Index(name = "idx_session_user_date", columnList = "user_id, session_date")
+        @Index(name = "idx_session_user_date", columnList = "user_id, session_date"),
+        @Index(name = "idx_session_gym_date", columnList = "gym_id, session_date"),
+        @Index(name = "idx_session_user_gym", columnList = "user_id, gym_id")
 })
 @Getter
 @Setter
@@ -34,6 +37,10 @@ public class UserSession extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gym_id", nullable = false)
+    private ClimbingGym gym;
 
     @Column(name = "session_date", nullable = false)
     private LocalDate sessionDate;
