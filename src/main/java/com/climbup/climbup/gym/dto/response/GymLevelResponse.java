@@ -22,7 +22,7 @@ public class GymLevelResponse {
     @Schema(description = "기본 레벨 ID", example = "1")
     private Long levelId;
 
-    @Schema(description = "기본 레벨명", example = "BEGINNER")
+    @Schema(description = "기본 레벨명", example = "V0")
     private String levelName;
 
     @Schema(description = "브랜드별 표시명", example = "ORANGE")
