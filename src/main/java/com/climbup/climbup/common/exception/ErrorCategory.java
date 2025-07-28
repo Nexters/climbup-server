@@ -4,6 +4,7 @@ public enum ErrorCategory {
     COMMON("COMMON"),
     AUTH("AUTH"),
     USER("USER"),
+    SESSION("SESSION"),
     VALIDATION("VALIDATION"),
     REQUEST("REQUEST"),
     RESOURCE("RESOURCE"),

@@ -32,7 +32,7 @@ public class UserSessionServiceImpl implements UserSessionService {
         var incompleteSessions = user.getSessions().stream().filter(userSession -> userSession.getEndedAt() == null).toList();
 
         if(!incompleteSessions.isEmpty()) {
-            throw new UserSessionNotYetFinishedException("아직 마무리되지 않은 세션이 존재합니다.");
+            throw new UserSessionNotYetFinishedException();
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -54,14 +54,14 @@ public class UserSessionServiceImpl implements UserSessionService {
     @Override
     @Transactional(readOnly = true)
     public UserSession getSession(Long userId, Long sessionId) {
-        UserSession session = userSessionRepository.findById(sessionId).orElseThrow(() -> new UserSessionNotFoundException("세션이 존재하지 않습니다."));
+        UserSession session = userSessionRepository.findById(sessionId).orElseThrow(UserSessionNotFoundException::new);
 
         if(!session.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("해당 세션에 접근할 수 없습니다.");
         }
 
         if(session.getEndedAt() == null) {
-            throw new UserSessionNotYetFinishedException("해당 세션이 아직 진행중입니다.");
+            throw new UserSessionNotYetFinishedException();
         }
 
         return session;
@@ -70,14 +70,14 @@ public class UserSessionServiceImpl implements UserSessionService {
     @Override
     @Transactional
     public UserSession finishSession(Long userId, Long sessionId) {
-        UserSession session = userSessionRepository.findById(sessionId).orElseThrow(() -> new UserSessionNotFoundException("세션이 존재하지 않습니다."));
+        UserSession session = userSessionRepository.findById(sessionId).orElseThrow(UserSessionNotFoundException::new);
 
         if(!session.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("해당 세션에 접근할 수 없습니다.");
         }
 
         if(session.getEndedAt() != null) {
-            throw new UserSessionAlreadyFinishedException("이미 종료된 세션입니다.");
+            throw new UserSessionAlreadyFinishedException();
         }
 
         LocalDateTime endTime = LocalDateTime.now();

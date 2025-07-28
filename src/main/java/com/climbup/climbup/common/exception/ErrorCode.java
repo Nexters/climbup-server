@@ -19,6 +19,11 @@ public enum ErrorCode {
     USER_ONBOARDING_ALREADY_COMPLETE(ErrorCategory.USER, "002", "이미 온보딩을 완료한 사용자입니다.", HttpStatus.CONFLICT),
     USER_ALREADY_EXISTS(ErrorCategory.USER, "003", "이미 존재하는 사용자입니다.", HttpStatus.CONFLICT),
 
+    // 세션 관련
+    SESSION_NOT_FOUND(ErrorCategory.SESSION, "001", "세션을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    SESSION_ALREADY_FINISHED(ErrorCategory.SESSION, "002", "이미 완료된 세션입니다.", HttpStatus.CONFLICT),
+    SESSION_NOT_YET_FINISHED(ErrorCategory.SESSION, "003", "세션이 아직 진행중입니다.", HttpStatus.CONFLICT),
+
     // 검증 관련
     VALIDATION_ERROR(ErrorCategory.VALIDATION, "001", "입력값이 올바르지 않습니다: {0}", HttpStatus.BAD_REQUEST),
     REQUIRED_FIELD_MISSING(ErrorCategory.VALIDATION, "002", "필수 필드가 누락되었습니다: {0}", HttpStatus.BAD_REQUEST),

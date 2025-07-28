@@ -1,5 +1,6 @@
 package com.climbup.climbup.session.controller;
 
+import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.session.dto.response.UserSessionResponses;
 import com.climbup.climbup.session.entity.UserSession;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -46,8 +48,9 @@ public class UserSessionController {
             )
     })
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResult<UserSessionResponses.CreateUserSession>> startUserSession() {
-        Long userId = 1L;
+        Long userId = SecurityUtil.getCurrentUserId();
         
         UserSession session = userSessionService.startSession(userId);
         UserSessionResponses.CreateUserSession response = UserSessionResponses.CreateUserSession.toDto(session);
@@ -94,10 +97,11 @@ public class UserSessionController {
             )
     })
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResult<UserSessionResponses.UserSessionState>> getUserSession(
             @PathVariable(name = "id") Long id
     ) {
-        Long userId = 1L;
+        Long userId = SecurityUtil.getCurrentUserId();
 
         UserSession session = userSessionService.getSession(userId, id);
         UserSessionResponses.UserSessionState response = UserSessionResponses.UserSessionState.toDto(session);
@@ -144,10 +148,11 @@ public class UserSessionController {
             )
     })
     @PostMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResult<UserSessionResponses.FinishUserSession>> endUserSession(
             @PathVariable(name = "id") Long sessionId
     ){
-        Long userId = 1L;
+        Long userId = SecurityUtil.getCurrentUserId();
 
         UserSession session = userSessionService.finishSession(userId, sessionId);
         UserSessionResponses.FinishUserSession response = UserSessionResponses.FinishUserSession.toDto(session);
