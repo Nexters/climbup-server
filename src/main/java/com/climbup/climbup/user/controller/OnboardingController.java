@@ -43,7 +43,7 @@ public class OnboardingController {
                                                 "errorCode": "USER_001",
                                                 "message": "이미 온보딩을 완료한 사용자입니다.",
                                                 "timestamp": "2024-01-15T10:30:00",
-                                                "path": "/api/onboarding/complete"
+                                                "path": "/api/onboarding"
                                             }
                                             """
                             )
@@ -56,7 +56,7 @@ public class OnboardingController {
 
         Long userId = SecurityUtil.getCurrentUserId();
 
-        onboardingService.completeOnboarding(userId, request.getGymId(), request.getLevelId());
+        onboardingService.completeOnboarding(userId, request.getGymId(), request.getGymLevelId());
 
         return ResponseEntity.ok(ApiResult.success(new OnboardingDto.Response("온보딩이 완료되었습니다.")));
     }
@@ -67,26 +67,6 @@ public class OnboardingController {
             description = "사용자의 암장을 설정합니다.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "암장 설정 성공"),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "이미 온보딩 완료된 사용자",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                                "errorCode": "USER_001",
-                                                "message": "이미 온보딩을 완료한 사용자입니다.",
-                                                "timestamp": "2024-01-15T10:30:00",
-                                                "path": "/api/onboarding/gym"
-                                            }
-                                            """
-                            )
-                    )
-            )
-    })
     @PostMapping("/gym")
     public ResponseEntity<ApiResult<OnboardingDto.Response>> setGym(
             @RequestBody OnboardingDto.GymRequest request) {
@@ -101,36 +81,16 @@ public class OnboardingController {
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "레벨 선택",
-            description = "사용자의 레벨을 설정합니다.",
+            description = "사용자의 레벨을 설정합니다. (암장별 레벨)",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "레벨 설정 성공"),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "이미 온보딩 완료된 사용자",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                                "errorCode": "USER_001",
-                                                "message": "이미 온보딩을 완료한 사용자입니다.",
-                                                "timestamp": "2024-01-15T10:30:00",
-                                                "path": "/api/onboarding/level"
-                                            }
-                                            """
-                            )
-                    )
-            )
-    })
     @PostMapping("/level")
     public ResponseEntity<ApiResult<OnboardingDto.Response>> setLevel(
             @RequestBody OnboardingDto.LevelRequest request) {
 
         Long userId = SecurityUtil.getCurrentUserId();
 
-        onboardingService.setUserLevel(userId, request.getLevelId());
+        onboardingService.setUserGymLevel(userId, request.getGymLevelId());
 
         return ResponseEntity.ok(ApiResult.success(new OnboardingDto.Response("레벨이 설정되었습니다.")));
     }
