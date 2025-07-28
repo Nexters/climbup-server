@@ -43,6 +43,9 @@ public class RouteMission extends BaseEntity {
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageUrl;
 
+    @Column(name = "thumbnail_url", nullable = false, columnDefinition = "TEXT")
+    private String thumbnailUrl;
+
     @Column(name = "video_url", nullable = false, columnDefinition = "TEXT")
     private String videoUrl;
 
