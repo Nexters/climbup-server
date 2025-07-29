@@ -8,8 +8,8 @@ public class InvalidTokenException extends BusinessException {
         super(ErrorCode.INVALID_TOKEN);
     }
 
-    public InvalidTokenException(String tokenType) {
-        super(ErrorCode.INVALID_TOKEN, tokenType);
+    public InvalidTokenException(String message) {
+        super(ErrorCode.INVALID_TOKEN, message);
     }
 
     public InvalidTokenException(String tokenType, Throwable cause) {
