@@ -24,7 +24,7 @@ services:
       - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
       - KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - APP_OAUTH2_AUTHORIZED_REDIRECT_URI=${OAUTH_REDIRECT_URI}
+      - APP_OAUTH2_AUTHORIZED_REDIRECT_URI=https://holdy.kr/oauth2/redirect
     ports:
       - "9090:9090"
     depends_on:
