@@ -3,6 +3,9 @@ package com.climbup.climbup.user.entity;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.gym.entity.ClimbingGym;
+import com.climbup.climbup.gym.entity.GymLevel;
+import com.climbup.climbup.gym.exception.GymLevelNotFoundException;
+import com.climbup.climbup.gym.exception.GymNotFoundException;
 import com.climbup.climbup.session.entity.UserSession;
 import com.climbup.climbup.sr.entity.SRHistory;
 import com.climbup.climbup.level.entity.Level;
@@ -40,10 +43,9 @@ public class User extends BaseEntity {
     @Column(name = "sr", nullable = false, columnDefinition = "INT DEFAULT 600")
     private Integer sr = 600;
 
-    // 온보딩 시 선택할 항목들 - nullable로 변경
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "level_id")
-    private Level level;
+    @JoinColumn(name = "gym_level_id")
+    private GymLevel gymLevel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gym_id")
@@ -61,16 +63,16 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SRHistory> srHistories = new ArrayList<>();
 
-    public void selectLevel(Level level) {
-        if (level == null) {
-            throw new IllegalArgumentException("레벨은 null일 수 없습니다.");
+    public void selectGymLevel(GymLevel gymLevel) {
+        if (gymLevel == null) {
+            throw new GymLevelNotFoundException();
         }
-        this.level = level;
+        this.gymLevel = gymLevel;
     }
 
     public void selectGym(ClimbingGym gym) {
         if (gym == null) {
-            throw new IllegalArgumentException("암장은 null일 수 없습니다.");
+            throw new GymNotFoundException();
         }
         this.gym = gym;
     }
@@ -83,6 +85,6 @@ public class User extends BaseEntity {
     }
 
     public boolean hasCompletedOnboarding() {
-        return this.gym != null && this.level != null;
+        return this.gym != null && this.gymLevel != null;
     }
 }

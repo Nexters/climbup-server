@@ -1,11 +1,15 @@
 package com.climbup.climbup.level.entity;
 
 import com.climbup.climbup.common.entity.BaseEntity;
+import com.climbup.climbup.gym.entity.GymLevel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "levels")
@@ -20,14 +24,14 @@ public class Level extends BaseEntity {
     private Long id;
 
     @Column(name = "name", nullable = false, length = 20)
-    private String name;    // ORANGE, GREEN, BLUE, RED, PURPLE
+    private String name;
 
-    @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
-    private String imageUrl; // todo: 추후 상황별로 레벨 이미지가 여러개 필요해질수도 있음
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
 
-    @Column(name = "sr_min", nullable = false)
-    private Integer srMin;
+    @Column(name = "sort_order", nullable = false)
+    private Integer sortOrder;
 
-    @Column(name = "sr_max")
-    private Integer srMax;
+    @OneToMany(mappedBy = "level", cascade = CascadeType.ALL)
+    private List<GymLevel> gymLevels = new ArrayList<>();
 }

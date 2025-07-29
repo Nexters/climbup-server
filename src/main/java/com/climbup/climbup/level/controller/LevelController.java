@@ -4,11 +4,13 @@ import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.level.dto.response.LevelResponse;
 import com.climbup.climbup.level.service.LevelService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +29,14 @@ public class LevelController {
     @GetMapping
     public ResponseEntity<ApiResult<List<LevelResponse>>> getAllLevelList() {
         return ResponseEntity.ok(ApiResult.success(levelService.getAllLevels()));
+    }
+
+    @Operation(summary = "특정 레벨 정보 조회", description = "레벨 ID로 특정 레벨의 상세 정보를 조회합니다")
+    @ApiResponse(responseCode = "200", description = "레벨 정보 조회 성공")
+    @GetMapping("/{levelId}")
+    public ResponseEntity<ApiResult<LevelResponse>> getLevelById(
+            @Parameter(description = "레벨 ID") @PathVariable Long levelId) {
+        return ResponseEntity.ok(ApiResult.success(levelService.getLevelById(levelId)));
     }
 
 }

@@ -58,7 +58,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .nickname(nickname)
                 .imageUrl(userInfo.getProfileImageUrl())
                 .sr(600)
-                .level(null)
+                .gymLevel(null)
                 .gym(null)
                 .build();
 

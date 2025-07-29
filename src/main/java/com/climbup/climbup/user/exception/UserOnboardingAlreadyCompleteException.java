@@ -7,4 +7,8 @@ public class UserOnboardingAlreadyCompleteException extends BusinessException {
     public UserOnboardingAlreadyCompleteException() {
         super(ErrorCode.USER_ONBOARDING_ALREADY_COMPLETE);
     }
+
+    public UserOnboardingAlreadyCompleteException(String message){
+        super(ErrorCode.USER_ONBOARDING_ALREADY_COMPLETE, message);
+    }
 }

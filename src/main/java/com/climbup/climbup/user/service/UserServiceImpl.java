@@ -2,6 +2,7 @@ package com.climbup.climbup.user.service;
 
 import com.climbup.climbup.user.dto.response.UserStatusResponse;
 import com.climbup.climbup.user.entity.User;
+import com.climbup.climbup.user.exception.UserNotFoundException;
 import com.climbup.climbup.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException());
     }
 
     @Override

@@ -40,6 +40,9 @@ public class UserMissionAttempt extends BaseEntity {
     @Column(name = "success", nullable = false)
     private Boolean success;
 
+    @Column(name = "thumbnail_url", columnDefinition = "TEXT")
+    private String thumbnailUrl;
+
     @Column(name = "video_url", columnDefinition = "TEXT")
     private String videoUrl;
 }

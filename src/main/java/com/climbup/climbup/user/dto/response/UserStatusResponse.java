@@ -29,30 +29,36 @@ public class UserStatusResponse {
     private boolean onboardingCompleted;
 
     @Schema(description = "선택된 레벨 정보")
-    private LevelInfo level;
+    private GymLevelInfo gymLevel; // 기존 level에서 gymLevel로 변경
 
     @Schema(description = "선택된 암장 정보")
     private GymInfo gym;
 
     @Data
     @Builder
-    @Schema(description = "레벨 정보")
-    public static class LevelInfo {
+    @Schema(description = "암장별 레벨 정보")
+    public static class GymLevelInfo {
 
-        @Schema(description = "레벨 ID", example = "2")
+        @Schema(description = "암장별 레벨 ID", example = "3")
         private Long id;
 
-        @Schema(description = "레벨 이름", example = "GREEN")
-        private String name;
+        @Schema(description = "브랜드명", example = "더클라임")
+        private String brandName;
 
-        @Schema(description = "레벨 이미지 URL", example = "https://example.com/green.png")
-        private String imageUrl;
+        @Schema(description = "기본 레벨명", example = "V0")
+        private String levelName;
 
-        @Schema(description = "최소 SR", example = "650")
+        @Schema(description = "브랜드별 표시명", example = "ORANGE")
+        private String displayName;
+
+        @Schema(description = "최소 SR", example = "600")
         private Integer srMin;
 
-        @Schema(description = "최대 SR", example = "999")
+        @Schema(description = "최대 SR", example = "649")
         private Integer srMax;
+
+        @Schema(description = "정렬 순서", example = "1")
+        private Integer sortOrder;
     }
 
     @Data
@@ -63,11 +69,17 @@ public class UserStatusResponse {
         @Schema(description = "암장 ID", example = "1")
         private Long id;
 
-        @Schema(description = "암장 이름", example = "더클라임")
-        private String name;
+        @Schema(description = "브랜드 ID", example = "1")
+        private Long brandId;
+
+        @Schema(description = "브랜드명", example = "더클라임")
+        private String brandName;
 
         @Schema(description = "지점명", example = "강남점")
-        private String location;
+        private String branchName;
+
+        @Schema(description = "전체 이름", example = "더클라임 강남점")
+        private String fullName;
 
         @Schema(description = "주소", example = "서울특별시 강남구 테헤란로8길 21 지하 1층")
         private String address;
@@ -78,7 +90,7 @@ public class UserStatusResponse {
 
     public static UserStatusResponse fromEntity(User user) {
         boolean hasGym = user.getGym() != null;
-        boolean hasLevel = user.getLevel() != null;
+        boolean hasGymLevel = user.getGymLevel() != null;
 
         return UserStatusResponse.builder()
                 .id(user.getId())
@@ -86,18 +98,22 @@ public class UserStatusResponse {
                 .nickname(user.getNickname())
                 .imageUrl(user.getImageUrl())
                 .sr(user.getSr())
-                .onboardingCompleted(hasGym && hasLevel)
-                .level(hasLevel ? LevelInfo.builder()
-                        .id(user.getLevel().getId())
-                        .name(user.getLevel().getName())
-                        .imageUrl(user.getLevel().getImageUrl())
-                        .srMin(user.getLevel().getSrMin())
-                        .srMax(user.getLevel().getSrMax())
+                .onboardingCompleted(user.hasCompletedOnboarding())
+                .gymLevel(hasGymLevel ? GymLevelInfo.builder()
+                        .id(user.getGymLevel().getId())
+                        .brandName(user.getGymLevel().getBrand().getName())
+                        .levelName(user.getGymLevel().getLevel().getName())
+                        .displayName(user.getGymLevel().getDisplayName())
+                        .srMin(user.getGymLevel().getSrMin())
+                        .srMax(user.getGymLevel().getSrMax())
+                        .sortOrder(user.getGymLevel().getSortOrder())
                         .build() : null)
                 .gym(hasGym ? GymInfo.builder()
                         .id(user.getGym().getId())
-                        .name(user.getGym().getName())
-                        .location(user.getGym().getLocation())
+                        .brandId(user.getGym().getBrand().getId())
+                        .brandName(user.getGym().getBrand().getName())
+                        .branchName(user.getGym().getBranchName())
+                        .fullName(user.getGym().getName())
                         .address(user.getGym().getAddress())
                         .imageUrl(user.getGym().getImageUrl())
                         .build() : null)

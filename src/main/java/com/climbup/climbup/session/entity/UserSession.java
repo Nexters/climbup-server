@@ -3,7 +3,6 @@ package com.climbup.climbup.session.entity;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.gym.entity.ClimbingGym;
-import com.climbup.climbup.recommendation.entity.ChallengeRecommendation;
 import com.climbup.climbup.sr.entity.SRHistory;
 import com.climbup.climbup.user.entity.User;
 import jakarta.persistence.*;
@@ -65,9 +64,6 @@ public class UserSession extends BaseEntity {
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     private List<UserMissionAttempt> attempts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
-    private List<ChallengeRecommendation> recommendations = new ArrayList<>();
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     private List<SRHistory> srHistories = new ArrayList<>();

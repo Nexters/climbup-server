@@ -1,6 +1,7 @@
 package com.climbup.climbup.sector.entity;
 
 import com.climbup.climbup.common.entity.BaseEntity;
+import com.climbup.climbup.gym.entity.ClimbingGym;
 import com.climbup.climbup.route.entity.RouteMission;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

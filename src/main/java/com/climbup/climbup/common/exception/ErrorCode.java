@@ -24,6 +24,9 @@ public enum ErrorCode {
     SESSION_ALREADY_FINISHED(ErrorCategory.SESSION, "002", "이미 완료된 세션입니다.", HttpStatus.CONFLICT),
     SESSION_NOT_YET_FINISHED(ErrorCategory.SESSION, "003", "세션이 아직 진행중입니다.", HttpStatus.CONFLICT),
 
+    // 암장 관련
+    GYM_LEVEL_BRAND_MISMATCH(ErrorCategory.GYM, "001", "선택한 암장과 레벨의 브랜드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+
     // 검증 관련
     VALIDATION_ERROR(ErrorCategory.VALIDATION, "001", "입력값이 올바르지 않습니다: {0}", HttpStatus.BAD_REQUEST),
     REQUIRED_FIELD_MISSING(ErrorCategory.VALIDATION, "002", "필수 필드가 누락되었습니다: {0}", HttpStatus.BAD_REQUEST),
@@ -41,9 +44,15 @@ public enum ErrorCode {
     RESOURCE_ACCESS_DENIED(ErrorCategory.RESOURCE, "003", "리소스에 접근할 권한이 없습니다.", HttpStatus.FORBIDDEN),
 
     // 비즈니스 로직 관련
-    GYM_NOT_FOUND(ErrorCategory.BUSINESS, "001", "암장을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    LEVEL_NOT_FOUND(ErrorCategory.BUSINESS, "002", "레벨을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    INVALID_BUSINESS_RULE(ErrorCategory.BUSINESS, "003", "비즈니스 규칙에 위배됩니다: {0}", HttpStatus.BAD_REQUEST);
+    INVALID_BUSINESS_RULE(ErrorCategory.BUSINESS, "001", "비즈니스 규칙에 위배됩니다: {0}", HttpStatus.BAD_REQUEST),
+    GYM_NOT_FOUND(ErrorCategory.BUSINESS, "002", "암장을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    LEVEL_NOT_FOUND(ErrorCategory.BUSINESS, "003", "레벨을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    GYM_LEVEL_NOT_FOUND(ErrorCategory.BUSINESS, "004", "암장 레벨을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    BRAND_NOT_FOUND(ErrorCategory.BUSINESS, "005", "암장 브랜드를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    SECTOR_NOT_FOUND(ErrorCategory.BUSINESS, "006", "섹터를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    ROUTE_NOT_FOUND(ErrorCategory.BUSINESS, "007", "루트미션을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    ATTEMPT_NOT_FOUND(ErrorCategory.BUSINESS, "008", "도전 기록을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    SR_HISTORY_NOT_FOUND(ErrorCategory.BUSINESS, "009", "SR 기록을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
     private final ErrorCategory category;
     private final String number;

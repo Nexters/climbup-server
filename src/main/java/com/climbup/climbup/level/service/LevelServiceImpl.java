@@ -2,6 +2,7 @@ package com.climbup.climbup.level.service;
 
 import com.climbup.climbup.level.dto.response.LevelResponse;
 import com.climbup.climbup.level.entity.Level;
+import com.climbup.climbup.level.exception.LevelNotFoundException;
 import com.climbup.climbup.level.repository.LevelRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,9 @@ public class LevelServiceImpl implements LevelService {
 
     @Override
     @Transactional
-    public Level getLevelById(Long id){
-        return levelRepository.findById(id).orElseThrow();
+    public LevelResponse getLevelById(Long levelId){
+        Level level = levelRepository.findById(levelId)
+                .orElseThrow(() -> new LevelNotFoundException());
+        return LevelResponse.fromEntity(level);
     }
 }

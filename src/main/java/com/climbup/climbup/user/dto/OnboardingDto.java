@@ -14,8 +14,8 @@ public class OnboardingDto {
         @Schema(description = "암장 ID", example = "1")
         private Long gymId;
 
-        @Schema(description = "레벨 ID", example = "1")
-        private Long levelId;
+        @Schema(description = "암장별 레벨 ID", example = "1")
+        private Long gymLevelId;
     }
 
     @Getter
@@ -30,8 +30,8 @@ public class OnboardingDto {
     @NoArgsConstructor
     @Schema(description = "레벨 선택 요청")
     public static class LevelRequest {
-        @Schema(description = "레벨 ID", example = "1")
-        private Long levelId;
+        @Schema(description = "암장별 레벨 ID", example = "1")
+        private Long gymLevelId;
     }
 
     @Getter

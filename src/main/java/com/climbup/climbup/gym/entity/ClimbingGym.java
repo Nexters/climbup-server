@@ -1,7 +1,9 @@
 package com.climbup.climbup.gym.entity;
 
+import com.climbup.climbup.brand.entity.Brand;
 import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.route.entity.RouteMission;
+import com.climbup.climbup.sector.entity.Sector;
 import com.climbup.climbup.session.entity.UserSession;
 import com.climbup.climbup.user.entity.User;
 import jakarta.persistence.*;
@@ -26,11 +28,12 @@ public class ClimbingGym extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 100)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "brand_id", nullable = false)
+    private Brand brand;
 
-    @Column(name = "location", nullable = false)
-    private String location;
+    @Column(name = "branch_name", nullable = false, length = 100)
+    private String branchName;
 
     @Column(name = "address", nullable = false)
     private String address;
@@ -49,4 +52,8 @@ public class ClimbingGym extends BaseEntity {
 
     @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL)
     private List<User> users = new ArrayList<>();
+
+    public String getName() {
+        return brand.getName() + " " + branchName;
+    }
 }
