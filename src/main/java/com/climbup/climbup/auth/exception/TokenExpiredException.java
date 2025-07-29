@@ -8,6 +8,10 @@ public class TokenExpiredException extends BusinessException {
         super(ErrorCode.TOKEN_EXPIRED);
     }
 
+    public TokenExpiredException(String message) {
+        super(ErrorCode.INVALID_TOKEN, message);
+    }
+
     public TokenExpiredException(Throwable cause) {
         super(ErrorCode.TOKEN_EXPIRED, cause);
     }
