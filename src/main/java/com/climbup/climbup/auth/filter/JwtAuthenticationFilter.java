@@ -43,7 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = extractTokenFromRequest(request);
 
             if (StringUtils.hasText(token) && jwtUtil.isTokenValid(token)) {
-                authenticateUser(request, token);
+                if (!jwtUtil.isAccessToken(token)) {
+                    log.debug("Access Token이 아닌 토큰으로 인증 시도: {}", jwtUtil.getTokenType(token));
+                    SecurityContextHolder.clearContext();
+                } else {
+                    authenticateUser(request, token);
+                }
             }
         } catch (InvalidTokenException e) {
             log.debug("유효하지 않은 토큰으로 인한 인증 실패: {}", e.getMessage());
@@ -120,7 +125,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.startsWith("/favicon.ico") ||
                 path.startsWith("/oauth2/") ||
                 path.startsWith("/login/") ||
-                path.startsWith("/api/auth/") ||
+                path.startsWith("/api/auth/refresh") ||
                 path.startsWith("/swagger-ui/") ||
                 path.startsWith("/v3/api-docs") ||
                 path.startsWith("/api/test/");

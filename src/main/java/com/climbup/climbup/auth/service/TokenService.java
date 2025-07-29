@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -50,9 +51,8 @@ public class TokenService {
 
         Long userId = jwtUtil.getUserId(refreshToken);
 
-        // Redis에서 저장된 Refresh Token과 비교
         String storedRefreshToken = getStoredRefreshToken(userId);
-        if (!refreshToken.equals(storedRefreshToken)) {
+        if (!Objects.equals(refreshToken, storedRefreshToken)) {
             throw new InvalidTokenException("refresh token이 일치하지 않습니다");
         }
 

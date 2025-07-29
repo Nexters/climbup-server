@@ -23,11 +23,10 @@ public class OAuth2LoginController {
     private String authorizedRedirectUris;
 
     @Operation(summary = "카카오 로그인 시작", description = "카카오 OAuth2 로그인을 시작합니다")
-    @GetMapping("/oauth2/authorization/kakao")
+    @GetMapping("/login/kakao")
     public String startKakaoLogin(@RequestParam(required = false) String redirect_uri,
                                   HttpServletRequest request) {
 
-        // redirect_uri가 제공되고 승인된 URI인 경우 세션에 저장
         if (StringUtils.hasText(redirect_uri) && isAuthorizedRedirectUri(redirect_uri)) {
             HttpSession session = request.getSession();
             session.setAttribute("redirect_uri", redirect_uri);
@@ -40,6 +39,6 @@ public class OAuth2LoginController {
     private boolean isAuthorizedRedirectUri(String uri) {
         List<String> authorizedUris = Arrays.asList(authorizedRedirectUris.split(","));
         return authorizedUris.stream().anyMatch(authorizedUri ->
-                uri.toLowerCase().startsWith(authorizedUri.toLowerCase().trim()));
+                uri.equals(authorizedUri.trim()));
     }
 }

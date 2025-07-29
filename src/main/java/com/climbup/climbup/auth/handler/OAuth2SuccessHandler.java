@@ -82,6 +82,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private boolean isAuthorizedRedirectUri(String uri) {
         List<String> authorizedUris = Arrays.asList(authorizedRedirectUris.split(","));
         return authorizedUris.stream().anyMatch(authorizedUri ->
-                uri.toLowerCase().startsWith(authorizedUri.toLowerCase().trim()));
+                uri.equals(authorizedUri.trim()));
     }
 }
