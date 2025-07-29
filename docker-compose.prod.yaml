@@ -15,16 +15,28 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - ./climbup-redis-data:/data
+    command: redis-server --appendonly yes
+
   server:
     image: ${DOCKER_USERNAME}/climbup-server:latest
     environment:
       - DB_URL=jdbc:postgresql://db:5432/${POSTGRES_DB:-db}
       - DB_USERNAME=${POSTGRES_USER:-root}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
       - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
       - KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - APP_OAUTH2_AUTHORIZED_REDIRECT_URI=https://holdy.kr/oauth2/redirect
+      - OAUTH_AUTHORIZED_REDIRECT_URIS=${OAUTH_AUTHORIZED_REDIRECT_URIS:-https://holdy.kr/oauth2/redirect}
+      - OAUTH_DEFAULT_REDIRECT_URI=${OAUTH_DEFAULT_REDIRECT_URI:-https://holdy.kr/oauth2/redirect}
     ports:
       - "9090:9090"
     depends_on:
