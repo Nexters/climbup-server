@@ -2,19 +2,15 @@ package com.climbup.climbup.auth.util;
 
 import com.climbup.climbup.auth.exception.InvalidTokenException;
 import com.climbup.climbup.auth.exception.TokenExpiredException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Component
@@ -22,115 +18,89 @@ import java.util.Date;
 public class JwtUtil {
 
     private final SecretKey key;
-    private final long accessTokenValidityInMilliseconds;
+    private final long accessTokenValidityInSeconds;
+    private final long refreshTokenValidityInSeconds;
 
-    public JwtUtil(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds) {
+    public JwtUtil(@Value("${jwt.secret}") String secret,
+                   @Value("${jwt.access-token-validity-in-seconds:3600}") long accessTokenValidityInSeconds,
+                   @Value("${jwt.refresh-token-validity-in-seconds:604800}") long refreshTokenValidityInSeconds) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
-        this.accessTokenValidityInMilliseconds = accessTokenValidityInSeconds * 1000;
+        this.accessTokenValidityInSeconds = accessTokenValidityInSeconds;
+        this.refreshTokenValidityInSeconds = refreshTokenValidityInSeconds;
     }
 
     public String createAccessToken(Long userId) {
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + accessTokenValidityInMilliseconds);
+        return createToken(userId, accessTokenValidityInSeconds, "ACCESS");
+    }
+
+    public String createRefreshToken(Long userId) {
+        return createToken(userId, refreshTokenValidityInSeconds, "REFRESH");
+    }
+
+    private String createToken(Long userId, long validityInSeconds, String tokenType) {
+        Instant now = Instant.now();
+        Instant validity = now.plus(validityInSeconds, ChronoUnit.SECONDS);
 
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .claim("type", tokenType)
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(validity))
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    /**
-     * JWT 토큰을 파싱하여 Claims 반환
-     * @param token JWT 토큰
-     * @return Claims 객체
-     * @throws InvalidTokenException 토큰이 유효하지 않은 경우
-     * @throws TokenExpiredException 토큰이 만료된 경우
-     */
-    public Claims parseClaims(String token) {
+    public boolean isTokenValid(String token) {
         try {
-            return Jwts.parserBuilder()
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            throw new TokenExpiredException("토큰이 만료되었습니다");
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new InvalidTokenException("유효하지 않은 토큰입니다");
+        }
+    }
+
+    public Long getUserId(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+
+            return Long.valueOf(claims.getSubject());
         } catch (ExpiredJwtException e) {
-            log.debug("만료된 JWT 토큰: {}", e.getMessage());
-            throw new TokenExpiredException(e);
-        } catch (UnsupportedJwtException e) {
-            log.debug("지원되지 않는 JWT 토큰: {}", e.getMessage());
-            throw new InvalidTokenException("지원되지 않는 토큰 형식", e);
-        } catch (MalformedJwtException e) {
-            log.debug("잘못된 형식의 JWT 토큰: {}", e.getMessage());
-            throw new InvalidTokenException("잘못된 토큰 형식", e);
-        } catch (SecurityException e) {
-            log.debug("JWT 서명 검증 실패: {}", e.getMessage());
-            throw new InvalidTokenException("서명 검증 실패", e);
-        } catch (IllegalArgumentException e) {
-            log.debug("JWT 토큰이 비어있음: {}", e.getMessage());
-            throw new InvalidTokenException("빈 토큰", e);
+            throw new TokenExpiredException("토큰이 만료되었습니다");
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new InvalidTokenException("유효하지 않은 토큰입니다");
         }
     }
 
-    /**
-     * JWT 토큰에서 사용자 ID 추출
-     * @param token JWT 토큰
-     * @return 사용자 ID
-     * @throws InvalidTokenException 토큰이 유효하지 않거나 사용자 ID가 없는 경우
-     */
-    public Long getUserId(String token) {
+    public String getTokenType(String token) {
         try {
-            Claims claims = parseClaims(token);
-            String subject = claims.getSubject();
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
 
-            if (subject == null || subject.trim().isEmpty()) {
-                throw new InvalidTokenException("사용자 ID가 없는 토큰");
-            }
-
-            return Long.valueOf(subject);
-        } catch (NumberFormatException e) {
-            log.debug("JWT 토큰의 subject를 Long으로 변환 실패: {}", e.getMessage());
-            throw new InvalidTokenException("잘못된 사용자 ID 형식", e);
+            return claims.get("type", String.class);
+        } catch (ExpiredJwtException e) {
+            throw new TokenExpiredException("토큰이 만료되었습니다");
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new InvalidTokenException("유효하지 않은 토큰입니다");
         }
     }
 
-    /**
-     * 토큰 유효성 검사 (예외를 던지지 않고 boolean 반환)
-     * Filter에서 사용하기 위한 메서드
-     * @param token JWT 토큰
-     * @return 토큰 유효성 여부
-     */
-    public boolean isTokenValid(String token) {
-        try {
-            Claims claims = parseClaims(token);
-            return !claims.getExpiration().before(new Date());
-        } catch (TokenExpiredException e) {
-            log.debug("토큰 만료: {}", e.getMessage());
-            return false;
-        } catch (InvalidTokenException e) {
-            log.debug("유효하지 않은 토큰: {}", e.getMessage());
-            return false;
-        } catch (Exception e) {
-            log.error("JWT 토큰 검증 중 예상치 못한 오류: {}", e.getClass().getSimpleName());
-            return false;
-        }
+    public boolean isAccessToken(String token) {
+        return "ACCESS".equals(getTokenType(token));
     }
 
-    /**
-     * 토큰 유효성 검사 (예외를 던지는 버전)
-     * Controller나 Service에서 사용하기 위한 메서드
-     * @param token JWT 토큰
-     * @throws InvalidTokenException 토큰이 유효하지 않은 경우
-     * @throws TokenExpiredException 토큰이 만료된 경우
-     */
-    public void validateToken(String token) {
-        Claims claims = parseClaims(token); // 내부에서 적절한 예외를 던짐
-
-        if (claims.getExpiration().before(new Date())) {
-            throw new TokenExpiredException();
-        }
+    public boolean isRefreshToken(String token) {
+        return "REFRESH".equals(getTokenType(token));
     }
 }

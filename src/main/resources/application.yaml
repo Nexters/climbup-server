@@ -7,6 +7,13 @@ spring:
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:password}
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -47,11 +54,13 @@ springdoc:
 
 jwt:
   secret: ${JWT_SECRET_KEY}
-  access-token-validity-in-seconds: 86400
+  access-token-validity-in-seconds: 3600  # 1시간
+  refresh-token-validity-in-seconds: 604800  # 7일
 
 app:
   oauth2:
-    authorized-redirect-uri: ${OAUTH_REDIRECT_URI}
+    authorized-redirect-uris: ${OAUTH_AUTHORIZED_REDIRECT_URIS}
+    default-redirect-uri: ${OAUTH_DEFAULT_REDIRECT_URI}
 
 logging:
   level:

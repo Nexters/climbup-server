@@ -151,9 +151,27 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = ex.getErrorCode();
         log.warn("JWT 관련 예외 발생: {} - {}", errorCode.getCode(), ex.getMessage());
 
+        Map<String, Object> details = new HashMap<>();
+
+        if (ex instanceof TokenExpiredException) {
+            details.put("shouldRefresh", true);
+            details.put("action", "REFRESH_TOKEN");
+        } else if (ex instanceof InvalidTokenException) {
+            details.put("shouldRefresh", false);
+            details.put("action", "REDIRECT_TO_LOGIN");
+        }
+
+        ErrorResponse response = ErrorResponse.builder()
+                .errorCode(errorCode.getCode())
+                .message(errorCode.getMessage(ex.getMessageArgs()))
+                .timestamp(java.time.LocalDateTime.now())
+                .path(request.getRequestURI())
+                .details(details)
+                .build();
+
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
-                .body(ErrorResponse.of(errorCode, request.getRequestURI(), ex.getMessageArgs()));
+                .body(response);
     }
 
     @ExceptionHandler(AuthHeaderMissingException.class)

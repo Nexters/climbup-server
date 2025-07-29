@@ -84,7 +84,7 @@ public class OnboardingController {
             description = "사용자의 레벨을 설정합니다. (암장별 레벨)",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @PostMapping("/level")
+    @PostMapping("/gym-level")
     public ResponseEntity<ApiResult<OnboardingDto.Response>> setLevel(
             @RequestBody OnboardingDto.LevelRequest request) {
 
