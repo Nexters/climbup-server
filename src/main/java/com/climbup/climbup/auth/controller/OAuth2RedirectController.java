@@ -1,5 +1,8 @@
 package com.climbup.climbup.auth.controller;
 
+import com.climbup.climbup.common.exception.CommonBusinessException;
+import com.climbup.climbup.common.exception.ErrorCode;
+import com.climbup.climbup.common.exception.ValidationException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +27,17 @@ public class OAuth2RedirectController {
             @RequestParam(required = false) String token,  // 기존 호환성
             @RequestParam(required = false) String error) {
 
-        // 에러 처리
+        // OAuth2 에러 처리
         if (error != null) {
             log.warn("OAuth2 인증 실패: {}", error);
-            return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "error", error,
-                    "message", "로그인 중 오류가 발생했습니다."
-            ));
+            switch (error) {
+                case "access_denied":
+                    throw new CommonBusinessException(ErrorCode.ACCESS_DENIED);
+                case "invalid_request":
+                    throw new ValidationException(ErrorCode.VALIDATION_ERROR, error);
+                default:
+                    throw new CommonBusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
         }
 
         log.info("JWT 토큰 발급 완료");
@@ -59,10 +65,6 @@ public class OAuth2RedirectController {
         }
 
         // 토큰이 없는 경우
-        return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "error", "missing_token",
-                "message", "토큰 정보가 없습니다."
-        ));
+        throw new ValidationException(ErrorCode.REQUIRED_FIELD_MISSING, "token");
     }
 }
