@@ -24,10 +24,9 @@ public class OAuth2RedirectController {
             @RequestParam(required = false) String access_token,
             @RequestParam(required = false) String refresh_token,
             @RequestParam(required = false) String token_type,
-            @RequestParam(required = false) String token,  // 기존 호환성
+            @RequestParam(required = false) String token,
             @RequestParam(required = false) String error) {
 
-        // OAuth2 에러 처리
         if (error != null) {
             log.warn("OAuth2 인증 실패: {}", error);
             switch (error) {
@@ -42,7 +41,6 @@ public class OAuth2RedirectController {
 
         log.info("JWT 토큰 발급 완료");
 
-        // 새로운 방식 (access_token + refresh_token)
         if (access_token != null && refresh_token != null) {
             return ResponseEntity.ok(Map.of(
                     "success", true,
@@ -54,7 +52,6 @@ public class OAuth2RedirectController {
             ));
         }
 
-        // 기존 방식 (단일 token) - 호환성 유지
         if (token != null) {
             return ResponseEntity.ok(Map.of(
                     "success", true,
@@ -64,7 +61,6 @@ public class OAuth2RedirectController {
             ));
         }
 
-        // 토큰이 없는 경우
         throw new ValidationException(ErrorCode.REQUIRED_FIELD_MISSING, "token");
     }
 }
