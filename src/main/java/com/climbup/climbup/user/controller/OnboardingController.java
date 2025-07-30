@@ -81,9 +81,43 @@ public class OnboardingController {
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "레벨 선택",
-            description = "사용자의 레벨을 설정합니다. (암장별 레벨)",
+            description = "사용자의 레벨을 설정합니다. (암장별 레벨) - 암장 선택 후에만 가능합니다.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "레벨 설정 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "암장 미선택 또는 브랜드 불일치",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "암장 미선택",
+                                            value = """
+                                                    {
+                                                        "errorCode": "GYM_NOT_SELECTED",
+                                                        "message": "암장이 선택되지 않았습니다.",
+                                                        "timestamp": "2024-01-15T10:30:00",
+                                                        "path": "/api/onboarding/gym-level"
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "브랜드 불일치",
+                                            value = """
+                                                    {
+                                                        "errorCode": "GYM_LEVEL_BRAND_MISMATCH",
+                                                        "message": "선택한 암장과 레벨의 브랜드가 일치하지 않습니다.",
+                                                        "timestamp": "2024-01-15T10:30:00",
+                                                        "path": "/api/onboarding/gym-level"
+                                                    }
+                                                    """
+                                    )
+                            }
+                    )
+            )
+    })
     @PostMapping("/gym-level")
     public ResponseEntity<ApiResult<OnboardingDto.Response>> setLevel(
             @RequestBody OnboardingDto.LevelRequest request) {
