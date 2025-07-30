@@ -26,6 +26,7 @@ public enum ErrorCode {
 
     // 암장 관련
     GYM_LEVEL_BRAND_MISMATCH(ErrorCategory.GYM, "001", "선택한 암장과 레벨의 브랜드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+    GYM_NOT_SELECTED(ErrorCategory.GYM, "002", "암장이 선택되지 않았습니다.", HttpStatus.BAD_REQUEST),
 
     // 검증 관련
     VALIDATION_ERROR(ErrorCategory.VALIDATION, "001", "입력값이 올바르지 않습니다: {0}", HttpStatus.BAD_REQUEST),

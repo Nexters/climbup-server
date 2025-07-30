@@ -5,6 +5,7 @@ import com.climbup.climbup.gym.entity.GymLevel;
 import com.climbup.climbup.gym.exception.GymLevelBrandMismatchException;
 import com.climbup.climbup.gym.exception.GymLevelNotFoundException;
 import com.climbup.climbup.gym.exception.GymNotFoundException;
+import com.climbup.climbup.gym.exception.GymNotSelectedException;
 import com.climbup.climbup.gym.repository.ClimbingGymRepository;
 import com.climbup.climbup.gym.repository.GymLevelRepository;
 import com.climbup.climbup.user.entity.User;
@@ -32,17 +33,23 @@ public class OnboardingServiceImpl implements OnboardingService {
             throw new UserOnboardingAlreadyCompleteException();
         }
 
+        // 암장 설정
         if (user.getGym() == null && gymId != null) {
             ClimbingGym gym = findGymById(gymId);
             user.selectGym(gym);
         }
 
+        // 레벨 설정
         if (user.getGymLevel() == null && gymLevelId != null) {
+            // 레벨 설정 시 암장이 선택되어 있어야 함
+            if (user.getGym() == null) {
+                throw new GymNotSelectedException();
+            }
+
             GymLevel gymLevel = findGymLevelById(gymLevelId);
 
-            // 암장과 레벨이 같은 브랜드인지 검증
-            if (user.getGym() != null &&
-                    !gymLevel.getBrand().getId().equals(user.getGym().getBrand().getId())) {
+            // 선택한 레벨이 선택한 암장의 브랜드와 일치하는지 검증
+            if (!gymLevel.getBrand().getId().equals(user.getGym().getBrand().getId())) {
                 throw new GymLevelBrandMismatchException();
             }
 
@@ -82,10 +89,15 @@ public class OnboardingServiceImpl implements OnboardingService {
             throw new UserOnboardingAlreadyCompleteException("이미 암장 레벨을 선택한 사용자입니다.");
         }
 
+        // 레벨 설정 시 암장이 선택되어 있어야 함
+        if (user.getGym() == null) {
+            throw new GymNotSelectedException();
+        }
+
         GymLevel gymLevel = findGymLevelById(gymLevelId);
 
-        if (user.getGym() != null &&
-                !gymLevel.getBrand().getId().equals(user.getGym().getBrand().getId())) {
+        // 선택한 레벨이 선택한 암장의 브랜드와 일치하는지 검증
+        if (!gymLevel.getBrand().getId().equals(user.getGym().getBrand().getId())) {
             throw new GymLevelBrandMismatchException();
         }
 
