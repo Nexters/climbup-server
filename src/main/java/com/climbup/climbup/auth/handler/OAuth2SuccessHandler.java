@@ -48,9 +48,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             String targetRedirectUri = determineTargetUrl(request);
 
             String targetUrl = targetRedirectUri +
-                    "?access_token=" + URLEncoder.encode(tokenResponse.getAccessToken(), StandardCharsets.UTF_8) +
-                    "&refresh_token=" + URLEncoder.encode(tokenResponse.getRefreshToken(), StandardCharsets.UTF_8) +
-                    "&token_type=" + URLEncoder.encode(tokenResponse.getTokenType(), StandardCharsets.UTF_8);
+                    "?accessToken=" + URLEncoder.encode(tokenResponse.getAccessToken(), StandardCharsets.UTF_8) +
+                    "&refreshToken=" + URLEncoder.encode(tokenResponse.getRefreshToken(), StandardCharsets.UTF_8) +
+                    "&tokenType=" + URLEncoder.encode(tokenResponse.getTokenType(), StandardCharsets.UTF_8);
 
             clearAuthenticationAttributes(request);
 
