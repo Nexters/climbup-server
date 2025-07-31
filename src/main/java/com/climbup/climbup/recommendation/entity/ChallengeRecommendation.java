@@ -33,7 +33,6 @@ public class ChallengeRecommendation extends BaseEntity {
     @Column(name = "recommended_order", nullable = false)
     private Integer recommendedOrder;
 
-    // Join 없이 미션 난이도 조회
     public String getDifficulty() {
         return mission != null ? mission.getDifficulty() : null;
     }
