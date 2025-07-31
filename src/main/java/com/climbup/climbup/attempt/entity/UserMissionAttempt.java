@@ -5,7 +5,6 @@ import com.climbup.climbup.route.entity.RouteMission;
 import com.climbup.climbup.session.entity.UserSession;
 import com.climbup.climbup.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 })
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @SuperBuilder
 public class UserMissionAttempt extends BaseEntity {
 

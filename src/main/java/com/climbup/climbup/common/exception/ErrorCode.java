@@ -32,6 +32,7 @@ public enum ErrorCode {
     VALIDATION_ERROR(ErrorCategory.VALIDATION, "001", "입력값이 올바르지 않습니다: {0}", HttpStatus.BAD_REQUEST),
     REQUIRED_FIELD_MISSING(ErrorCategory.VALIDATION, "002", "필수 필드가 누락되었습니다: {0}", HttpStatus.BAD_REQUEST),
     INVALID_FORMAT(ErrorCategory.VALIDATION, "003", "형식이 올바르지 않습니다: {0}", HttpStatus.BAD_REQUEST),
+    INVALID_DIFFICULTY_LEVEL(ErrorCategory.VALIDATION, "004", "유효하지 않은 난이도입니다: {0}", HttpStatus.BAD_REQUEST),
 
     // 요청 관련
     MALFORMED_JSON(ErrorCategory.REQUEST, "001", "JSON 형식이 올바르지 않습니다.", HttpStatus.BAD_REQUEST),

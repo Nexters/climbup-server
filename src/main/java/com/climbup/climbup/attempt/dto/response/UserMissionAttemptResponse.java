@@ -1,4 +1,4 @@
-package com.climbup.climbup.attempt.dto;
+package com.climbup.climbup.attempt.dto.response;
 
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,11 +1,15 @@
 package com.climbup.climbup.attempt.controller;
 
+import com.climbup.climbup.attempt.dto.request.CreateAttemptRequest;
+import com.climbup.climbup.attempt.dto.response.CreateAttemptResponse;
+import com.climbup.climbup.attempt.service.AttemptService;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadChunkRequest;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadSessionInitializeRequest;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadChunkResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionFinalizeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionInitializeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusResponse;
+import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.recommendation.dto.response.RouteMissionRecommendationResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +22,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +34,8 @@ import java.util.UUID;
 @Tag(name = "Attempts", description = "루트 미션 도전 관련 API")
 @RequiredArgsConstructor
 public class AttemptController {
+
+    private final AttemptService attemptService;
 
     @Operation(summary = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트 불러오기", description = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트를 받아보기", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -100,6 +107,92 @@ public class AttemptController {
         return ResponseEntity.ok(ApiResult.success(List.of()));
     }
 
+    @Operation(summary = "루트미션 도전기록 등록", description = "루트미션에 대한 도전기록을 등록합니다. 성공 시 SR이 증가합니다.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "도전기록이 성공적으로 등록됨",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CreateAttemptResponse.class),
+                            examples = @ExampleObject(
+                                    name = "성공적인 도전기록 등록 응답",
+                                    value = """
+                                {
+                                    "message": "도전기록이 성공적으로 등록되었습니다.",
+                                    "data": {
+                                        "missionAttemptId": 1,
+                                        "success": true,
+                                        "videoUrl": null,
+                                        "createdAt": "2025-07-31T14:20:00",
+                                        "srGained": 125,
+                                        "currentSr": 1375
+                                    }
+                                }
+                                """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "유효하지 않은 난이도",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "유효하지 않은 난이도",
+                                    value = """
+            {
+                "errorCode": "VALIDATION_004",
+                "message": "유효하지 않은 난이도입니다: V99",
+                "timestamp": "2025-07-31T14:20:00",
+                "path": "/api/attempts"
+            }
+            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "루트미션을 찾을 수 없음 또는 활성 세션이 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "루트미션을 찾을 수 없음",
+                                            value = """
+                {
+                    "errorCode": "BUSINESS_007",
+                    "message": "루트미션을 찾을 수 없습니다.",
+                    "timestamp": "2025-07-31T14:20:00",
+                    "path": "/api/attempts"
+                }
+                """
+                                    ),
+                                    @ExampleObject(
+                                            name = "활성 세션이 없음",
+                                            value = """
+                {
+                    "errorCode": "SESSION_001",
+                    "message": "세션을 찾을 수 없습니다.",
+                    "timestamp": "2025-07-31T14:20:00",
+                    "path": "/api/attempts"
+                }
+                """
+                                    )
+                            }
+                    )
+            )
+    })
+    @PostMapping
+    public ResponseEntity<ApiResult<CreateAttemptResponse>> createAttempt(
+            @Valid @RequestBody CreateAttemptRequest request
+    ) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        CreateAttemptResponse response = attemptService.createAttempt(userId, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResult.success("도전기록이 성공적으로 등록되었습니다.", response));
+    }
 
     @Operation(summary = "해당 도전의 영상 업로드 상태 불러오기", description = "해당 도전의 영상 업로드 상태 불러오기", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
