@@ -1,4 +1,4 @@
-package com.climbup.climbup.attempt.dto.request;
+package com.climbup.climbup.attempt.upload.dto.request;
 
 import lombok.Data;
 

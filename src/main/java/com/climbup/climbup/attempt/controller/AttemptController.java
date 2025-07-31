@@ -1,11 +1,11 @@
 package com.climbup.climbup.attempt.controller;
 
-import com.climbup.climbup.attempt.dto.request.RouteMissionUploadChunkRequest;
-import com.climbup.climbup.attempt.dto.request.RouteMissionUploadSessionInitializeRequest;
-import com.climbup.climbup.attempt.dto.response.RouteMissionUploadChunkResponse;
-import com.climbup.climbup.attempt.dto.response.RouteMissionUploadSessionFinalizeResponse;
-import com.climbup.climbup.attempt.dto.response.RouteMissionUploadSessionInitializeResponse;
-import com.climbup.climbup.attempt.dto.response.RouteMissionUploadStatusResponse;
+import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadChunkRequest;
+import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadSessionInitializeRequest;
+import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadChunkResponse;
+import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionFinalizeResponse;
+import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionInitializeResponse;
+import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusResponse;
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.recommendation.dto.request.RouteMissionRecommendationResponse;
 import io.swagger.v3.oas.annotations.Operation;

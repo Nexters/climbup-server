@@ -1,4 +1,4 @@
-package com.climbup.climbup.attempt.enums;
+package com.climbup.climbup.attempt.upload.enums;
 
 public enum UploadStatus {
     finished, in_progress, not_started

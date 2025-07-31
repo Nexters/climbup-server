@@ -1,6 +1,6 @@
-package com.climbup.climbup.attempt.dto.response;
+package com.climbup.climbup.attempt.upload.dto.response;
 
-import com.climbup.climbup.attempt.enums.UploadStatus;
+import com.climbup.climbup.attempt.upload.enums.UploadStatus;
 import lombok.Builder;
 import lombok.Data;
 
