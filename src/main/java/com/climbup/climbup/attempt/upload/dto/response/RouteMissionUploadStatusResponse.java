@@ -12,9 +12,9 @@ import java.util.Optional;
 public class RouteMissionUploadStatusResponse {
     private UploadStatus status;
 
-    private Optional<String> uploadId;
+    private String uploadId;
 
-    private Optional<LocalDateTime> createdAt;
+    private LocalDateTime createdAt;
 
     private UploadStatusChunkResponse chunks;
 }

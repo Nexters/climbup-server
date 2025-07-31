@@ -1,4 +1,4 @@
-package com.climbup.climbup.recommendation.dto.request;
+package com.climbup.climbup.recommendation.dto.response;
 
 import com.climbup.climbup.attempt.dto.UserMissionAttemptResponse;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;

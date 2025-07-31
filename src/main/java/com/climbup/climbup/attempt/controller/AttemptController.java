@@ -7,7 +7,7 @@ import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSession
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionInitializeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusResponse;
 import com.climbup.climbup.common.dto.ApiResult;
-import com.climbup.climbup.recommendation.dto.request.RouteMissionRecommendationResponse;
+import com.climbup.climbup.recommendation.dto.response.RouteMissionRecommendationResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
