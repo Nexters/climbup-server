@@ -1,7 +1,11 @@
 package com.climbup.climbup.recommendation.controller;
 
+import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.recommendation.dto.response.RouteMissionRecommendationResponse;
+import com.climbup.climbup.recommendation.service.RecommendationService;
+import com.climbup.climbup.session.repository.UserSessionRepository;
+import com.climbup.climbup.session.service.UserSessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -24,6 +28,10 @@ import java.util.List;
 @Tag(name = "Route Mission Recommendations", description = "루트 미션 추천 관련 API")
 @RequiredArgsConstructor
 public class RecommendationController {
+
+    private final RecommendationService recommendationService;
+    private final UserSessionService userSessionService;
+    private final UserSessionRepository userSessionRepository;
 
     @Operation(summary = "루트미션 리스트 불러오기", description = "유저의 난이도에 맞는 추천 루트미션 리스트", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -90,6 +98,8 @@ public class RecommendationController {
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResult<List<RouteMissionRecommendationResponse>>> getRouteMissionRecommendations() {
-        return ResponseEntity.ok(ApiResult.success(List.of(RouteMissionRecommendationResponse.builder().build())));
+        Long userId = SecurityUtil.getCurrentUserId();
+        List<RouteMissionRecommendationResponse> routeMissionRecommendationResponses = recommendationService.getRecommendationsByUserActiveSession(userId);
+        return ResponseEntity.ok(ApiResult.success(routeMissionRecommendationResponses));
     }
 }

@@ -1,5 +1,6 @@
 package com.climbup.climbup.session.service;
 
+import com.climbup.climbup.recommendation.service.RecommendationService;
 import com.climbup.climbup.session.entity.UserSession;
 import com.climbup.climbup.session.exception.UserSessionAlreadyFinishedException;
 import com.climbup.climbup.session.exception.UserSessionNotFoundException;
@@ -22,6 +23,7 @@ import java.time.Duration;
 public class UserSessionServiceImpl implements UserSessionService {
     private final UserSessionRepository userSessionRepository;
     private final UserRepository userRepository;
+    private final RecommendationService recommendationService;
 
     @Override
     @Transactional
@@ -47,6 +49,8 @@ public class UserSessionServiceImpl implements UserSessionService {
                 .completedCount(0)
                 .attemptedCount(0)
                 .build();
+
+        recommendationService.generateRecommendationsForSession(session);
         
         return userSessionRepository.save(session);
     }
