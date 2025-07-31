@@ -101,6 +101,35 @@ public class AttemptController {
     }
 
 
+    @Operation(summary = "해당 도전의 영상 업로드 상태 불러오기", description = "해당 도전의 영상 업로드 상태 불러오기", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "해당 도전의 영상 업로드 상태 불러오기",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = RouteMissionUploadStatusResponse.class),
+                            examples = @ExampleObject(
+                                    name = "성공적인 도전 영상 업로드 상태 반환",
+                                    value = """
+                                    {
+                                        "message": "도전의 영상 업로드 상태를 성공적으로 조회했습니다.",
+                                        "data": {
+                                                "status": "in_progress",
+                                                "uploadId": "8ded5806-87df-43b5-9c64-e4513eb33987",
+                                                "createdAt": "2025-07-31T14:20:00",
+                                                "chunks": {
+                                                    "totalReceived": 505050,
+                                                    "totalExpected": 10101010,
+                                                    "completedChunks": [1, 2, 3, 4, 5, 6, 7, 10]
+                                                }
+                                            }
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
     @GetMapping("/{attemptId}/upload/status")
     public ResponseEntity<ApiResult<RouteMissionUploadStatusResponse>> getRouteMissionUploadStatus(
             @PathVariable(name = "attemptId") Long attemptId
@@ -108,6 +137,29 @@ public class AttemptController {
         return ResponseEntity.ok(ApiResult.success(RouteMissionUploadStatusResponse.builder().build()));
     }
 
+
+    @Operation(summary = "해당 도전의 영상 업로드 세션 생성하기", description = "해당 도전의 영상 업로드 세션 생성하기", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "해당 도전의 영상 업로드 세션 생성하기",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = RouteMissionUploadSessionInitializeResponse.class),
+                            examples = @ExampleObject(
+                                    name = "성공적인 도전 영상 업로드 세션 생성",
+                                    value = """
+                                    {
+                                        "message": "영상 업로드 세션을 성공적으로 생성했습니다.",
+                                        "data": {
+                                                "uploadId": "8ded5806-87df-43b5-9c64-e4513eb33987"
+                                            }
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
     @PostMapping("/{attemptId}/upload/initialize")
     public ResponseEntity<ApiResult<RouteMissionUploadSessionInitializeResponse>> initializeRouteMissionUploadSession(
             @PathVariable(name = "attemptId") Long attemptId,
@@ -117,6 +169,30 @@ public class AttemptController {
     }
 
 
+    @Operation(summary = "해당 도전의 영상 청크 업로드", description = "해당 도전의 영상 청크 업로드", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "해당 도전의 영상 청크 업로드하기",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = RouteMissionUploadChunkResponse.class),
+                            examples = @ExampleObject(
+                                    name = "성공적인 도전 영상 청크 업로드",
+                                    value = """
+                                    {
+                                        "message": "영상 청크를 성공적으로 업로드했습니다.",
+                                        "data": {
+                                                "index": 5,
+                                                "totalChunkReceived": 5,
+                                                "totalChunkExpected": 20
+                                            }
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
     @PostMapping("/{attemptId}/upload/{uploadId}/chunk")
     public ResponseEntity<ApiResult<RouteMissionUploadChunkResponse>> uploadRouteMissionVideoChunk(
             @PathVariable(name = "attemptId") Long attemptId,
@@ -127,6 +203,28 @@ public class AttemptController {
     }
 
 
+    @Operation(summary = "해당 도전의 영상 업로드 세션 마무리", description = "해당 도전의 영상 업로드 세션 마무리", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "해당 도전의 영상 업로드 세션 마무리",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = RouteMissionUploadSessionFinalizeResponse.class),
+                            examples = @ExampleObject(
+                                    name = "성공적인 도전 영상 업로드 세션 마무리",
+                                    value = """
+                                    {
+                                        "message": "영상 업로드 세션을 성공적으로 마무리했습니다.",
+                                        "data": {
+                                                "fileName": "thisIsFileName"
+                                            }
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
     @PostMapping("/{attemptId}/upload/{uploadId}/finalize")
     public ResponseEntity<ApiResult<RouteMissionUploadSessionFinalizeResponse>> finalizeRouteMissionUploadSession(
             @PathVariable(name = "attemptId") Long attemptId,

@@ -14,7 +14,7 @@ public class RouteMissionUploadStatusResponse {
 
     private Optional<String> uploadId;
 
-    private LocalDateTime createdAt;
+    private Optional<LocalDateTime> createdAt;
 
     private UploadStatusChunkResponse chunks;
 }

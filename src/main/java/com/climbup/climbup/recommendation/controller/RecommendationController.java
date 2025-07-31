@@ -93,6 +93,6 @@ public class RecommendationController {
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResult<List<RouteMissionRecommendationResponse>>> getRouteMissionRecommendations() {
-        return ResponseEntity.ok(ApiResult.success("추천 루트미션 리스트를 성공적으로 조회했습니다.", List.of()));
+        return ResponseEntity.ok(ApiResult.success(List.of(RouteMissionRecommendationResponse.builder().build())));
     }
 }
