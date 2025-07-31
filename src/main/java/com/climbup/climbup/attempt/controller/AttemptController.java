@@ -1,5 +1,11 @@
 package com.climbup.climbup.attempt.controller;
 
+import com.climbup.climbup.attempt.dto.request.RouteMissionUploadChunkRequest;
+import com.climbup.climbup.attempt.dto.request.RouteMissionUploadSessionInitializeRequest;
+import com.climbup.climbup.attempt.dto.response.RouteMissionUploadChunkResponse;
+import com.climbup.climbup.attempt.dto.response.RouteMissionUploadSessionFinalizeResponse;
+import com.climbup.climbup.attempt.dto.response.RouteMissionUploadSessionInitializeResponse;
+import com.climbup.climbup.attempt.dto.response.RouteMissionUploadStatusResponse;
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.recommendation.dto.request.RouteMissionRecommendationResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,14 +16,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/attempts")
@@ -93,5 +98,40 @@ public class AttemptController {
     ) {
 
         return ResponseEntity.ok(ApiResult.success(List.of()));
+    }
+
+
+    @GetMapping("/{attemptId}/upload/status")
+    public ResponseEntity<ApiResult<RouteMissionUploadStatusResponse>> getRouteMissionUploadStatus(
+            @PathVariable(name = "attemptId") Long attemptId
+    ) {
+        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadStatusResponse.builder().build()));
+    }
+
+    @PostMapping("/{attemptId}/upload/initialize")
+    public ResponseEntity<ApiResult<RouteMissionUploadSessionInitializeResponse>> initializeRouteMissionUploadSession(
+            @PathVariable(name = "attemptId") Long attemptId,
+            @Valid @RequestBody RouteMissionUploadSessionInitializeRequest request
+    ) {
+        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadSessionInitializeResponse.builder().build()));
+    }
+
+
+    @PostMapping("/{attemptId}/upload/{uploadId}/chunk")
+    public ResponseEntity<ApiResult<RouteMissionUploadChunkResponse>> uploadRouteMissionVideoChunk(
+            @PathVariable(name = "attemptId") Long attemptId,
+            @PathVariable(name = "uploadId") UUID uploadId,
+            @Valid @RequestBody RouteMissionUploadChunkRequest request
+            ) {
+        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadChunkResponse.builder().build()));
+    }
+
+
+    @PostMapping("/{attemptId}/upload/{uploadId}/finalize")
+    public ResponseEntity<ApiResult<RouteMissionUploadSessionFinalizeResponse>> finalizeRouteMissionUploadSession(
+            @PathVariable(name = "attemptId") Long attemptId,
+            @PathVariable(name = "uploadId") UUID uploadId
+    ) {
+        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadSessionFinalizeResponse.builder().build()));
     }
 }

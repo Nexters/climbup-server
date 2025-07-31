@@ -1,6 +1,6 @@
 package com.climbup.climbup.recommendation.dto.request;
 
-import com.climbup.climbup.attempt.dto.UserMissionAttemptResponse;
+import com.climbup.climbup.attempt.dto.response.UserMissionAttemptResponse;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.gym.entity.ClimbingGym;
 import com.climbup.climbup.recommendation.entity.ChallengeRecommendation;
