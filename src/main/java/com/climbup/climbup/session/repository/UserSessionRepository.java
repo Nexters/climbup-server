@@ -8,6 +8,4 @@ import java.util.Optional;
 
 public interface UserSessionRepository extends JpaRepository<UserSession, Long> {
     Optional<UserSession> findByUserIdAndEndedAtIsNull(Long userId);
-
-    Long user(User user);
 }
