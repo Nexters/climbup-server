@@ -50,9 +50,10 @@ public class UserSessionServiceImpl implements UserSessionService {
                 .attemptedCount(0)
                 .build();
 
+        session = userSessionRepository.save(session);
         recommendationService.generateRecommendationsForSession(session);
         
-        return userSessionRepository.save(session);
+        return session;
     }
 
     @Override
