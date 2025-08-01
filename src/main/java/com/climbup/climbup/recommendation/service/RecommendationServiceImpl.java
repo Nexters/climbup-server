@@ -34,14 +34,11 @@ public class RecommendationServiceImpl implements RecommendationService{
     public void generateRecommendationsForSession(UserSession session){
         User user = session.getUser();
 
-        List<RouteMission> routeMissions = routeMissionRepository.findAll();
+        List<RouteMission> routeMissions = routeMissionRepository.findUnattemptedRouteMissionsByUser(user.getId());
 
         AtomicInteger index = new AtomicInteger(0);
 
         List<ChallengeRecommendation> recommendations = routeMissions.stream()
-                .filter(routeMission ->
-                        routeMission.getAttempts().stream().noneMatch(userMissionAttempt -> userMissionAttempt.getUser().getId().equals(user.getId()))
-                )
                 .map(routeMission -> {
                     ChallengeRecommendation recommendation = ChallengeRecommendation.builder()
                         .session(session)
@@ -60,8 +57,6 @@ public class RecommendationServiceImpl implements RecommendationService{
     @Override
     @Transactional(readOnly = true)
     public List<RouteMissionRecommendationResponse> getRecommendationsByUserActiveSession(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-
         UserSession session = userSessionRepository.findByUserIdAndEndedAtIsNull(userId).orElseThrow(UserSessionNotFoundException::new);
 
         List<ChallengeRecommendation> recommendations = recommendationRepository.findBySession(session);
@@ -69,9 +64,7 @@ public class RecommendationServiceImpl implements RecommendationService{
         return recommendations.stream().map(recommendation -> {
             RouteMission routeMission = recommendation.getMission();
             ClimbingGym gym = routeMission.getGym();
-            List<UserMissionAttempt> attempts = routeMission.getAttempts().stream()
-                    .filter(attempt -> attempt.getUser().getId().equals(user.getId()))
-                    .toList();
+            List<UserMissionAttempt> attempts = routeMission.getAttempts().stream().toList();
             Sector sector = routeMission.getSector();
 
             return RouteMissionRecommendationResponse.toDto(recommendation, routeMission, gym, attempts, sector, recommendation.getRecommendedOrder());
