@@ -5,6 +5,6 @@ import com.climbup.climbup.common.exception.ErrorCode;
 
 public class RecommendationNotFoundException extends BusinessException {
     public RecommendationNotFoundException() {
-        super(ErrorCode.ATTEMPT_NOT_FOUND);
+        super(ErrorCode.RECOMMENDATION_NOT_FOUND);
     }
 }
