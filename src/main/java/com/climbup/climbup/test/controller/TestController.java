@@ -9,6 +9,10 @@ import com.climbup.climbup.gym.repository.ClimbingGymRepository;
 import com.climbup.climbup.gym.repository.GymLevelRepository;
 import com.climbup.climbup.level.entity.Level;
 import com.climbup.climbup.level.repository.LevelRepository;
+import com.climbup.climbup.route.entity.RouteMission;
+import com.climbup.climbup.route.repository.RouteMissionRepository;
+import com.climbup.climbup.sector.entity.Sector;
+import com.climbup.climbup.sector.repository.SectorRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +40,8 @@ public class TestController {
     private final ClimbingGymRepository climbingGymRepository;
     private final BrandRepository brandRepository;
     private final GymLevelRepository gymLevelRepository;
+    private final RouteMissionRepository routeMissionRepository;
+    private final SectorRepository sectorRepository;
 
     @Operation(summary = "랜덤 숫자 생성", description = "0-99 사이의 랜덤한 정수를 반환합니다")
     @ApiResponse(responseCode = "200", description = "성공적으로 랜덤 숫자를 생성함")
@@ -46,7 +53,7 @@ public class TestController {
         return ResponseEntity.ok(ApiResult.success(response));
     }
 
-    @Operation(summary = "테스트 데이터 초기화", description = "개발/테스트용 브랜드, 레벨, 암장, 브랜드별 레벨 데이터를 생성합니다")
+    @Operation(summary = "테스트 데이터 초기화", description = "개발/테스트용 브랜드, 레벨, 암장, 브랜드별 레벨, 섹터, 루트 미션 데이터를 생성합니다")
     @ApiResponse(responseCode = "200", description = "테스트 데이터 생성 완료")
     @PostMapping("/init-data")
     @Transactional
@@ -55,6 +62,8 @@ public class TestController {
         int levelsCreated = 0;
         int gymsCreated = 0;
         int gymLevelsCreated = 0;
+        int sectorsCreated = 0;
+        int routeMissionsCreated = 0;
 
         // 1. 브랜드 데이터 생성
         if (brandRepository.count() == 0) {
@@ -237,6 +246,60 @@ public class TestController {
             gymLevelsCreated = theClimbLevels.size();
         }
 
+        // 5. 섹터 데이터 생성
+        if (sectorRepository.count() == 0) {
+            List<Sector> sectors = sectorRepository.saveAll(List.of(
+                    Sector.builder()
+                            .name("A구역")
+                            .imageUrl("https://example.com/sector-a.jpg")
+                            .build(),
+                    Sector.builder()
+                            .name("B구역")
+                            .imageUrl("https://example.com/sector-b.jpg")
+                            .build(),
+                    Sector.builder()
+                            .name("C구역")
+                            .imageUrl("https://example.com/sector-c.jpg")
+                            .build(),
+                    Sector.builder()
+                            .name("D구역")
+                            .imageUrl("https://example.com/sector-d.jpg")
+                            .build()
+            ));
+            sectorsCreated = sectors.size();
+        }
+
+        // 6. 루트 미션 30개 생성
+        if (routeMissionRepository.count() == 0) {
+            List<ClimbingGym> gyms = climbingGymRepository.findAll();
+            List<Sector> sectors = sectorRepository.findAll();
+            
+            if (!gyms.isEmpty() && !sectors.isEmpty()) {
+                String[] difficulties = {"V0", "V1", "V2", "V3", "V4", "V5", "V6"};
+                
+                List<RouteMission> routeMissions = new ArrayList<>();
+                for (int i = 1; i <= 30; i++) {
+                    ClimbingGym gym = gyms.get((i - 1) % gyms.size());
+                    Sector sector = sectors.get((i - 1) % sectors.size());
+                    String difficulty = difficulties[(i - 1) % difficulties.length];
+                    
+                    routeMissions.add(RouteMission.builder()
+                            .gym(gym)
+                            .sector(sector)
+                            .difficulty(difficulty)
+                            .score(600 + (i - 1) * 50)
+                            .imageUrl("https://example.com/route-mission-" + i + ".jpg")
+                            .thumbnailUrl("https://example.com/route-mission-" + i + "-thumb.jpg")
+                            .videoUrl("https://example.com/route-mission-" + i + ".mp4")
+                            .postedAt(LocalDateTime.now().minusDays(30 - i))
+                            .build());
+                }
+                
+                routeMissionRepository.saveAll(routeMissions);
+                routeMissionsCreated = routeMissions.size();
+            }
+        }
+
         // 결과 응답
         Map<String, Object> response = new HashMap<>();
         response.put("message", "테스트 데이터가 생성되었습니다.");
@@ -244,6 +307,8 @@ public class TestController {
         response.put("levelsCreated", levelsCreated);
         response.put("gymsCreated", gymsCreated);
         response.put("gymLevelsCreated", gymLevelsCreated);
+        response.put("sectorsCreated", sectorsCreated);
+        response.put("routeMissionsCreated", routeMissionsCreated);
         response.put("timestamp", LocalDateTime.now());
 
         return ResponseEntity.ok(ApiResult.success(response));
@@ -258,6 +323,8 @@ public class TestController {
         response.put("levelCount", levelRepository.count());
         response.put("gymCount", climbingGymRepository.count());
         response.put("gymLevelCount", gymLevelRepository.count());
+        response.put("sectorCount", sectorRepository.count());
+        response.put("routeMissionCount", routeMissionRepository.count());
         response.put("timestamp", LocalDateTime.now());
 
         return ResponseEntity.ok(ApiResult.success(response));
@@ -272,10 +339,14 @@ public class TestController {
         long levelCount = levelRepository.count();
         long gymCount = climbingGymRepository.count();
         long gymLevelCount = gymLevelRepository.count();
+        long sectorCount = sectorRepository.count();
+        long routeMissionCount = routeMissionRepository.count();
 
         // 외래키 제약조건 때문에 순서가 중요함
+        routeMissionRepository.deleteAll();
         gymLevelRepository.deleteAll();
         climbingGymRepository.deleteAll();
+        sectorRepository.deleteAll();
         levelRepository.deleteAll();
         brandRepository.deleteAll();
 
@@ -285,6 +356,8 @@ public class TestController {
         response.put("deletedLevels", levelCount);
         response.put("deletedGyms", gymCount);
         response.put("deletedGymLevels", gymLevelCount);
+        response.put("deletedSectors", sectorCount);
+        response.put("deletedRouteMissions", routeMissionCount);
         response.put("timestamp", LocalDateTime.now());
 
         return ResponseEntity.ok(ApiResult.success(response));
