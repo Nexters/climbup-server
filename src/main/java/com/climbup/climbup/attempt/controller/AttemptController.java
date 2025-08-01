@@ -13,6 +13,7 @@ import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusR
 import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.recommendation.dto.response.RouteMissionRecommendationResponse;
+import com.climbup.climbup.recommendation.service.RecommendationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -37,6 +38,7 @@ import java.util.UUID;
 public class AttemptController {
 
     private final AttemptService attemptService;
+    private final RecommendationService recommendationService;
 
 
     @Operation(summary = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트 불러오기", description = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트를 받아보기", security = @SecurityRequirement(name = "bearerAuth"))
@@ -105,8 +107,7 @@ public class AttemptController {
     public ResponseEntity<ApiResult<List<RouteMissionRecommendationResponse>>> getRouteMissionRecommendationByAttempt(
             @PathVariable(name = "attemptId") Long attemptId
     ) {
-
-        return ResponseEntity.ok(ApiResult.success(List.of()));
+        return ResponseEntity.ok(ApiResult.success(recommendationService.getRecommendationsByUserAttempt(attemptId)));
     }
 
     @Operation(summary = "루트미션 도전기록 등록", description = "루트미션에 대한 도전기록을 등록합니다. 성공 시 SR이 증가합니다.", security = @SecurityRequirement(name = "bearerAuth"))
