@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 @RequiredArgsConstructor
 public class RecommendationServiceImpl implements RecommendationService{
+    private static final byte MAX_NUM_OF_RECS = 30;
+
     private final UserSessionRepository userSessionRepository;
     private final UserRepository userRepository;
     private final RouteMissionRepository routeMissionRepository;
@@ -50,7 +52,7 @@ public class RecommendationServiceImpl implements RecommendationService{
                 })
                 .toList();
 
-        recommendations = recommendations.subList(0, (int) Math.min(30, (long) recommendations.size()));
+        recommendations = recommendations.subList(0, (int) Math.min(MAX_NUM_OF_RECS, (long) recommendations.size()));
         recommendationRepository.saveAll(recommendations);
     }
 

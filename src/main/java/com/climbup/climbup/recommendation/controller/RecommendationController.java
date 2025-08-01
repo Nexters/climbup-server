@@ -30,8 +30,6 @@ import java.util.List;
 public class RecommendationController {
 
     private final RecommendationService recommendationService;
-    private final UserSessionService userSessionService;
-    private final UserSessionRepository userSessionRepository;
 
     @Operation(summary = "루트미션 리스트 불러오기", description = "유저의 난이도에 맞는 추천 루트미션 리스트", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
