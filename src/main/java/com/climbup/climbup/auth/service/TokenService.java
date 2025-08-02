@@ -40,6 +40,8 @@ public class TokenService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
+                .accessTokenExpiresIn(3600L)
+                .refreshTokenExpiresIn(604800L)
                 .build();
     }
 

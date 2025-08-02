@@ -1,6 +1,5 @@
 package com.climbup.climbup.user.controller;
 
-import com.climbup.climbup.auth.util.JwtUtil;
 import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.user.docs.UserApiDocs;
@@ -8,7 +7,6 @@ import com.climbup.climbup.user.docs.UserApiExamples;
 import com.climbup.climbup.user.dto.response.UserStatusResponse;
 import com.climbup.climbup.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -86,6 +84,6 @@ public class UserController {
         Long userId = SecurityUtil.getCurrentUserId();
 
         UserStatusResponse userStatus = userService.getUserStatus(userId);
-        return ResponseEntity.ok(ApiResult.success(userStatus));
+        return ResponseEntity.ok(ApiResult.success("사용자 상태가 성공적으로 조회되었습니다.", userStatus));
     }
 }

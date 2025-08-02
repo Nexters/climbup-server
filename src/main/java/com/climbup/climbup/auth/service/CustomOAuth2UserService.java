@@ -67,8 +67,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private String generateUniqueNickname() {
         for (int i = 0; i < maxRetries; i++) {
-            String base = RandomNicknameGenerator.generate();
-            String nickname = base + (ThreadLocalRandom.current().nextInt(900) + 100);
+            String nickname = RandomNicknameGenerator.generate();
             if (!userRepository.existsByNickname(nickname)) {
                 return nickname;
             }
