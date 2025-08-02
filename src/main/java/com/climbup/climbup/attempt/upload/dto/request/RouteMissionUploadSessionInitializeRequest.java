@@ -7,18 +7,18 @@ import lombok.Data;
 
 @Data
 public class RouteMissionUploadSessionInitializeRequest {
-    @Positive
+    @Positive(message = "총 청크 길이는 0보다 커야합니다.")
     private Integer chunkLength;
 
-    @Positive
+    @Positive(message = "총 청크 크기는 0보다 커야합니다.")
     private Integer chunkSize;
 
-    @Positive
+    @Positive(message = "총 파일 크기는 0보다 커야합니다.")
     private Integer fileSize;
 
-    @NotNull
+    @NotNull(message = "파일 이름은 필수입니다.")
     private String fileName;
 
-    @NotNull
+    @NotNull(message = "파일 확장자는 필수입니다.")
     private String fileType;
 }

@@ -6,6 +6,7 @@ public enum ErrorCategory {
     USER("USER"),
     SESSION("SESSION"),
     GYM("GYM"),
+    RECOMMENDATION("RECOMMENDATION"),
     VALIDATION("VALIDATION"),
     REQUEST("REQUEST"),
     RESOURCE("RESOURCE"),

@@ -9,4 +9,5 @@ import java.util.List;
 public interface RecommendationService {
     void generateRecommendationsForSession(UserSession session);
     List<RouteMissionRecommendationResponse> getRecommendationsByUserActiveSession(Long userId);
+    List<RouteMissionRecommendationResponse> getRecommendationsByUserAttempt(Long attemptId);
 }
