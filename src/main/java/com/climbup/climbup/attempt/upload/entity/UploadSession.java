@@ -42,7 +42,7 @@ public class UploadSession extends BaseEntity {
     private String fileType;
 
     @OneToMany(mappedBy = "uploadSession", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Chunk> chunks = new HashSet<>();
+    private List<Chunk> chunks = new ArrayList<>();
 
     public Long getReceivedChunkCount() {
         return this.chunks.stream().filter(Chunk::isCompleted).count();
@@ -50,5 +50,13 @@ public class UploadSession extends BaseEntity {
 
     public List<Integer> getReceivedChunkList() {
         return this.chunks.stream().map(Chunk::getChunkIndex).toList();
+    }
+
+    public boolean hasChunk(int index) {
+        return this.chunks.stream().anyMatch(chunk -> chunk.getChunkIndex() == index);
+    }
+
+    public void addChunk(Chunk chunk) {
+        this.chunks.add(chunk);
     }
 }
