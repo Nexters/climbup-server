@@ -134,7 +134,9 @@ public class AttemptController {
             @PathVariable(name = "attemptId") Long attemptId,
             @Valid @RequestBody RouteMissionUploadSessionInitializeRequest request
     ) {
-        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadSessionInitializeResponse.builder().build()));
+        var response = attemptService.initializeAttemptUploadSession(attemptId, request);
+
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 
 

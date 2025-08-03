@@ -33,6 +33,7 @@ public enum ErrorCode {
 
     // 업로드 관련
     UPLOAD_SESSION_NOT_FOUND(ErrorCategory.UPLOAD_SESSION, "001", "업로드 세션을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    UPLOAD_SESSION_ALREADY_EXISTS(ErrorCategory.UPLOAD_SESSION, "002", "업로드 세션이 이미 존재합니다.", HttpStatus.CONFLICT),
 
     // 검증 관련
     VALIDATION_ERROR(ErrorCategory.VALIDATION, "001", "입력값이 올바르지 않습니다: {0}", HttpStatus.BAD_REQUEST),

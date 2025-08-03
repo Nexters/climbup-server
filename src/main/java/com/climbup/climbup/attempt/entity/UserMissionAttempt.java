@@ -37,7 +37,7 @@ public class UserMissionAttempt extends BaseEntity {
     @JoinColumn(name = "mission_id", nullable = false)
     private RouteMission mission;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "upload_id")
     private UploadSession upload;
 

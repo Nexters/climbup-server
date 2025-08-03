@@ -5,10 +5,15 @@ import com.climbup.climbup.attempt.dto.request.CreateAttemptRequest;
 import com.climbup.climbup.attempt.dto.response.CreateAttemptResponse;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.attempt.exception.AttemptNotFoundException;
+import com.climbup.climbup.attempt.exception.UploadSessionAlreadyExistsException;
 import com.climbup.climbup.attempt.exception.UploadSessionNotfoundException;
 import com.climbup.climbup.attempt.repository.UserMissionAttemptRepository;
+import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadSessionInitializeRequest;
+import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionInitializeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusResponse;
 import com.climbup.climbup.attempt.upload.entity.UploadSession;
+import com.climbup.climbup.attempt.upload.enums.UploadStatus;
+import com.climbup.climbup.attempt.upload.repository.UploadSessionRepository;
 import com.climbup.climbup.common.exception.ErrorCode;
 import com.climbup.climbup.common.exception.ValidationException;
 import com.climbup.climbup.route.entity.RouteMission;
@@ -38,6 +43,7 @@ public class AttemptServiceImpl implements AttemptService {
     private final UserRepository userRepository;
     private final UserSessionRepository sessionRepository;
     private final SRHistoryRepository srHistoryRepository;
+    private final UploadSessionRepository uploadSessionRepository;
 
     @Transactional
     public CreateAttemptResponse createAttempt(Long userId, CreateAttemptRequest request) {
@@ -115,6 +121,26 @@ public class AttemptServiceImpl implements AttemptService {
         }
 
         return RouteMissionUploadStatusResponse.toDto(uploadSession);
+    }
+
+    @Override
+    @Transactional
+    public RouteMissionUploadSessionInitializeResponse initializeAttemptUploadSession(Long attemptId, RouteMissionUploadSessionInitializeRequest request) {
+        UserMissionAttempt attempt = attemptRepository.findById(attemptId).orElseThrow(AttemptNotFoundException::new);
+
+        if(attempt.getUpload() != null) {
+            throw new UploadSessionAlreadyExistsException();
+        }
+
+        UploadSession uploadSession = UploadSession.builder().status(UploadStatus.NOT_STARTED).chunkLength(request.getChunkLength()).chunkSize(request.getChunkSize()).fileSize(request.getFileSize()).fileName(request.getFileName()).fileType(request.getFileType()).build();
+
+        uploadSession = uploadSessionRepository.save(uploadSession);
+
+        attempt.setUpload(uploadSession);
+
+        attemptRepository.save(attempt);
+
+        return RouteMissionUploadSessionInitializeResponse.builder().uploadId(uploadSession.getId()).build();
     }
 
 }

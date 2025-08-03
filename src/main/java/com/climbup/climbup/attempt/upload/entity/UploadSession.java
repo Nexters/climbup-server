@@ -6,11 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import jakarta.persistence.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.*;
 
@@ -18,7 +17,9 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuperBuilder
 @Table(name = "upload_sessions")
+@AllArgsConstructor
 public class UploadSession extends BaseEntity {
 
     @Id
@@ -26,7 +27,7 @@ public class UploadSession extends BaseEntity {
     private UUID id;
 
     @Column(name = "status")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private UploadStatus status;
 
     @Column(name = "chunk_length")

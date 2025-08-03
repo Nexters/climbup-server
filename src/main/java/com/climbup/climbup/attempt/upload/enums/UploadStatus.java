@@ -1,5 +1,7 @@
 package com.climbup.climbup.attempt.upload.enums;
 
 public enum UploadStatus {
-    finished, in_progress, not_started
+    NOT_STARTED,    // 0
+    IN_PROGRESS,    // 1
+    FINISHED        // 2
 }
