@@ -48,7 +48,6 @@ public class AttemptController {
                     description = "유저 추천 루트미션 리스트 반환",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = RouteMissionRecommendationResponse.class),
                             examples = @ExampleObject(
                                     name = "성공적인 추천 루트미션 리스트 응답",
                                     value = """
@@ -117,7 +116,6 @@ public class AttemptController {
                     description = "도전기록이 성공적으로 등록됨",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = CreateAttemptResponse.class),
                             examples = @ExampleObject(
                                     name = "성공적인 도전기록 등록 응답",
                                     value = """
@@ -204,7 +202,6 @@ public class AttemptController {
                     description = "해당 도전의 영상 업로드 상태 불러오기",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = RouteMissionUploadStatusResponse.class),
                             examples = @ExampleObject(
                                     name = "성공적인 도전 영상 업로드 상태 반환",
                                     value = """
@@ -241,7 +238,6 @@ public class AttemptController {
                     description = "해당 도전의 영상 업로드 세션 생성하기",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = RouteMissionUploadSessionInitializeResponse.class),
                             examples = @ExampleObject(
                                     name = "성공적인 도전 영상 업로드 세션 생성",
                                     value = """
@@ -272,7 +268,6 @@ public class AttemptController {
                     description = "해당 도전의 영상 청크 업로드하기",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = RouteMissionUploadChunkResponse.class),
                             examples = @ExampleObject(
                                     name = "성공적인 도전 영상 청크 업로드",
                                     value = """
@@ -306,7 +301,6 @@ public class AttemptController {
                     description = "해당 도전의 영상 업로드 세션 마무리",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = RouteMissionUploadSessionFinalizeResponse.class),
                             examples = @ExampleObject(
                                     name = "성공적인 도전 영상 업로드 세션 마무리",
                                     value = """

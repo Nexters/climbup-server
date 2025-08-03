@@ -38,7 +38,6 @@ public class RecommendationController {
                     description = "유저 추천 루트미션 리스트 반환",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = RouteMissionRecommendationResponse.class),
                             examples = @ExampleObject(
                                     name = "성공적인 추천 루트미션 리스트 응답",
                                     value = """

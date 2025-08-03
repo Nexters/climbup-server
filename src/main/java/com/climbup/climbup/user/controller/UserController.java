@@ -39,7 +39,6 @@ public class UserController {
                     description = "조회 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = UserStatusResponse.class),
                             examples = {
                                     @ExampleObject(
                                             name = "신규 사용자",
