@@ -34,35 +34,7 @@ public class UserController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "조회 성공",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(
-                                            name = "신규 사용자",
-                                            summary = "온보딩 미완료",
-                                            value = UserApiExamples.NEW_USER
-                                    ),
-                                    @ExampleObject(
-                                            name = "암장만 선택",
-                                            summary = "암장 선택 완료, 레벨 선택 필요",
-                                            value = UserApiExamples.GYM_SELECTED
-                                    ),
-                                    @ExampleObject(
-                                            name = "레벨만 선택",
-                                            summary = "레벨 선택 완료, 암장 선택 필요",
-                                            value = UserApiExamples.LEVEL_SELECTED
-                                    ),
-                                    @ExampleObject(
-                                            name = "온보딩 완료",
-                                            summary = "모든 설정 완료",
-                                            value = UserApiExamples.COMPLETED_USER
-                                    )
-                            }
-                    )
-            ),
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(
                     responseCode = "401",
                     description = "인증 실패",

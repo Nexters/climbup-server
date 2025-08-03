@@ -31,25 +31,25 @@ public class RouteMissionRecommendationResponse {
     @Schema(description = "섹터 데이터")
     private SectorResponse sector;
 
-    @Schema(description = "루트미션 난이도")
+    @Schema(description = "루트미션 난이도", example = "V3")
     private String difficulty;
 
-    @Schema(description = "루트 미션 상승 점수")
+    @Schema(description = "루트 미션 상승 점수", example = "100")
     private Integer score;
 
-    @Schema(description = "루트미션 설명 이미지 주소")
+    @Schema(description = "루트미션 설명 이미지 주소", example = "https://example.com/mission1.jpg")
     private String imageUrl;
 
-    @Schema(description = "루트미션 해설 영상 주소")
+    @Schema(description = "루트미션 해설 영상 주소", example = "https://example.com/mission1.mp4")
     private String videoUrl;
 
-    @Schema(description = "루트미션 탈거 날짜")
+    @Schema(description = "루트미션 탈거 날짜", example = "2025-07-31T14:20:00")
     private LocalDateTime removedAt;
 
-    @Schema(description = "루트미션 추가 날짜")
+    @Schema(description = "루트미션 추가 날짜", example = "2025-07-31T14:20:00")
     private LocalDateTime postedAt;
 
-    @Schema(description = "루트미션 추천 순서")
+    @Schema(description = "루트미션 추천 순서", example = "1")
     private Integer recommendedOrder;
 
     public static RouteMissionRecommendationResponse toDto(ChallengeRecommendation recommendation, RouteMission mission, ClimbingGym gym, List<UserMissionAttempt> attempts, Sector sector, Integer recommendedOrder){

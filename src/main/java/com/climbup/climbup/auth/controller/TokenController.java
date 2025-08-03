@@ -34,27 +34,7 @@ public class TokenController {
 
     @Operation(summary = "토큰 재발급", description = "Refresh Token으로 새로운 Access Token을 발급받습니다")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "토큰 재발급 성공",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                                "message": "토큰이 성공적으로 재발급되었습니다.",
-                                                "data": {
-                                                    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                                                    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                                                    "tokenType": "Bearer",
-                                                    "accessTokenExpiresIn": 3600,
-                                                    "refreshTokenExpiresIn": 604800
-                                                }
-                                            }
-                                            """
-                            )
-                    )
-            ),
+            @ApiResponse(responseCode = "200", description = "토큰 재발급 성공"),
             @ApiResponse(
                     responseCode = "400",
                     description = "잘못된 요청",
@@ -117,21 +97,7 @@ public class TokenController {
 
     @Operation(summary = "로그아웃", description = "Refresh Token을 무효화합니다")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "로그아웃 성공",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                                "message": "로그아웃이 완료되었습니다.",
-                                                "data": null
-                                            }
-                                            """
-                            )
-                    )
-            ),
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
             @ApiResponse(
                     responseCode = "403",
                     description = "접근 권한 없음",

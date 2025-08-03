@@ -32,66 +32,7 @@ public class RecommendationController {
     private final RecommendationService recommendationService;
 
     @Operation(summary = "루트미션 리스트 불러오기", description = "유저의 난이도에 맞는 추천 루트미션 리스트", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200", 
-                    description = "유저 추천 루트미션 리스트 반환",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "성공적인 추천 루트미션 리스트 응답",
-                                    value = """
-                                    {
-                                        "message": "추천 루트미션 리스트를 성공적으로 조회했습니다.",
-                                        "data": [
-                                            {
-                                                "missionId": 1,
-                                                "gymId": 1,
-                                                "attempts": [
-                                                    {
-                                                        "missionAttemptId": 1,
-                                                        "success": true,
-                                                        "videoUrl": "https://example.com/attempt1.mp4",
-                                                        "createdAt": "2025-07-31T14:20:00"
-                                                    }
-                                                ],
-                                                "sector": {
-                                                    "id": 1,
-                                                    "name": "A 섹터",
-                                                    "imageUrl": "https://example.com/sector1.jpg"
-                                                },
-                                                "difficulty": "V3",
-                                                "score": 100,
-                                                "imageUrl": "https://example.com/mission1.jpg",
-                                                "videoUrl": "https://example.com/mission1.mp4",
-                                                "removedAt": "2025-07-31T14:20:00",
-                                                "postedAt": "2025-07-31T14:20:00",
-                                                "recommendedOrder": 1
-                                            },
-                                            {
-                                                "missionId": 2,
-                                                "gymId": 1,
-                                                "attempts": [],
-                                                "sector": {
-                                                    "id": 2,
-                                                    "name": "B 섹터",
-                                                    "imageUrl": "https://example.com/sector2.jpg"
-                                                },
-                                                "difficulty": "V4",
-                                                "score": 150,
-                                                "imageUrl": "https://example.com/mission2.jpg",
-                                                "videoUrl": "https://example.com/mission2.mp4",
-                                                "removedAt": "2025-07-31T14:20:00",
-                                                "postedAt": "2025-07-31T14:20:00",
-                                                "recommendedOrder": 2
-                                            }
-                                        ]
-                                    }
-                                    """
-                            )
-                    )
-            )
-    })
+    @ApiResponse(responseCode = "200", description = "유저 추천 루트미션 리스트 반환")
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResult<List<RouteMissionRecommendationResponse>>> getRouteMissionRecommendations() {

@@ -42,66 +42,7 @@ public class AttemptController {
 
 
     @Operation(summary = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트 불러오기", description = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트를 받아보기", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "유저 추천 루트미션 리스트 반환",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "성공적인 추천 루트미션 리스트 응답",
-                                    value = """
-                                    {
-                                        "message": "추천 루트미션 리스트를 성공적으로 조회했습니다.",
-                                        "data": [
-                                            {
-                                                "missionId": 1,
-                                                "gymId": 1,
-                                                "attempts": [
-                                                    {
-                                                        "missionAttemptId": 1,
-                                                        "success": true,
-                                                        "videoUrl": "https://example.com/attempt1.mp4",
-                                                        "createdAt": "2025-07-31T14:20:00"
-                                                    }
-                                                ],
-                                                "sector": {
-                                                    "id": 1,
-                                                    "name": "A 섹터",
-                                                    "imageUrl": "https://example.com/sector1.jpg"
-                                                },
-                                                "difficulty": "V3",
-                                                "score": 100,
-                                                "imageUrl": "https://example.com/mission1.jpg",
-                                                "videoUrl": "https://example.com/mission1.mp4",
-                                                "removedAt": "2025-07-31T14:20:00",
-                                                "postedAt": "2025-07-31T14:20:00",
-                                                "recommendedOrder": 1
-                                            },
-                                            {
-                                                "missionId": 2,
-                                                "gymId": 1,
-                                                "attempts": [],
-                                                "sector": {
-                                                    "id": 2,
-                                                    "name": "B 섹터",
-                                                    "imageUrl": "https://example.com/sector2.jpg"
-                                                },
-                                                "difficulty": "V4",
-                                                "score": 150,
-                                                "imageUrl": "https://example.com/mission2.jpg",
-                                                "videoUrl": "https://example.com/mission2.mp4",
-                                                "removedAt": "2025-07-31T14:20:00",
-                                                "postedAt": "2025-07-31T14:20:00",
-                                                "recommendedOrder": 2
-                                            }
-                                        ]
-                                    }
-                                    """
-                            )
-                    )
-            )
-    })
+    @ApiResponse(responseCode = "200", description = "유저 추천 루트미션 리스트 반환")
     @GetMapping("/{attemptId}/recommendations")
     public ResponseEntity<ApiResult<List<RouteMissionRecommendationResponse>>> getRouteMissionRecommendationByAttempt(
             @PathVariable(name = "attemptId") Long attemptId
@@ -111,29 +52,7 @@ public class AttemptController {
 
     @Operation(summary = "루트미션 도전기록 등록", description = "루트미션에 대한 도전기록을 등록합니다. 성공 시 SR이 증가합니다.", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "도전기록이 성공적으로 등록됨",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "성공적인 도전기록 등록 응답",
-                                    value = """
-                                {
-                                    "message": "도전기록이 성공적으로 등록되었습니다.",
-                                    "data": {
-                                        "missionAttemptId": 1,
-                                        "success": true,
-                                        "videoUrl": null,
-                                        "createdAt": "2025-07-31T14:20:00",
-                                        "srGained": 125,
-                                        "currentSr": 1375
-                                    }
-                                }
-                                """
-                            )
-                    )
-            ),
+            @ApiResponse(responseCode = "201", description = "도전기록이 성공적으로 등록됨"),
             @ApiResponse(
                     responseCode = "400",
                     description = "유효하지 않은 난이도",
@@ -196,33 +115,7 @@ public class AttemptController {
     }
 
     @Operation(summary = "해당 도전의 영상 업로드 상태 불러오기", description = "해당 도전의 영상 업로드 상태 불러오기", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "해당 도전의 영상 업로드 상태 불러오기",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "성공적인 도전 영상 업로드 상태 반환",
-                                    value = """
-                                    {
-                                        "message": "도전의 영상 업로드 상태를 성공적으로 조회했습니다.",
-                                        "data": {
-                                                "status": "in_progress",
-                                                "uploadId": "8ded5806-87df-43b5-9c64-e4513eb33987",
-                                                "createdAt": "2025-07-31T14:20:00",
-                                                "chunks": {
-                                                    "totalReceived": 505050,
-                                                    "totalExpected": 10101010,
-                                                    "completedChunks": [1, 2, 3, 4, 5, 6, 7, 10]
-                                                }
-                                            }
-                                    }
-                                    """
-                            )
-                    )
-            )
-    })
+    @ApiResponse(responseCode = "200", description = "해당 도전의 영상 업로드 상태 불러오기")
     @GetMapping("/{attemptId}/upload/status")
     public ResponseEntity<ApiResult<RouteMissionUploadStatusResponse>> getRouteMissionUploadStatus(
             @PathVariable(name = "attemptId") Long attemptId
@@ -232,26 +125,7 @@ public class AttemptController {
 
 
     @Operation(summary = "해당 도전의 영상 업로드 세션 생성하기", description = "해당 도전의 영상 업로드 세션 생성하기", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "해당 도전의 영상 업로드 세션 생성하기",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "성공적인 도전 영상 업로드 세션 생성",
-                                    value = """
-                                    {
-                                        "message": "영상 업로드 세션을 성공적으로 생성했습니다.",
-                                        "data": {
-                                                "uploadId": "8ded5806-87df-43b5-9c64-e4513eb33987"
-                                            }
-                                    }
-                                    """
-                            )
-                    )
-            )
-    })
+    @ApiResponse(responseCode = "201", description = "해당 도전의 영상 업로드 세션 생성하기")
     @PostMapping("/{attemptId}/upload/initialize")
     public ResponseEntity<ApiResult<RouteMissionUploadSessionInitializeResponse>> initializeRouteMissionUploadSession(
             @PathVariable(name = "attemptId") Long attemptId,
@@ -262,28 +136,7 @@ public class AttemptController {
 
 
     @Operation(summary = "해당 도전의 영상 청크 업로드", description = "해당 도전의 영상 청크 업로드", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "해당 도전의 영상 청크 업로드하기",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "성공적인 도전 영상 청크 업로드",
-                                    value = """
-                                    {
-                                        "message": "영상 청크를 성공적으로 업로드했습니다.",
-                                        "data": {
-                                                "index": 5,
-                                                "totalChunkReceived": 5,
-                                                "totalChunkExpected": 20
-                                            }
-                                    }
-                                    """
-                            )
-                    )
-            )
-    })
+    @ApiResponse(responseCode = "201", description = "해당 도전의 영상 청크 업로드하기")
     @PostMapping("/{attemptId}/upload/{uploadId}/chunk")
     public ResponseEntity<ApiResult<RouteMissionUploadChunkResponse>> uploadRouteMissionVideoChunk(
             @PathVariable(name = "attemptId") Long attemptId,
@@ -295,26 +148,7 @@ public class AttemptController {
 
 
     @Operation(summary = "해당 도전의 영상 업로드 세션 마무리", description = "해당 도전의 영상 업로드 세션 마무리", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "해당 도전의 영상 업로드 세션 마무리",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "성공적인 도전 영상 업로드 세션 마무리",
-                                    value = """
-                                    {
-                                        "message": "영상 업로드 세션을 성공적으로 마무리했습니다.",
-                                        "data": {
-                                                "fileName": "thisIsFileName"
-                                            }
-                                    }
-                                    """
-                            )
-                    )
-            )
-    })
+    @ApiResponse(responseCode = "201", description = "해당 도전의 영상 업로드 세션 마무리")
     @PostMapping("/{attemptId}/upload/{uploadId}/finalize")
     public ResponseEntity<ApiResult<RouteMissionUploadSessionFinalizeResponse>> finalizeRouteMissionUploadSession(
             @PathVariable(name = "attemptId") Long attemptId,
