@@ -36,6 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 import java.io.*;
 import java.nio.file.*;
@@ -70,6 +72,43 @@ public class AttemptServiceImpl implements AttemptService {
     private Path getChunkFilePath(UUID uploadId, int chunkIndex) {
         return Paths.get("uploads", uploadId.toString(), "chunks", String.valueOf(chunkIndex));
     }
+
+    private String combineChunks(UploadSession uploadSession)
+    {
+        String fileName = uploadSession.getFileName() + "." + uploadSession.getFileType();
+        Path finalFilePath = Paths.get("uploads", uploadSession.getId().toString(), fileName);
+        ensureDirectoryExists(finalFilePath.getParent());
+
+        List<Chunk> sortedChunks = uploadSession.getChunks().stream()
+                .sorted(Comparator.comparing(Chunk::getChunkIndex))
+                .toList();
+
+        try  {
+            FileOutputStream fos = new FileOutputStream(finalFilePath.toFile());
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+            for (Chunk chunk : sortedChunks) {
+                Path chunkPath = Paths.get(chunk.getFilePath());
+                byte[] chunkData = Files.readAllBytes(chunkPath);
+                bos.write(chunkData);
+            }
+            bos.flush();
+        } catch (IOException e) {
+            log.error(e.toString());
+            throw new CommonBusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+
+        for (Chunk chunk : sortedChunks) {
+            try {
+                Files.deleteIfExists(Paths.get(chunk.getFilePath()));
+            } catch (IOException e) {
+                log.warn("Failed to delete chunk file: {}", chunk.getFilePath(), e);
+            }
+        }
+
+        return finalFilePath.toString();
+    }
+
 
     @Transactional
     public CreateAttemptResponse createAttempt(Long userId, CreateAttemptRequest request) {
@@ -230,12 +269,12 @@ public class AttemptServiceImpl implements AttemptService {
             throw new UploadSessionChunkIncompleteException();
         }
 
-        // need to implement chunk combining feature
+        String finalVideoPath = combineChunks(uploadSession);
 
         uploadSession.setStatus(UploadStatus.FINISHED);
         uploadSessionRepository.save(uploadSession);
 
-        // will have the name of the video somewhere here
+        log.info("video saved in {}", finalVideoPath);
 
         // upload the video to NCP storage
 
@@ -243,7 +282,6 @@ public class AttemptServiceImpl implements AttemptService {
                 .orElseThrow(AttemptNotFoundException::new);
 
         attemptRepository.save(attempt);
-
 
         return RouteMissionUploadSessionFinalizeResponse.builder()
                 .fileName(uploadSession.getFileName())

@@ -136,7 +136,7 @@ public class AttemptController {
             @PathVariable(name = "attemptId") Long attemptId,
             @Valid @RequestBody RouteMissionUploadSessionInitializeRequest request
     ) {
-        var response = attemptService.initializeAttemptUploadSession(attemptId, request);
+        RouteMissionUploadSessionInitializeResponse response = attemptService.initializeAttemptUploadSession(attemptId, request);
 
         return ResponseEntity.ok(ApiResult.success(response));
     }
@@ -151,7 +151,7 @@ public class AttemptController {
             @Valid @RequestBody RouteMissionUploadChunkRequest request
             ) {
 
-        var response = attemptService.uploadChunk(uploadId, request);
+        RouteMissionUploadChunkResponse response = attemptService.uploadChunk(uploadId, request);
 
         return ResponseEntity.ok(ApiResult.success(response));
     }
@@ -164,6 +164,7 @@ public class AttemptController {
             @PathVariable(name = "attemptId") Long attemptId,
             @PathVariable(name = "uploadId") UUID uploadId
     ) {
-        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadSessionFinalizeResponse.builder().build()));
+        RouteMissionUploadSessionFinalizeResponse response = attemptService.finalizeUploadSession(uploadId);
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 }
