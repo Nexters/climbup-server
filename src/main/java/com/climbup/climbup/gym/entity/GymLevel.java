@@ -30,8 +30,8 @@ public class GymLevel extends BaseEntity {
     @JoinColumn(name = "level_id", nullable = false)
     private Level level;
 
-    @Column(name = "display_name", nullable = false, length = 50)
-    private String displayName;
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
 
     @Column(name = "sr_min", nullable = false)
     private Integer srMin;

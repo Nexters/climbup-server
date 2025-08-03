@@ -48,8 +48,8 @@ public class UserStatusResponse {
         @Schema(description = "기본 레벨명", example = "V0")
         private String levelName;
 
-        @Schema(description = "브랜드별 표시명", example = "ORANGE")
-        private String displayName;
+        @Schema(description = "암장별 레벨명", example = "ORANGE")
+        private String gymLevelName;
 
         @Schema(description = "최소 SR", example = "600")
         private Integer srMin;
@@ -103,7 +103,7 @@ public class UserStatusResponse {
                         .id(user.getGymLevel().getId())
                         .brandName(user.getGymLevel().getBrand().getName())
                         .levelName(user.getGymLevel().getLevel().getName())
-                        .displayName(user.getGymLevel().getDisplayName())
+                        .gymLevelName(user.getGymLevel().getName())
                         .srMin(user.getGymLevel().getSrMin())
                         .srMax(user.getGymLevel().getSrMax())
                         .sortOrder(user.getGymLevel().getSortOrder())

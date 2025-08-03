@@ -86,48 +86,44 @@ public class TestController {
         if (levelRepository.count() == 0) {
             List<Level> levels = levelRepository.saveAll(List.of(
                     Level.builder()
-                            .name("V0")
-                            .description("입문자용 가장 쉬운 난이도")
+                            .name("입문자 단계")
+                            .description("클라이밍이 처음이라면 가볍게 시작해보세요!")
                             .sortOrder(0)
                             .build(),
                     Level.builder()
-                            .name("V1")
-                            .description("초급자용 난이도")
+                            .name("기본기를 익히는 단계")
+                            .description("규칙도 익히고, 슬슬 재미가 붙은 단계네요!")
                             .sortOrder(1)
                             .build(),
                     Level.builder()
                             .name("V2")
-                            .description("초급자 상급 난이도")
                             .sortOrder(2)
                             .build(),
                     Level.builder()
-                            .name("V3")
-                            .description("중급자 입문 난이도")
+                            .name("도전의 재미가 시작되는 단계")
+                            .description("도전의 재미가 본격적으로 느껴지실 거예요.")
                             .sortOrder(3)
                             .build(),
                     Level.builder()
-                            .name("V4")
-                            .description("중급자 난이도")
+                            .name("고난이도 루트에 도전하는 단계")
+                            .description("이제 다양한 루트도 거뜬하죠? 멋져요!")
                             .sortOrder(4)
                             .build(),
                     Level.builder()
                             .name("V5")
-                            .description("중급자 상급 난이도")
                             .sortOrder(5)
                             .build(),
                     Level.builder()
-                            .name("V6")
-                            .description("고급자 입문 난이도")
+                            .name("어디서든 인정받는 단계")
+                            .description("누구나 인정할 실력자시군요. 정말 대단해요!")
                             .sortOrder(6)
                             .build(),
                     Level.builder()
                             .name("V7")
-                            .description("고급자 난이도")
                             .sortOrder(7)
                             .build(),
                     Level.builder()
                             .name("V8")
-                            .description("고급자 상급 난이도")
                             .sortOrder(8)
                             .build(),
                     Level.builder()
@@ -181,24 +177,22 @@ public class TestController {
             Brand climbingPark = brandRepository.findByName("클라이밍파크").orElseThrow();
 
             Level v0 = levelRepository.findAll().stream()
-                    .filter(l -> l.getName().equals("V0")).findFirst().orElseThrow();
+                    .filter(l -> l.getName().equals("입문자 단계")).findFirst().orElseThrow();
             Level v1 = levelRepository.findAll().stream()
-                    .filter(l -> l.getName().equals("V1")).findFirst().orElseThrow();
+                    .filter(l -> l.getName().equals("기본기를 익히는 단계")).findFirst().orElseThrow();
             Level v3 = levelRepository.findAll().stream()
-                    .filter(l -> l.getName().equals("V3")).findFirst().orElseThrow();
+                    .filter(l -> l.getName().equals("도전의 재미가 시작되는 단계")).findFirst().orElseThrow();
             Level v4 = levelRepository.findAll().stream()
-                    .filter(l -> l.getName().equals("V4")).findFirst().orElseThrow();
+                    .filter(l -> l.getName().equals("고난이도 루트에 도전하는 단계")).findFirst().orElseThrow();
             Level v6 = levelRepository.findAll().stream()
-                    .filter(l -> l.getName().equals("V6")).findFirst().orElseThrow();
-            Level v8 = levelRepository.findAll().stream()
-                    .filter(l -> l.getName().equals("V8")).findFirst().orElseThrow();
+                    .filter(l -> l.getName().equals("어디서든 인정받는 단계")).findFirst().orElseThrow();
 
             // 더클라임 레벨 체계
             List<GymLevel> theClimbLevels = List.of(
                     GymLevel.builder()
                             .brand(theClimb)
                             .level(v0)
-                            .displayName("ORANGE")
+                            .name("ORANGE")
                             .srMin(600)
                             .srMax(649)
                             .sortOrder(1)
@@ -207,7 +201,7 @@ public class TestController {
                     GymLevel.builder()
                             .brand(theClimb)
                             .level(v1)
-                            .displayName("GREEN")
+                            .name("GREEN")
                             .srMin(650)
                             .srMax(999)
                             .sortOrder(2)
@@ -216,7 +210,7 @@ public class TestController {
                     GymLevel.builder()
                             .brand(theClimb)
                             .level(v3)
-                            .displayName("BLUE")
+                            .name("BLUE")
                             .srMin(1000)
                             .srMax(1999)
                             .sortOrder(3)
@@ -225,7 +219,7 @@ public class TestController {
                     GymLevel.builder()
                             .brand(theClimb)
                             .level(v4)
-                            .displayName("RED")
+                            .name("RED")
                             .srMin(2000)
                             .srMax(2999)
                             .sortOrder(4)
@@ -234,7 +228,7 @@ public class TestController {
                     GymLevel.builder()
                             .brand(theClimb)
                             .level(v6)
-                            .displayName("PURPLE")
+                            .name("PURPLE")
                             .srMin(3000)
                             .srMax(null)
                             .sortOrder(5)
