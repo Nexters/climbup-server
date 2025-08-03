@@ -3,6 +3,7 @@ package com.climbup.climbup.attempt.controller;
 
 import com.climbup.climbup.attempt.dto.request.CreateAttemptRequest;
 import com.climbup.climbup.attempt.dto.response.CreateAttemptResponse;
+import com.climbup.climbup.attempt.repository.UserMissionAttemptRepository;
 import com.climbup.climbup.attempt.service.AttemptService;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadChunkRequest;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadSessionInitializeRequest;
@@ -39,6 +40,7 @@ public class AttemptController {
 
     private final AttemptService attemptService;
     private final RecommendationService recommendationService;
+    private final UserMissionAttemptRepository userMissionAttemptRepository;
 
 
     @Operation(summary = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트 불러오기", description = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트를 받아보기", security = @SecurityRequirement(name = "bearerAuth"))
@@ -120,7 +122,8 @@ public class AttemptController {
     public ResponseEntity<ApiResult<RouteMissionUploadStatusResponse>> getRouteMissionUploadStatus(
             @PathVariable(name = "attemptId") Long attemptId
     ) {
-        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadStatusResponse.builder().build()));
+        RouteMissionUploadStatusResponse response = attemptService.getAttemptUploadStatus(attemptId);
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 
 

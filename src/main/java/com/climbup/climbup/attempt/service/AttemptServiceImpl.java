@@ -4,7 +4,11 @@ import com.climbup.climbup.attempt.dto.LevelSRReward;
 import com.climbup.climbup.attempt.dto.request.CreateAttemptRequest;
 import com.climbup.climbup.attempt.dto.response.CreateAttemptResponse;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
+import com.climbup.climbup.attempt.exception.AttemptNotFoundException;
+import com.climbup.climbup.attempt.exception.UploadSessionNotfoundException;
 import com.climbup.climbup.attempt.repository.UserMissionAttemptRepository;
+import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusResponse;
+import com.climbup.climbup.attempt.upload.entity.UploadSession;
 import com.climbup.climbup.common.exception.ErrorCode;
 import com.climbup.climbup.common.exception.ValidationException;
 import com.climbup.climbup.route.entity.RouteMission;
@@ -98,4 +102,19 @@ public class AttemptServiceImpl implements AttemptService {
                 .currentSr(currentSr)
                 .build();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RouteMissionUploadStatusResponse getAttemptUploadStatus(Long attemptId) {
+        UserMissionAttempt attempt = attemptRepository.findById(attemptId).orElseThrow(AttemptNotFoundException::new);
+
+        var uploadSession = attempt.getUpload();
+
+        if(uploadSession == null) {
+            throw new UploadSessionNotfoundException();
+        }
+
+        return RouteMissionUploadStatusResponse.toDto(uploadSession);
+    }
+
 }
