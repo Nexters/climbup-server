@@ -6,7 +6,7 @@ import com.climbup.climbup.attempt.dto.response.CreateAttemptResponse;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.attempt.exception.AttemptNotFoundException;
 import com.climbup.climbup.attempt.exception.UploadSessionAlreadyExistsException;
-import com.climbup.climbup.attempt.exception.UploadSessionNotfoundException;
+import com.climbup.climbup.attempt.exception.UploadSessionNotFoundException;
 import com.climbup.climbup.attempt.repository.UserMissionAttemptRepository;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadSessionInitializeRequest;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionInitializeResponse;
@@ -117,7 +117,7 @@ public class AttemptServiceImpl implements AttemptService {
         var uploadSession = attempt.getUpload();
 
         if(uploadSession == null) {
-            throw new UploadSessionNotfoundException();
+            throw new UploadSessionNotFoundException();
         }
 
         return RouteMissionUploadStatusResponse.toDto(uploadSession);

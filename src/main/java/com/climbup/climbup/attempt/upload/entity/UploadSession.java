@@ -2,12 +2,8 @@ package com.climbup.climbup.attempt.upload.entity;
 
 import com.climbup.climbup.attempt.upload.enums.UploadStatus;
 import com.climbup.climbup.common.entity.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.*;
 
+import lombok.*;
 import jakarta.persistence.*;
 import lombok.experimental.SuperBuilder;
 
@@ -27,7 +23,7 @@ public class UploadSession extends BaseEntity {
     private UUID id;
 
     @Column(name = "status")
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private UploadStatus status;
 
     @Column(name = "chunk_length")
@@ -45,10 +41,10 @@ public class UploadSession extends BaseEntity {
     @Column(name = "file_type")
     private String fileType;
 
-    @OneToMany(mappedBy = "uploadSession", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "uploadSession", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Chunk> chunks = new HashSet<>();
 
-    public long getReceivedChunkCount() {
+    public Long getReceivedChunkCount() {
         return this.chunks.stream().filter(Chunk::isCompleted).count();
     }
 

@@ -40,7 +40,6 @@ public class AttemptController {
 
     private final AttemptService attemptService;
     private final RecommendationService recommendationService;
-    private final UserMissionAttemptRepository userMissionAttemptRepository;
 
 
     @Operation(summary = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트 불러오기", description = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트를 받아보기", security = @SecurityRequirement(name = "bearerAuth"))
