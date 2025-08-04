@@ -58,5 +58,6 @@ public class UploadSession extends BaseEntity {
 
     public void addChunk(Chunk chunk) {
         this.chunks.add(chunk);
+        chunk.setUploadSession(this);
     }
 }

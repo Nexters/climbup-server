@@ -83,9 +83,8 @@ public class AttemptServiceImpl implements AttemptService {
                 .sorted(Comparator.comparing(Chunk::getChunkIndex))
                 .toList();
 
-        try  {
-            FileOutputStream fos = new FileOutputStream(finalFilePath.toFile());
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
+        try (FileOutputStream fos = new FileOutputStream(finalFilePath.toFile());
+             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
 
             for (Chunk chunk : sortedChunks) {
                 Path chunkPath = Paths.get(chunk.getFilePath());
@@ -228,16 +227,16 @@ public class AttemptServiceImpl implements AttemptService {
             Chunk chunk = new Chunk();
             chunk.setChunkIndex(request.getIndex());
             chunk.setChunkSize((long) request.getChunk().length);
-            chunk.setUploadSession(uploadSession);
             chunk.setCompleted(true);
             chunk.setFilePath(chunkFilePath.toString());
+
+            uploadSession.addChunk(chunk);
 
             String chunkName = String.format("chunk_%d_%s", request.getIndex(), uploadSession.getFileName());
             chunk.setName(chunkName);
 
             chunkRepository.save(chunk);
 
-            uploadSession.getChunks().add(chunk);
 
         } catch (IOException e) {
             log.error("Failed to store chunk {} for upload session {}", request.getIndex(), uploadId, e);
