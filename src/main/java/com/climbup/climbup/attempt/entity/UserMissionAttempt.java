@@ -1,5 +1,6 @@
 package com.climbup.climbup.attempt.entity;
 
+import com.climbup.climbup.attempt.upload.entity.UploadSession;
 import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.route.entity.RouteMission;
 import com.climbup.climbup.session.entity.UserSession;
@@ -35,6 +36,10 @@ public class UserMissionAttempt extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mission_id", nullable = false)
     private RouteMission mission;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "upload_id")
+    private UploadSession upload;
 
     @Column(name = "success", nullable = false)
     private Boolean success;

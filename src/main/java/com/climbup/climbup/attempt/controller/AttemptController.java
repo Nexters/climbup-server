@@ -3,6 +3,7 @@ package com.climbup.climbup.attempt.controller;
 
 import com.climbup.climbup.attempt.dto.request.CreateAttemptRequest;
 import com.climbup.climbup.attempt.dto.response.CreateAttemptResponse;
+import com.climbup.climbup.attempt.repository.UserMissionAttemptRepository;
 import com.climbup.climbup.attempt.service.AttemptService;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadChunkRequest;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadSessionInitializeRequest;
@@ -10,6 +11,8 @@ import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadChunkRe
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionFinalizeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionInitializeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusResponse;
+import com.climbup.climbup.attempt.upload.entity.UploadSession;
+import com.climbup.climbup.attempt.upload.repository.UploadSessionRepository;
 import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.recommendation.dto.response.RouteMissionRecommendationResponse;
@@ -39,6 +42,7 @@ public class AttemptController {
 
     private final AttemptService attemptService;
     private final RecommendationService recommendationService;
+    private final UploadSessionRepository uploadSessionRepository;
 
 
     @Operation(summary = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트 불러오기", description = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트를 받아보기", security = @SecurityRequirement(name = "bearerAuth"))
@@ -120,7 +124,8 @@ public class AttemptController {
     public ResponseEntity<ApiResult<RouteMissionUploadStatusResponse>> getRouteMissionUploadStatus(
             @PathVariable(name = "attemptId") Long attemptId
     ) {
-        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadStatusResponse.builder().build()));
+        RouteMissionUploadStatusResponse response = attemptService.getAttemptUploadStatus(attemptId);
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 
 
@@ -131,7 +136,9 @@ public class AttemptController {
             @PathVariable(name = "attemptId") Long attemptId,
             @Valid @RequestBody RouteMissionUploadSessionInitializeRequest request
     ) {
-        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadSessionInitializeResponse.builder().build()));
+        RouteMissionUploadSessionInitializeResponse response = attemptService.initializeAttemptUploadSession(attemptId, request);
+
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 
 
@@ -143,7 +150,10 @@ public class AttemptController {
             @PathVariable(name = "uploadId") UUID uploadId,
             @Valid @RequestBody RouteMissionUploadChunkRequest request
             ) {
-        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadChunkResponse.builder().build()));
+
+        RouteMissionUploadChunkResponse response = attemptService.uploadChunk(uploadId, request);
+
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 
 
@@ -154,6 +164,7 @@ public class AttemptController {
             @PathVariable(name = "attemptId") Long attemptId,
             @PathVariable(name = "uploadId") UUID uploadId
     ) {
-        return ResponseEntity.ok(ApiResult.success(RouteMissionUploadSessionFinalizeResponse.builder().build()));
+        RouteMissionUploadSessionFinalizeResponse response = attemptService.finalizeUploadSession(uploadId);
+        return ResponseEntity.ok(ApiResult.success(response));
     }
 }
