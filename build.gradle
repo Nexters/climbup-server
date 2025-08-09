@@ -21,6 +21,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -35,6 +36,9 @@ dependencies {
     runtimeOnly 'org.flywaydb:flyway-database-postgresql'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // discord
+    implementation 'com.github.napstr:logback-discord-appender:1.0.0'
 
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
