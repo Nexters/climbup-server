@@ -1,7 +1,6 @@
 package com.climbup.climbup.global.discord;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
+import com.climbup.climbup.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,8 +14,7 @@ import org.springframework.stereotype.Component;
 public class SignUpEventListener {
 
     private final DiscordService discordService;
-
-    private final EntityManager entityManager;
+    private final UserRepository userRepository;
 
     @EventListener
     public void handleUserRegistration(SignUpEvent event) {
@@ -25,9 +23,7 @@ public class SignUpEventListener {
         }
 
         try {
-            // 전체 사용자 수 조회
-            Query query = entityManager.createQuery("SELECT COUNT(u) FROM User u");
-            long totalUserCount = (Long) query.getSingleResult();
+            long totalUserCount = userRepository.count();
 
             discordService.sendUserRegistrationNotification(
                     event.getNickname(),
