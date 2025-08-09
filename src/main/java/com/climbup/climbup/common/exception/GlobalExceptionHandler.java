@@ -193,6 +193,7 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(ex.getErrorCode(), request.getRequestURI(), ex.getMessageArgs()));
     }
 
+    // Discord 에러 알림 전송 메서드
     private void sendDiscordErrorNotification(Exception ex, String methodName) {
         if (discordService == null) {
             return;
@@ -216,11 +217,13 @@ public class GlobalExceptionHandler {
         }
     }
 
+    // 스택트레이스 추출 메서드
     private String getStackTrace(Exception ex) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         ex.printStackTrace(pw);
 
+        // 스택트레이스를 적절한 길이로 자르기 (Discord 메시지 길이 제한)
         String fullStackTrace = sw.toString();
         if (fullStackTrace.length() > 1500) {
             return fullStackTrace.substring(0, 1500) + "\n... (truncated)";

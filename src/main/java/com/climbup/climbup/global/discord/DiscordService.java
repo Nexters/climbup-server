@@ -48,7 +48,8 @@ public class DiscordService {
     public void sendErrorNotification(String errorMessage, String className, String methodName) {
         String sanitizedMessage = sanitizeErrorMessage(errorMessage);
 
-        if (!isValidWebhookUrl(discordConfig.getWebhook().getErrorUrl())) {
+        if (!discordConfig.isEnabled() ||
+                !isValidWebhookUrl(discordConfig.getWebhook().getErrorUrl())) {
             return;
         }
 
@@ -67,7 +68,8 @@ public class DiscordService {
 
     @Async
     public void sendUserRegistrationNotification(String nickname, long totalUserCount) {
-        if (!isValidWebhookUrl(discordConfig.getWebhook().getNotificationUrl()) ||
+        if (!discordConfig.isEnabled() ||
+                !isValidWebhookUrl(discordConfig.getWebhook().getNotificationUrl()) ||
                 !"prod".equals(activeProfile)) {
             return;
         }
@@ -127,7 +129,7 @@ public class DiscordService {
         if (message == null) return null;
 
         String sanitized = message
-                .replaceAll("(?i)\\b(password|passwd|token|secret|key|apikey|api_key)\\s*[=:]\\s*\\S+", "$1=***")
+                .replaceAll("(?i)(password|token|secret|key)[\\s=:]+[^\\s\\n]+", "$1=***")
                 .replaceAll("(?i)(authorization:?\\s+bearer\\s+)[^\\s\\n]+", "$1***")
                 .replaceAll("(?i)(api[_-]?key[\\s=:]+)[^\\s\\n]+", "$1***");
 
