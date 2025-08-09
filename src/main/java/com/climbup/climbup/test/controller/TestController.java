@@ -373,4 +373,9 @@ public class TestController {
         response.put("timestamp", LocalDateTime.now());
         return ResponseEntity.ok(ApiResult.success(response));
     }
+
+    @GetMapping("/error")
+    public String testError() {
+        throw new RuntimeException("테스트 에러입니다!");
+    }
 }

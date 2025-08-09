@@ -4,7 +4,9 @@ import com.climbup.climbup.auth.exception.AuthHeaderMissingException;
 import com.climbup.climbup.auth.exception.InvalidTokenException;
 import com.climbup.climbup.auth.exception.TokenExpiredException;
 import com.climbup.climbup.common.dto.ErrorResponse;
+import com.climbup.climbup.global.discord.DiscordService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -18,12 +20,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final DiscordService discordService;
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(
@@ -139,6 +146,7 @@ public class GlobalExceptionHandler {
             Exception ex, HttpServletRequest request) {
 
         log.error("Unexpected exception occurred", ex);
+        sendDiscordErrorNotification(ex, "handleGenericException");
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus())
                 .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, request.getRequestURI()));
@@ -183,5 +191,40 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(ex.getHttpStatus())
                 .body(ErrorResponse.of(ex.getErrorCode(), request.getRequestURI(), ex.getMessageArgs()));
+    }
+
+    private void sendDiscordErrorNotification(Exception ex, String methodName) {
+        if (discordService == null) {
+            return;
+        }
+
+        try {
+            String stackTrace = getStackTrace(ex);
+            String className = ex.getStackTrace().length > 0 ?
+                    ex.getStackTrace()[0].getClassName() : "Unknown";
+            String actualMethodName = ex.getStackTrace().length > 0 ?
+                    ex.getStackTrace()[0].getMethodName() : methodName;
+
+            discordService.sendErrorNotification(
+                    ex.getMessage() + "\n\n" + stackTrace,
+                    className,
+                    actualMethodName
+            );
+
+        } catch (Exception discordEx) {
+            log.error("Discord 알림 전송 중 오류 발생", discordEx);
+        }
+    }
+
+    private String getStackTrace(Exception ex) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+
+        String fullStackTrace = sw.toString();
+        if (fullStackTrace.length() > 1500) {
+            return fullStackTrace.substring(0, 1500) + "\n... (truncated)";
+        }
+        return fullStackTrace;
     }
 }
