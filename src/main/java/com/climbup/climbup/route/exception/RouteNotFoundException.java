@@ -7,4 +7,8 @@ public class RouteNotFoundException extends BusinessException {
     public RouteNotFoundException() {
         super(ErrorCode.ROUTE_NOT_FOUND);
     }
+
+    public RouteNotFoundException(Long missionId) {
+        super(ErrorCode.ROUTE_NOT_FOUND, "루트미션 ID: " + missionId);
+    }
 }
