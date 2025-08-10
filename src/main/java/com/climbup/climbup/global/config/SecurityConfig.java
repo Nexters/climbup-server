@@ -40,8 +40,7 @@ public class SecurityConfig {
                                 "/login/oauth2/code/*", "/error", "/css/**", "/js/**",
                                 "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/levels/**", "/api/gyms/**", "/api/brands/**",
-                                "/api/gym-levels/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/users/profile").authenticated()
+                                "/api/gym-levels/**", "/api/route-missions/**").permitAll()
                         .requestMatchers("/api/test/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",

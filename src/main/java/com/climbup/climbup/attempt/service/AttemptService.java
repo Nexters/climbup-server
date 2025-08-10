@@ -8,6 +8,7 @@ import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadChunkRe
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionFinalizeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionInitializeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -20,5 +21,5 @@ public interface AttemptService {
 
     RouteMissionUploadChunkResponse uploadChunk(UUID uploadId, RouteMissionUploadChunkRequest request);
 
-    RouteMissionUploadSessionFinalizeResponse finalizeUploadSession(UUID uploadId);
+    RouteMissionUploadSessionFinalizeResponse finalizeUploadSession(UUID uploadId, MultipartFile thumbnailFile);
 }

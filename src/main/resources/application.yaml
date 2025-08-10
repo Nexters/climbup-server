@@ -19,7 +19,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
 
   flyway:
@@ -85,3 +85,12 @@ logging:
 auth:
   nickname:
     max-retries: 50
+
+ncp:
+  storage:
+    access-key: ${NCP_ACCESS_KEY}
+    secret-key: ${NCP_SECRET_KEY}
+    region: kr-standard
+    endpoint: https://kr.object.ncloudstorage.com
+    bucket-name: holdy
+    base-url: https://kr.object.ncloudstorage.com/holdy
