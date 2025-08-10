@@ -1,6 +1,5 @@
 package com.climbup.climbup.route.service;
 
-import com.climbup.climbup.attempt.upload.service.ImageService;
 import com.climbup.climbup.attempt.upload.service.UploadService;
 import com.climbup.climbup.gym.entity.ClimbingGym;
 import com.climbup.climbup.gym.exception.GymNotFoundException;
@@ -23,11 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,7 +34,6 @@ public class RouteMissionServiceImpl implements RouteMissionService {
     private final ClimbingGymRepository climbingGymRepository;
     private final SectorRepository sectorRepository;
     private final UploadService uploadService;
-    private final ImageService imageService;
 
     @Override
     @Transactional
@@ -53,13 +46,12 @@ public class RouteMissionServiceImpl implements RouteMissionService {
         try {
             ClimbingGym gym = climbingGymRepository.findById(request.getGymId())
                     .orElseThrow(() -> new GymNotFoundException(request.getGymId()));
-
             Sector sector = sectorRepository.findById(request.getSectorId())
                     .orElseThrow(() -> new SectorNotFoundException(request.getSectorId()));
 
-            String imageUrl = uploadRouteImage(routeImage);
-            String videoUrl = uploadGuideVideo(guideVideo);
-            String thumbnailUrl = uploadVideoThumbnail(videoThumbnail);
+            String imageUrl = uploadService.uploadMultipartFile(routeImage, "routes", "images");
+            String videoUrl = uploadService.uploadMultipartFile(guideVideo, "guides", "videos");
+            String thumbnailUrl = uploadService.uploadMultipartFile(videoThumbnail, "guides", "images");
 
             RouteMission mission = RouteMission.builder()
                     .gym(gym)
@@ -73,8 +65,8 @@ public class RouteMissionServiceImpl implements RouteMissionService {
                     .build();
 
             mission = routeMissionRepository.save(mission);
-
             log.info("Route mission created successfully: {}", mission.getId());
+
             return RouteMissionResponse.from(mission);
 
         } catch (Exception e) {
@@ -134,19 +126,18 @@ public class RouteMissionServiceImpl implements RouteMissionService {
                 mission.setScore(request.getScore());
             }
 
-            // 파일 업로드 (제공된 경우에만)
             if (routeImage != null && !routeImage.isEmpty()) {
-                String imageUrl = uploadRouteImage(routeImage);
+                String imageUrl = uploadService.uploadMultipartFile(routeImage, "routes", "images");
                 mission.setImageUrl(imageUrl);
             }
 
             if (guideVideo != null && !guideVideo.isEmpty()) {
-                String videoUrl = uploadGuideVideo(guideVideo);
+                String videoUrl = uploadService.uploadMultipartFile(guideVideo, "guides", "videos");
                 mission.setVideoUrl(videoUrl);
             }
 
             if (videoThumbnail != null && !videoThumbnail.isEmpty()) {
-                String thumbnailUrl = uploadVideoThumbnail(videoThumbnail);
+                String thumbnailUrl = uploadService.uploadMultipartFile(videoThumbnail, "guides", "images");
                 mission.setThumbnailUrl(thumbnailUrl);
             }
 
@@ -171,40 +162,5 @@ public class RouteMissionServiceImpl implements RouteMissionService {
         routeMissionRepository.save(mission);
 
         log.info("Route mission soft deleted: {}", missionId);
-    }
-
-    private String uploadRouteImage(MultipartFile routeImage) {
-        String tempImagePath = imageService.saveTemporaryImageFile(routeImage);
-        return uploadService.uploadImage(tempImagePath, "routes");
-    }
-
-    private String uploadGuideVideo(MultipartFile guideVideo) {
-        String tempVideoPath = saveTemporaryFile(guideVideo);
-        return uploadService.uploadVideo(tempVideoPath, "guides");
-    }
-
-    private String uploadVideoThumbnail(MultipartFile videoThumbnail) {
-        String tempThumbnailPath = imageService.saveTemporaryImageFile(videoThumbnail);
-        return uploadService.uploadImage(tempThumbnailPath, "guides");
-    }
-
-    private String saveTemporaryFile(MultipartFile file) {
-        try {
-            Path tempDir = Paths.get("temp");
-            Files.createDirectories(tempDir);
-
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path tempFilePath = tempDir.resolve(fileName);
-
-            try (FileOutputStream fos = new FileOutputStream(tempFilePath.toFile())) {
-                fos.write(file.getBytes());
-            }
-
-            return tempFilePath.toString();
-
-        } catch (IOException e) {
-            log.error("Failed to save temporary file: {}", file.getOriginalFilename(), e);
-            throw new RuntimeException("임시 파일 저장에 실패했습니다.", e);
-        }
     }
 }

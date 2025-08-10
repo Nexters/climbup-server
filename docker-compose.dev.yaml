@@ -37,6 +37,8 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - OAUTH_AUTHORIZED_REDIRECT_URIS=${OAUTH_AUTHORIZED_REDIRECT_URIS:-http://localhost:5173/oauth2/redirect,https://holdy.kr/oauth2/redirect}
       - OAUTH_DEFAULT_REDIRECT_URI=${OAUTH_DEFAULT_REDIRECT_URI:-http://localhost:5173/oauth2/redirect}
+      - NCP_ACCESS_KEY=${NCP_ACCESS_KEY:-ncp_iam_BPAMKR621TrFvcw4G8ek}
+      - NCP_SECRET_KEY=${NCP_SECRET_KEY:-ncp_iam_BPKMKRW1ET86Hvx1z74EaVQRqjjfQSCcj4}
       - NCP_ACCESS_KEY=${NCP_ACCESS_KEY}
       - NCP_SECRET_KEY=${NCP_SECRET_KEY}
       - DISCORD_ENABLED=${DISCORD_ENABLED:-true}
