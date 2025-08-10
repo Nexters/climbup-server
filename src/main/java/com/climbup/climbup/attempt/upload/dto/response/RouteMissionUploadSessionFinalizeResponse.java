@@ -12,10 +12,10 @@ public class RouteMissionUploadSessionFinalizeResponse {
     @Schema(description = "업로드된 파일명", example = "video_123456789.mp4")
     private String fileName;
 
-    @Schema(description = "업로드된 영상 URL", example = "https://storage.com/attempts/videos/...")
+    @Schema(description = "업로드된 영상 URL", example = "https://storage.com/videos/attempts/...")
     private String videoUrl;
 
-    @Schema(description = "업로드된 썸네일 URL", example = "https://storage.com/attempts/thumbnails/...")
+    @Schema(description = "업로드된 썸네일 URL", example = "https://storage.com/images/attempts/...")
     private String thumbnailUrl;
 
     @Schema(description = "썸네일 업로드 여부", example = "true")

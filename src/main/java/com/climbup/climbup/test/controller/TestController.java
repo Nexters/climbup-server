@@ -1,6 +1,5 @@
 package com.climbup.climbup.test.controller;
 
-import com.climbup.climbup.attempt.upload.service.ImageService;
 import com.climbup.climbup.attempt.upload.service.UploadService;
 import com.climbup.climbup.brand.entity.Brand;
 import com.climbup.climbup.brand.repository.BrandRepository;
@@ -24,6 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +45,6 @@ public class TestController {
     private final GymLevelRepository gymLevelRepository;
     private final RouteMissionRepository routeMissionRepository;
     private final SectorRepository sectorRepository;
-    private final ImageService imageService;
     private final UploadService uploadService;
 
     @Operation(summary = "랜덤 숫자 생성", description = "0-99 사이의 랜덤한 정수를 반환합니다")
@@ -338,7 +340,6 @@ public class TestController {
         long sectorCount = sectorRepository.count();
         long routeMissionCount = routeMissionRepository.count();
 
-        // 외래키 제약조건 때문에 순서가 중요함
         routeMissionRepository.deleteAll();
         gymLevelRepository.deleteAll();
         climbingGymRepository.deleteAll();
@@ -381,8 +382,7 @@ public class TestController {
             @RequestParam("image") MultipartFile imageFile,
             @RequestParam(value = "category", defaultValue = "test") String category
     ) {
-        String tempPath = imageService.saveTemporaryImageFile(imageFile);
-        String imageUrl = uploadService.uploadImage(tempPath, category);
+        String imageUrl = uploadService.uploadMultipartFile(imageFile, category, "images");
 
         Map<String, String> result = new HashMap<>();
         result.put("originalFileName", imageFile.getOriginalFilename());
@@ -411,13 +411,13 @@ public class TestController {
     }
 
     private String saveTemporaryVideoFile(MultipartFile file) throws Exception {
-        java.nio.file.Path tempDir = java.nio.file.Paths.get("temp");
-        java.nio.file.Files.createDirectories(tempDir);
+        Path tempDir = Paths.get("temp");
+        Files.createDirectories(tempDir);
 
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        java.nio.file.Path tempFilePath = tempDir.resolve(fileName);
+        Path tempFilePath = tempDir.resolve(fileName);
 
-        try (java.io.FileOutputStream fos = new java.io.FileOutputStream(tempFilePath.toFile())) {
+        try (FileOutputStream fos = new FileOutputStream(tempFilePath.toFile())) {
             fos.write(file.getBytes());
         }
 

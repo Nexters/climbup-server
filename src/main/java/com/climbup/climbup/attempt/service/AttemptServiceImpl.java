@@ -18,7 +18,6 @@ import com.climbup.climbup.attempt.upload.enums.UploadStatus;
 import com.climbup.climbup.attempt.upload.exception.VideoUploadFailedException;
 import com.climbup.climbup.attempt.upload.repository.UploadSessionRepository;
 import com.climbup.climbup.attempt.upload.repository.ChunkRepository;
-import com.climbup.climbup.attempt.upload.service.ImageService;
 import com.climbup.climbup.attempt.upload.service.UploadService;
 import com.climbup.climbup.common.exception.CommonBusinessException;
 import com.climbup.climbup.common.exception.ErrorCode;
@@ -61,7 +60,6 @@ public class AttemptServiceImpl implements AttemptService {
     private final UploadSessionRepository uploadSessionRepository;
     private final ChunkRepository chunkRepository;
     private final UploadService uploadService;
-    private final ImageService imageService;
 
 
     private Path getUploadSessionDirectory(UUID uploadId) {
@@ -280,16 +278,15 @@ public class AttemptServiceImpl implements AttemptService {
 
         try {
             String videoUrl = uploadService.uploadVideo(finalVideoPath, "attempts");
-            log.info("Video uploaded to NCP successfully. Video URL: {}", videoUrl);
+            log.info("Video uploaded successfully: {}", videoUrl);
 
             String thumbnailUrl = null;
             boolean thumbnailUploaded = false;
 
             if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-                String tempImagePath = imageService.saveTemporaryImageFile(thumbnailFile);
-                thumbnailUrl = uploadService.uploadImage(tempImagePath, "attempts");
+                thumbnailUrl = uploadService.uploadMultipartFile(thumbnailFile, "attempts", "images");
                 thumbnailUploaded = true;
-                log.info("Thumbnail uploaded to NCP successfully. Thumbnail URL: {}", thumbnailUrl);
+                log.info("Thumbnail uploaded successfully: {}", thumbnailUrl);
             }
 
             UserMissionAttempt attempt = attemptRepository.findByUploadId(uploadId)
@@ -304,10 +301,8 @@ public class AttemptServiceImpl implements AttemptService {
             uploadSession.setStatus(UploadStatus.FINISHED);
             uploadSessionRepository.save(uploadSession);
 
-            log.info("Upload session finalized successfully for attempt: {}. Video URL: {}, Thumbnail URL: {}",
+            log.info("Upload session finalized: attempt={}, video={}, thumbnail={}",
                     attempt.getId(), videoUrl, thumbnailUrl);
-
-            cleanupLocalFiles(finalVideoPath, uploadSession);
 
             return RouteMissionUploadSessionFinalizeResponse.builder()
                     .fileName(uploadSession.getFileName())
@@ -317,8 +312,15 @@ public class AttemptServiceImpl implements AttemptService {
                     .build();
 
         } catch (Exception e) {
-            log.error("Failed to finalize upload session: {}", uploadId, e);
+            log.error("Upload session failed: {}", uploadId, e);
             throw new VideoUploadFailedException(e);
+
+        } finally {
+            try {
+                cleanupLocalFiles(finalVideoPath, uploadSession);
+            } catch (Exception cleanupException) {
+                log.warn("Cleanup failed for session {}: {}", uploadId, cleanupException.getMessage());
+            }
         }
     }
 
