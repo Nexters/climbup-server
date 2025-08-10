@@ -31,11 +31,20 @@ public enum ErrorCode {
     // 추천 관련
     RECOMMENDATION_NOT_FOUND(ErrorCategory.RECOMMENDATION, "001", "추천을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
-    // 업로드 관련
+    // 루트미션 관련
+    ROUTE_MISSION_CREATE_FAILED(ErrorCategory.ROUTE_MISSON, "001", "루트미션 생성에 실패했습니다.", HttpStatus.BAD_REQUEST),
+    ROUTE_MISSION_UPDATE_FAILED(ErrorCategory.ROUTE_MISSON, "002", "루트미션 수정에 실패했습니다.", HttpStatus.BAD_REQUEST),
+
+    // 업로드 세션 관련
     UPLOAD_SESSION_NOT_FOUND(ErrorCategory.UPLOAD_SESSION, "001", "업로드 세션을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     UPLOAD_SESSION_ALREADY_EXISTS(ErrorCategory.UPLOAD_SESSION, "002", "업로드 세션이 이미 존재합니다.", HttpStatus.CONFLICT),
     UPLOAD_SESSION_CHUNK_ALREADY_EXISTS(ErrorCategory.UPLOAD_SESSION, "003", "청크가 이미 존재합니다.", HttpStatus.CONFLICT),
     UPLOAD_SESSION_CHUNK_INCOMPLETE(ErrorCategory.UPLOAD_SESSION, "004", "업로드가 완료되지 않았습니다: {0}", HttpStatus.BAD_REQUEST),
+
+    // 업로드 관련
+    VIDEO_UPLOAD_FAILED(ErrorCategory.UPLOAD, "001", "영상 업로드에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    THUMBNAIL_UPLOAD_FAILED(ErrorCategory.UPLOAD, "002", "썸네일 업로드에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    IMAGE_SAVE_FAILED(ErrorCategory.UPLOAD, "003", "이미지 임시 저장에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // 검증 관련
     VALIDATION_ERROR(ErrorCategory.VALIDATION, "001", "입력값이 올바르지 않습니다: {0}", HttpStatus.BAD_REQUEST),
