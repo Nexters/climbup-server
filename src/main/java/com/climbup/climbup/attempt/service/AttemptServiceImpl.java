@@ -15,8 +15,10 @@ import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusR
 import com.climbup.climbup.attempt.upload.entity.UploadSession;
 import com.climbup.climbup.attempt.upload.entity.Chunk;
 import com.climbup.climbup.attempt.upload.enums.UploadStatus;
+import com.climbup.climbup.attempt.upload.exception.VideoUploadFailedException;
 import com.climbup.climbup.attempt.upload.repository.UploadSessionRepository;
 import com.climbup.climbup.attempt.upload.repository.ChunkRepository;
+import com.climbup.climbup.attempt.upload.service.UploadService;
 import com.climbup.climbup.common.exception.CommonBusinessException;
 import com.climbup.climbup.common.exception.ErrorCode;
 import com.climbup.climbup.common.exception.ValidationException;
@@ -35,12 +37,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.io.*;
 import java.nio.file.*;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +59,7 @@ public class AttemptServiceImpl implements AttemptService {
     private final SRHistoryRepository srHistoryRepository;
     private final UploadSessionRepository uploadSessionRepository;
     private final ChunkRepository chunkRepository;
+    private final UploadService uploadService;
 
 
     private Path getUploadSessionDirectory(UUID uploadId) {
@@ -258,33 +263,91 @@ public class AttemptServiceImpl implements AttemptService {
 
     @Override
     @Transactional
-    public RouteMissionUploadSessionFinalizeResponse finalizeUploadSession(UUID uploadId) {
-        UploadSession uploadSession = uploadSessionRepository.findById(uploadId).orElseThrow(UploadSessionNotFoundException::new);
+    public RouteMissionUploadSessionFinalizeResponse finalizeUploadSession(UUID uploadId, MultipartFile thumbnailFile) {
+        UploadSession uploadSession = uploadSessionRepository.findById(uploadId)
+                .orElseThrow(UploadSessionNotFoundException::new);
 
         long receivedChunks = uploadSession.getReceivedChunkCount();
         int expectedChunks = uploadSession.getChunkLength();
-        
+
         if (receivedChunks != expectedChunks) {
             throw new UploadSessionChunkIncompleteException();
         }
 
         String finalVideoPath = combineChunks(uploadSession);
 
-        uploadSession.setStatus(UploadStatus.FINISHED);
-        uploadSessionRepository.save(uploadSession);
+        try {
+            String videoUrl = uploadService.uploadVideo(finalVideoPath, "attempts");
+            log.info("Video uploaded successfully: {}", videoUrl);
 
-        log.info("video saved in {}", finalVideoPath);
+            String thumbnailUrl = null;
+            boolean thumbnailUploaded = false;
 
-        // upload the video to NCP storage
+            if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+                thumbnailUrl = uploadService.uploadMultipartFile(thumbnailFile, "attempts", "images");
+                thumbnailUploaded = true;
+                log.info("Thumbnail uploaded successfully: {}", thumbnailUrl);
+            }
 
-        UserMissionAttempt attempt = attemptRepository.findByUploadId(uploadId)
-                .orElseThrow(AttemptNotFoundException::new);
+            UserMissionAttempt attempt = attemptRepository.findByUploadId(uploadId)
+                    .orElseThrow(AttemptNotFoundException::new);
 
-        attemptRepository.save(attempt);
+            attempt.setVideoUrl(videoUrl);
+            if (thumbnailUrl != null) {
+                attempt.setThumbnailUrl(thumbnailUrl);
+            }
+            attemptRepository.save(attempt);
 
-        return RouteMissionUploadSessionFinalizeResponse.builder()
-                .fileName(uploadSession.getFileName())
-                .build();
+            uploadSession.setStatus(UploadStatus.FINISHED);
+            uploadSessionRepository.save(uploadSession);
+
+            log.info("Upload session finalized: attempt={}, video={}, thumbnail={}",
+                    attempt.getId(), videoUrl, thumbnailUrl);
+
+            return RouteMissionUploadSessionFinalizeResponse.builder()
+                    .fileName(uploadSession.getFileName())
+                    .videoUrl(videoUrl)
+                    .thumbnailUrl(thumbnailUrl)
+                    .thumbnailUploaded(thumbnailUploaded)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("Upload session failed: {}", uploadId, e);
+            throw new VideoUploadFailedException(e);
+
+        } finally {
+            try {
+                cleanupLocalFiles(finalVideoPath, uploadSession);
+            } catch (Exception cleanupException) {
+                log.warn("Cleanup failed for session {}: {}", uploadId, cleanupException.getMessage());
+            }
+        }
     }
 
+    private void cleanupLocalFiles(String finalVideoPath, UploadSession uploadSession) {
+        try {
+            Files.deleteIfExists(Paths.get(finalVideoPath));
+
+            Path uploadDir = Paths.get("uploads", uploadSession.getId().toString());
+
+            if (Files.exists(uploadDir)) {
+                try (Stream<Path> pathStream = Files.walk(uploadDir)) {
+                    pathStream
+                            .sorted(Comparator.reverseOrder())
+                            .map(Path::toFile)
+                            .forEach(file -> {
+                                try {
+                                    Files.delete(file.toPath());
+                                } catch (IOException e) {
+                                    log.warn("Failed to delete file: {}", file.getPath(), e);
+                                }
+                            });
+                }
+            }
+
+            log.info("Local temporary files cleaned up for upload session: {}", uploadSession.getId());
+        } catch (Exception e) {
+            log.warn("Failed to cleanup local files for upload session: {}", uploadSession.getId(), e);
+        }
+    }
 }

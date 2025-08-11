@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +43,6 @@ public class AttemptController {
 
     private final AttemptService attemptService;
     private final RecommendationService recommendationService;
-    private final UploadSessionRepository uploadSessionRepository;
 
 
     @Operation(summary = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트 불러오기", description = "도전한 루트미션과 비슷한 난이도의 루트미션 리스트를 받아보기", security = @SecurityRequirement(name = "bearerAuth"))
@@ -157,14 +157,15 @@ public class AttemptController {
     }
 
 
-    @Operation(summary = "해당 도전의 영상 업로드 세션 마무리", description = "해당 도전의 영상 업로드 세션 마무리", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "해당 도전의 영상 업로드 세션 마무리", description = "해당 도전의 영상 업로드 세션을 마무리하고 썸네일을 함께 업로드합니다.", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponse(responseCode = "201", description = "해당 도전의 영상 업로드 세션 마무리")
-    @PostMapping("/{attemptId}/upload/{uploadId}/finalize")
+    @PostMapping(value = "/{attemptId}/upload/{uploadId}/finalize", consumes = "multipart/form-data")
     public ResponseEntity<ApiResult<RouteMissionUploadSessionFinalizeResponse>> finalizeRouteMissionUploadSession(
             @PathVariable(name = "attemptId") Long attemptId,
-            @PathVariable(name = "uploadId") UUID uploadId
+            @PathVariable(name = "uploadId") UUID uploadId,
+            @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnailFile
     ) {
-        RouteMissionUploadSessionFinalizeResponse response = attemptService.finalizeUploadSession(uploadId);
+        RouteMissionUploadSessionFinalizeResponse response = attemptService.finalizeUploadSession(uploadId, thumbnailFile);
         return ResponseEntity.ok(ApiResult.success(response));
     }
 }

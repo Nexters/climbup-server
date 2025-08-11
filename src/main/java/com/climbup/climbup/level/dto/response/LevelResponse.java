@@ -12,10 +12,10 @@ public class LevelResponse {
     @Schema(description = "레벨 ID", example = "1")
     private Long id;
 
-    @Schema(description = "레벨 이름", example = "V0")
+    @Schema(description = "레벨 이름", example = "입문자 단계")
     private String name;
 
-    @Schema(description = "레벨 설명", example = "입문자용 가장 쉬운 난이도")
+    @Schema(description = "레벨 설명", example = "클라이밍이 처음이라면 가볍게 시작해보세요!")
     private String description;
 
     @Schema(description = "정렬 순서", example = "1")

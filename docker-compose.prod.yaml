@@ -37,6 +37,8 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - OAUTH_AUTHORIZED_REDIRECT_URIS=${OAUTH_AUTHORIZED_REDIRECT_URIS:-https://holdy.kr/oauth2/redirect}
       - OAUTH_DEFAULT_REDIRECT_URI=${OAUTH_DEFAULT_REDIRECT_URI:-https://holdy.kr/oauth2/redirect}
+      - NCP_ACCESS_KEY=${NCP_ACCESS_KEY}
+      - NCP_SECRET_KEY=${NCP_SECRET_KEY}
     ports:
       - "9090:9090"
     depends_on:

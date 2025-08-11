@@ -31,7 +31,7 @@ public class RouteMissionRecommendationResponse {
     @Schema(description = "섹터 데이터")
     private SectorResponse sector;
 
-    @Schema(description = "루트미션 난이도", example = "V3")
+    @Schema(description = "루트미션 난이도", example = "BLUE")
     private String difficulty;
 
     @Schema(description = "루트 미션 상승 점수", example = "100")

@@ -1,5 +1,6 @@
 package com.climbup.climbup.test.controller;
 
+import com.climbup.climbup.attempt.upload.service.UploadService;
 import com.climbup.climbup.brand.entity.Brand;
 import com.climbup.climbup.brand.repository.BrandRepository;
 import com.climbup.climbup.common.dto.ApiResult;
@@ -19,11 +20,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +45,7 @@ public class TestController {
     private final GymLevelRepository gymLevelRepository;
     private final RouteMissionRepository routeMissionRepository;
     private final SectorRepository sectorRepository;
+    private final UploadService uploadService;
 
     @Operation(summary = "랜덤 숫자 생성", description = "0-99 사이의 랜덤한 정수를 반환합니다")
     @ApiResponse(responseCode = "200", description = "성공적으로 랜덤 숫자를 생성함")
@@ -71,12 +75,12 @@ public class TestController {
                     Brand.builder()
                             .name("더클라임")
                             .description("국내 최대 클라이밍 체인")
-                            .logoUrl("https://example.com/the-climb-logo.png")
+                            .logoUrl("https://kr.object.ncloudstorage.com/holdy/images/brands/1754827291538_0d3a6d65.jpg")
                             .build(),
                     Brand.builder()
                             .name("클라이밍파크")
                             .description("프리미엄 클라이밍 센터")
-                            .logoUrl("https://example.com/climbing-park-logo.png")
+                            .logoUrl("https://kr.object.ncloudstorage.com/holdy/images/brands/1754827291538_0d3a6d65.jpg")
                             .build()
             ));
             brandsCreated = brands.size();
@@ -96,7 +100,7 @@ public class TestController {
                             .sortOrder(1)
                             .build(),
                     Level.builder()
-                            .name("V2")
+                            .name("V2 (미정)")
                             .sortOrder(2)
                             .build(),
                     Level.builder()
@@ -110,7 +114,7 @@ public class TestController {
                             .sortOrder(4)
                             .build(),
                     Level.builder()
-                            .name("V5")
+                            .name("V5 (미정)")
                             .sortOrder(5)
                             .build(),
                     Level.builder()
@@ -119,20 +123,20 @@ public class TestController {
                             .sortOrder(6)
                             .build(),
                     Level.builder()
-                            .name("V7")
+                            .name("V7 (미정)")
                             .sortOrder(7)
                             .build(),
                     Level.builder()
-                            .name("V8")
+                            .name("V8 (미정)")
                             .sortOrder(8)
                             .build(),
                     Level.builder()
-                            .name("V9")
+                            .name("V9 (미정)")
                             .description("전문가 난이도")
                             .sortOrder(9)
                             .build(),
                     Level.builder()
-                            .name("V10")
+                            .name("V10 (미정)")
                             .description("최고 난이도")
                             .sortOrder(10)
                             .build()
@@ -196,7 +200,7 @@ public class TestController {
                             .srMin(600)
                             .srMax(649)
                             .sortOrder(1)
-                            .imageUrl("https://example.com/orange-level.png")
+                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1754827060631_fed8b32d.jpg")
                             .build(),
                     GymLevel.builder()
                             .brand(theClimb)
@@ -205,7 +209,7 @@ public class TestController {
                             .srMin(650)
                             .srMax(999)
                             .sortOrder(2)
-                            .imageUrl("https://example.com/green-level.png")
+                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1754827112115_23d7cdaa.jpg")
                             .build(),
                     GymLevel.builder()
                             .brand(theClimb)
@@ -214,7 +218,7 @@ public class TestController {
                             .srMin(1000)
                             .srMax(1999)
                             .sortOrder(3)
-                            .imageUrl("https://example.com/blue-level.png")
+                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1754827128436_d46cb155.jpg")
                             .build(),
                     GymLevel.builder()
                             .brand(theClimb)
@@ -223,7 +227,7 @@ public class TestController {
                             .srMin(2000)
                             .srMax(2999)
                             .sortOrder(4)
-                            .imageUrl("https://example.com/red-level.png")
+                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1754827153698_29dfb9bf.jpg")
                             .build(),
                     GymLevel.builder()
                             .brand(theClimb)
@@ -232,7 +236,7 @@ public class TestController {
                             .srMin(3000)
                             .srMax(null)
                             .sortOrder(5)
-                            .imageUrl("https://example.com/purple-level.png")
+                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1754827166592_1786a40d.jpg")
                             .build()
             );
 
@@ -269,7 +273,7 @@ public class TestController {
             List<Sector> sectors = sectorRepository.findAll();
             
             if (!gyms.isEmpty() && !sectors.isEmpty()) {
-                String[] difficulties = {"V0", "V1", "V2", "V3", "V4", "V5", "V6"};
+                String[] difficulties = {"ORANGE", "GREEN", "BLUE", "RED", "PURPLE"};
                 
                 List<RouteMission> routeMissions = new ArrayList<>();
                 for (int i = 1; i <= 30; i++) {
@@ -336,7 +340,6 @@ public class TestController {
         long sectorCount = sectorRepository.count();
         long routeMissionCount = routeMissionRepository.count();
 
-        // 외래키 제약조건 때문에 순서가 중요함
         routeMissionRepository.deleteAll();
         gymLevelRepository.deleteAll();
         climbingGymRepository.deleteAll();
@@ -372,5 +375,52 @@ public class TestController {
 
         response.put("timestamp", LocalDateTime.now());
         return ResponseEntity.ok(ApiResult.success(response));
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<ApiResult<Map<String, String>>> testImageUpload(
+            @RequestParam("image") MultipartFile imageFile,
+            @RequestParam(value = "category", defaultValue = "test") String category
+    ) {
+        String imageUrl = uploadService.uploadMultipartFile(imageFile, category, "images");
+
+        Map<String, String> result = new HashMap<>();
+        result.put("originalFileName", imageFile.getOriginalFilename());
+        result.put("uploadedUrl", imageUrl);
+        result.put("category", category);
+        result.put("fileSize", String.valueOf(imageFile.getSize()));
+
+        return ResponseEntity.ok(ApiResult.success("이미지 업로드 테스트 성공", result));
+    }
+
+    @PostMapping("/video")
+    public ResponseEntity<ApiResult<Map<String, String>>> testVideoUpload(
+            @RequestParam("video") MultipartFile videoFile,
+            @RequestParam(value = "category", defaultValue = "test") String category
+    ) throws Exception {
+        String tempPath = saveTemporaryVideoFile(videoFile);
+        String videoUrl = uploadService.uploadVideo(tempPath, category);
+
+        Map<String, String> result = new HashMap<>();
+        result.put("originalFileName", videoFile.getOriginalFilename());
+        result.put("uploadedUrl", videoUrl);
+        result.put("category", category);
+        result.put("fileSize", String.valueOf(videoFile.getSize()));
+
+        return ResponseEntity.ok(ApiResult.success("영상 업로드 테스트 성공", result));
+    }
+
+    private String saveTemporaryVideoFile(MultipartFile file) throws Exception {
+        Path tempDir = Paths.get("temp");
+        Files.createDirectories(tempDir);
+
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path tempFilePath = tempDir.resolve(fileName);
+
+        try (FileOutputStream fos = new FileOutputStream(tempFilePath.toFile())) {
+            fos.write(file.getBytes());
+        }
+
+        return tempFilePath.toString();
     }
 }
