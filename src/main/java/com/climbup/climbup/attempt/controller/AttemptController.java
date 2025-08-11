@@ -2,8 +2,10 @@ package com.climbup.climbup.attempt.controller;
 
 
 import com.climbup.climbup.attempt.dto.request.CreateAttemptRequest;
+import com.climbup.climbup.attempt.dto.response.AttemptStatusResponse;
 import com.climbup.climbup.attempt.dto.response.CreateAttemptResponse;
-import com.climbup.climbup.attempt.repository.UserMissionAttemptRepository;
+import com.climbup.climbup.attempt.dto.response.SessionAttemptResponse;
+import com.climbup.climbup.attempt.dto.response.UserMissionAttemptResponse;
 import com.climbup.climbup.attempt.service.AttemptService;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadChunkRequest;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadSessionInitializeRequest;
@@ -11,8 +13,6 @@ import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadChunkRe
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionFinalizeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionInitializeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusResponse;
-import com.climbup.climbup.attempt.upload.entity.UploadSession;
-import com.climbup.climbup.attempt.upload.repository.UploadSessionRepository;
 import com.climbup.climbup.auth.util.SecurityUtil;
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.recommendation.dto.response.RouteMissionRecommendationResponse;
@@ -20,7 +20,6 @@ import com.climbup.climbup.recommendation.service.RecommendationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -166,6 +165,43 @@ public class AttemptController {
             @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnailFile
     ) {
         RouteMissionUploadSessionFinalizeResponse response = attemptService.finalizeUploadSession(uploadId, thumbnailFile);
+        return ResponseEntity.ok(ApiResult.success(response));
+    }
+
+    @Operation(summary = "세션별 도전기록 조회",
+            description = "특정 세션의 도전기록을 성공/실패로 구분하여 조회합니다.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "세션 도전기록 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "404", description = "세션을 찾을 수 없음")
+    })
+    @GetMapping("/sessions/{sessionId}")
+    public ResponseEntity<ApiResult<SessionAttemptResponse>> getSessionAttempts(
+            @PathVariable(name = "sessionId") Long sessionId
+    ) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        SessionAttemptResponse response = attemptService.getSessionAttempts(userId, sessionId);
+
+        return ResponseEntity.ok(ApiResult.success(response));
+    }
+
+    @Operation(summary = "특정 도전 기록의 상태 조회", description = "도전 기록의 현재 상태를 확인합니다.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "도전 기록 상태 조회 성공")
+    @GetMapping("/{attemptId}/status")
+    public ResponseEntity<ApiResult<AttemptStatusResponse>> getAttemptStatus(
+            @PathVariable(name = "attemptId") Long attemptId
+    ) {
+        AttemptStatusResponse response = attemptService.getAttemptStatus(attemptId);
+        return ResponseEntity.ok(ApiResult.success(response));
+    }
+
+    @Operation(summary = "업로드 미완료 도전 기록 목록 조회", description = "사용자의 업로드가 완료되지 않은 도전 기록들을 조회합니다.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "미완료 도전 기록 목록 조회 성공")
+    @GetMapping("/incomplete")
+    public ResponseEntity<ApiResult<List<UserMissionAttemptResponse>>> getIncompleteAttempts() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        List<UserMissionAttemptResponse> response = attemptService.getIncompleteAttempts(userId);
         return ResponseEntity.ok(ApiResult.success(response));
     }
 }
