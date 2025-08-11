@@ -1,6 +1,6 @@
 package com.climbup.climbup.attempt.repository;
 
-import com.climbup.climbup.attempt.dto.response.SessionAttemptResponse;
+import com.climbup.climbup.attempt.dto.response.SessionAttemptDetail;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.attempt.upload.enums.UploadStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,7 +30,7 @@ public interface UserMissionAttemptRepository extends JpaRepository<UserMissionA
             @Param("inProgress") UploadStatus inProgress,
             @Param("failed") UploadStatus failed);
 
-    @Query("SELECT new com.climbup.climbup.attempt.dto.response.SessionAttemptResponse.SessionAttemptDetail(" +
+    @Query("SELECT new com.climbup.climbup.attempt.dto.response.SessionAttemptDetail(" +
             "uma.success, " +
             "m.difficulty, " +
             "gl.imageUrl, " +
@@ -50,7 +50,7 @@ public interface UserMissionAttemptRepository extends JpaRepository<UserMissionA
             "WHERE uma.user.id = :userId " +
             "AND uma.session.id = :sessionId " +
             "ORDER BY uma.createdAt ASC")
-    List<SessionAttemptResponse.SessionAttemptDetail> findSessionAttemptsWithGymLevel(
+    List<SessionAttemptDetail> findSessionAttemptsWithGymLevel(
             @Param("userId") Long userId,
             @Param("sessionId") Long sessionId);
 }
