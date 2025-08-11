@@ -39,7 +39,6 @@ public class SessionAttemptDetail {
     @Schema(description = "도전기록 비디오 URL", example = "https://example.com/attempt_video.mp4")
     private String attemptVideoUrl;
 
-    // DTO Projection용 생성자
     public SessionAttemptDetail(Boolean success, String difficulty, String difficultyImageUrl,
                                 LocalDateTime removedAt, String guideThumbnailUrl, String guideVideoUrl,
                                 String sectorName, Integer score, String attemptThumbnailUrl, String attemptVideoUrl) {
