@@ -1,5 +1,6 @@
 package com.climbup.climbup.attempt.entity;
 
+import com.climbup.climbup.attempt.enums.AttemptStatus;
 import com.climbup.climbup.attempt.upload.entity.UploadSession;
 import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.route.entity.RouteMission;
@@ -49,4 +50,16 @@ public class UserMissionAttempt extends BaseEntity {
 
     @Column(name = "video_url", columnDefinition = "TEXT")
     private String videoUrl;
+
+    public AttemptStatus getStatus() {
+        if (upload == null) {
+            return AttemptStatus.PENDING_UPLOAD;
+        }
+
+        return switch (upload.getStatus()) {
+            case NOT_STARTED, IN_PROGRESS -> AttemptStatus.UPLOADING;
+            case FINISHED -> AttemptStatus.COMPLETED;
+            case FAILED -> AttemptStatus.UPLOAD_FAILED;
+        };
+    }
 }
