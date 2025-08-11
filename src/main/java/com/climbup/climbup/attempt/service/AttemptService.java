@@ -11,6 +11,7 @@ import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadChunkRe
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionFinalizeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionInitializeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusResponse;
+import com.climbup.climbup.attempt.upload.enums.UploadStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public interface AttemptService {
     RouteMissionUploadStatusResponse getAttemptUploadStatus(Long attemptId);
 
     RouteMissionUploadSessionInitializeResponse initializeAttemptUploadSession(Long attemptId, RouteMissionUploadSessionInitializeRequest request);
+
+    void updateUploadSessionStatus(UUID uploadId, UploadStatus status);
 
     RouteMissionUploadChunkResponse uploadChunk(UUID uploadId, RouteMissionUploadChunkRequest request);
 
