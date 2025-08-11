@@ -1,5 +1,6 @@
 package com.climbup.climbup.attempt.dto.response;
 
+import com.climbup.climbup.attempt.enums.AttemptStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -18,8 +19,8 @@ public class CreateAttemptResponse {
     @Schema(description = "성공 여부", example = "true")
     private Boolean success;
 
-    @Schema(description = "영상 URL", example = "https://example.com/video.mp4")
-    private String videoUrl;
+    @Schema(description = "도전 상태", example = "PENDING_UPLOAD")
+    private AttemptStatus status;
 
     @Schema(description = "생성 시간", example = "2025-07-31T14:20:00")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

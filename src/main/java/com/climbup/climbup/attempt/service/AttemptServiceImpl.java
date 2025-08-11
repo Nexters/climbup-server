@@ -2,7 +2,10 @@ package com.climbup.climbup.attempt.service;
 
 import com.climbup.climbup.attempt.dto.LevelSRReward;
 import com.climbup.climbup.attempt.dto.request.CreateAttemptRequest;
+import com.climbup.climbup.attempt.dto.response.AttemptStatusResponse;
 import com.climbup.climbup.attempt.dto.response.CreateAttemptResponse;
+import com.climbup.climbup.attempt.dto.response.SessionAttemptResponse;
+import com.climbup.climbup.attempt.dto.response.UserMissionAttemptResponse;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.attempt.exception.*;
 import com.climbup.climbup.attempt.repository.UserMissionAttemptRepository;
@@ -61,7 +64,6 @@ public class AttemptServiceImpl implements AttemptService {
     private final ChunkRepository chunkRepository;
     private final UploadService uploadService;
 
-
     private Path getUploadSessionDirectory(UUID uploadId) {
         return Paths.get("uploads", uploadId.toString(), "chunks");
     }
@@ -78,8 +80,7 @@ public class AttemptServiceImpl implements AttemptService {
         return Paths.get("uploads", uploadId.toString(), "chunks", String.valueOf(chunkIndex));
     }
 
-    private String combineChunks(UploadSession uploadSession)
-    {
+    private String combineChunks(UploadSession uploadSession) {
         String fileName = uploadSession.getFileName() + "." + uploadSession.getFileType();
         Path finalFilePath = Paths.get("uploads", uploadSession.getId().toString(), fileName);
         ensureDirectoryExists(finalFilePath.getParent());
@@ -113,7 +114,34 @@ public class AttemptServiceImpl implements AttemptService {
         return finalFilePath.toString();
     }
 
+    private void cleanupLocalFiles(String finalVideoPath, UploadSession uploadSession) {
+        try {
+            Files.deleteIfExists(Paths.get(finalVideoPath));
 
+            Path uploadDir = Paths.get("uploads", uploadSession.getId().toString());
+
+            if (Files.exists(uploadDir)) {
+                try (Stream<Path> pathStream = Files.walk(uploadDir)) {
+                    pathStream
+                            .sorted(Comparator.reverseOrder())
+                            .map(Path::toFile)
+                            .forEach(file -> {
+                                try {
+                                    Files.delete(file.toPath());
+                                } catch (IOException e) {
+                                    log.warn("Failed to delete file: {}", file.getPath(), e);
+                                }
+                            });
+                }
+            }
+
+            log.info("Local temporary files cleaned up for upload session: {}", uploadSession.getId());
+        } catch (Exception e) {
+            log.warn("Failed to cleanup local files for upload session: {}", uploadSession.getId(), e);
+        }
+    }
+
+    @Override
     @Transactional
     public CreateAttemptResponse createAttempt(Long userId, CreateAttemptRequest request) {
         log.info("Creating attempt for user: {}, mission: {}, success: {}", userId, request.getMissionId(), request.getSuccess());
@@ -171,7 +199,7 @@ public class AttemptServiceImpl implements AttemptService {
         return CreateAttemptResponse.builder()
                 .missionAttemptId(attempt.getId())
                 .success(attempt.getSuccess())
-                .videoUrl(attempt.getVideoUrl())
+                .status(attempt.getStatus())
                 .createdAt(attempt.getCreatedAt())
                 .srGained(srGained)
                 .currentSr(currentSr)
@@ -201,13 +229,21 @@ public class AttemptServiceImpl implements AttemptService {
             throw new UploadSessionAlreadyExistsException();
         }
 
-        UploadSession uploadSession = UploadSession.builder().status(UploadStatus.NOT_STARTED).chunkLength(request.getChunkLength()).chunkSize(request.getChunkSize()).fileSize(request.getFileSize()).fileName(request.getFileName()).fileType(request.getFileType()).build();
+        UploadSession uploadSession = UploadSession.builder()
+                .status(UploadStatus.NOT_STARTED)
+                .chunkLength(request.getChunkLength())
+                .chunkSize(request.getChunkSize())
+                .fileSize(request.getFileSize())
+                .fileName(request.getFileName())
+                .fileType(request.getFileType())
+                .build();
 
         uploadSession = uploadSessionRepository.save(uploadSession);
 
         attempt.setUpload(uploadSession);
-
         attemptRepository.save(attempt);
+
+        log.info("Upload session initialized for attempt: {}", attemptId);
 
         return RouteMissionUploadSessionInitializeResponse.builder().uploadId(uploadSession.getId()).build();
     }
@@ -242,9 +278,13 @@ public class AttemptServiceImpl implements AttemptService {
 
             chunkRepository.save(chunk);
 
-
         } catch (IOException e) {
             log.error("Failed to store chunk {} for upload session {}", request.getIndex(), uploadId, e);
+
+            // 청크 저장 실패 시 업로드 상태를 FAILED로 변경
+            uploadSession.setStatus(UploadStatus.FAILED);
+            uploadSessionRepository.save(uploadSession);
+
             throw new UploadSessionChunkIncompleteException();
         }
 
@@ -252,7 +292,6 @@ public class AttemptServiceImpl implements AttemptService {
             uploadSession.setStatus(UploadStatus.IN_PROGRESS);
             uploadSessionRepository.save(uploadSession);
         }
-
 
         return RouteMissionUploadChunkResponse.builder()
                 .index(request.getIndex())
@@ -267,10 +306,15 @@ public class AttemptServiceImpl implements AttemptService {
         UploadSession uploadSession = uploadSessionRepository.findById(uploadId)
                 .orElseThrow(UploadSessionNotFoundException::new);
 
+        UserMissionAttempt attempt = attemptRepository.findByUploadId(uploadId)
+                .orElseThrow(AttemptNotFoundException::new);
+
         long receivedChunks = uploadSession.getReceivedChunkCount();
         int expectedChunks = uploadSession.getChunkLength();
 
         if (receivedChunks != expectedChunks) {
+            uploadSession.setStatus(UploadStatus.FAILED);
+            uploadSessionRepository.save(uploadSession);
             throw new UploadSessionChunkIncompleteException();
         }
 
@@ -289,9 +333,7 @@ public class AttemptServiceImpl implements AttemptService {
                 log.info("Thumbnail uploaded successfully: {}", thumbnailUrl);
             }
 
-            UserMissionAttempt attempt = attemptRepository.findByUploadId(uploadId)
-                    .orElseThrow(AttemptNotFoundException::new);
-
+            // 업로드 성공 시 URL 저장
             attempt.setVideoUrl(videoUrl);
             if (thumbnailUrl != null) {
                 attempt.setThumbnailUrl(thumbnailUrl);
@@ -313,6 +355,11 @@ public class AttemptServiceImpl implements AttemptService {
 
         } catch (Exception e) {
             log.error("Upload session failed: {}", uploadId, e);
+
+            // 업로드 실패 시 상태를 FAILED로 변경
+            uploadSession.setStatus(UploadStatus.FAILED);
+            uploadSessionRepository.save(uploadSession);
+
             throw new VideoUploadFailedException(e);
 
         } finally {
@@ -324,30 +371,48 @@ public class AttemptServiceImpl implements AttemptService {
         }
     }
 
-    private void cleanupLocalFiles(String finalVideoPath, UploadSession uploadSession) {
-        try {
-            Files.deleteIfExists(Paths.get(finalVideoPath));
+    @Override
+    @Transactional(readOnly = true)
+    public SessionAttemptResponse getSessionAttempts(Long userId, Long sessionId) {
+        List<SessionAttemptResponse.SessionAttemptDetail> allAttempts =
+                attemptRepository.findSessionAttemptsWithGymLevel(userId, sessionId);
 
-            Path uploadDir = Paths.get("uploads", uploadSession.getId().toString());
+        List<SessionAttemptResponse.SessionAttemptDetail> successfulAttempts = allAttempts.stream()
+                .filter(attempt -> attempt.getSuccess())
+                .toList();
 
-            if (Files.exists(uploadDir)) {
-                try (Stream<Path> pathStream = Files.walk(uploadDir)) {
-                    pathStream
-                            .sorted(Comparator.reverseOrder())
-                            .map(Path::toFile)
-                            .forEach(file -> {
-                                try {
-                                    Files.delete(file.toPath());
-                                } catch (IOException e) {
-                                    log.warn("Failed to delete file: {}", file.getPath(), e);
-                                }
-                            });
-                }
-            }
+        List<SessionAttemptResponse.SessionAttemptDetail> failedAttempts = allAttempts.stream()
+                .filter(attempt -> !attempt.getSuccess())
+                .toList();
 
-            log.info("Local temporary files cleaned up for upload session: {}", uploadSession.getId());
-        } catch (Exception e) {
-            log.warn("Failed to cleanup local files for upload session: {}", uploadSession.getId(), e);
-        }
+        return SessionAttemptResponse.builder()
+                .successfulAttempts(successfulAttempts)
+                .failedAttempts(failedAttempts)
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AttemptStatusResponse getAttemptStatus(Long attemptId) {
+        UserMissionAttempt attempt = attemptRepository.findById(attemptId)
+                .orElseThrow(AttemptNotFoundException::new);
+
+        return AttemptStatusResponse.from(attempt);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserMissionAttemptResponse> getIncompleteAttempts(Long userId) {
+        List<UserMissionAttempt> incompleteAttempts = attemptRepository
+                .findIncompleteAttemptsByUserId(
+                        userId,
+                        UploadStatus.NOT_STARTED,
+                        UploadStatus.IN_PROGRESS,
+                        UploadStatus.FAILED
+                );
+
+        return incompleteAttempts.stream()
+                .map(UserMissionAttemptResponse::toDto)
+                .toList();
     }
 }
