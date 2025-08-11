@@ -75,11 +75,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void authenticateUser(HttpServletRequest request, String token) {
         Long userId = jwtUtil.getUserId(token);
 
-        // 사용자 존재 여부 확인
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        // Spring Security 인증 객체 생성
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
                         userId,

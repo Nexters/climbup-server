@@ -30,11 +30,7 @@ public class RouteMissionController {
     private final RouteMissionService routeMissionService;
 
     @Operation(summary = "루트미션 생성", description = "새로운 루트미션을 생성합니다. 루트 이미지, 가이드 영상, 썸네일을 함께 업로드합니다.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "루트미션이 성공적으로 생성됨"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터"),
-            @ApiResponse(responseCode = "404", description = "클라이밍장 또는 섹터를 찾을 수 없음")
-    })
+    @ApiResponse(responseCode = "201", description = "루트미션이 성공적으로 생성됨")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ApiResult<RouteMissionResponse>> createRouteMission(
             @Valid @RequestPart("data") CreateRouteMissionRequest request,
@@ -75,10 +71,7 @@ public class RouteMissionController {
     }
 
     @Operation(summary = "루트미션 수정", description = "기존 루트미션을 수정합니다. 파일은 선택적으로 업로드 가능합니다.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "루트미션이 성공적으로 수정됨"),
-            @ApiResponse(responseCode = "404", description = "루트미션을 찾을 수 없음")
-    })
+    @ApiResponse(responseCode = "200", description = "루트미션이 성공적으로 수정됨")
     @PatchMapping(value = "/{missionId}", consumes = "multipart/form-data")
     public ResponseEntity<ApiResult<RouteMissionResponse>> updateRouteMission(
             @PathVariable Long missionId,
