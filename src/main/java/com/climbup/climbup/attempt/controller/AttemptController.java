@@ -171,11 +171,7 @@ public class AttemptController {
     @Operation(summary = "세션별 도전기록 조회",
             description = "특정 세션의 도전기록을 성공/실패로 구분하여 조회합니다.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "세션 도전기록 조회 성공"),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
-            @ApiResponse(responseCode = "404", description = "세션을 찾을 수 없음")
-    })
+    @ApiResponse(responseCode = "200", description = "세션 도전기록 조회 성공")
     @GetMapping("/sessions/{sessionId}")
     public ResponseEntity<ApiResult<SessionAttemptResponse>> getSessionAttempts(
             @PathVariable(name = "sessionId") Long sessionId

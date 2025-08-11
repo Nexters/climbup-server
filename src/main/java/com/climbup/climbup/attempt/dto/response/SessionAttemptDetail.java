@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Schema(description = "세션 도전기록 상세")
 public class SessionAttemptDetail {
 
-    @Schema(description = "도전기록 성공 여부", example = "true")
+    @Schema(description = "도전기록 성공 여부")
     private Boolean success;
 
     @Schema(description = "난이도", example = "BLUE")
