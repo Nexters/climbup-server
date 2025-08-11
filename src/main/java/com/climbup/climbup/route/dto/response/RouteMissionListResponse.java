@@ -22,7 +22,7 @@ public class RouteMissionListResponse {
     @Schema(description = "섹터 이름", example = "A구역")
     private String sectorName;
 
-    @Schema(description = "난이도", example = "V3")
+    @Schema(description = "난이도", example = "BLUE")
     private String difficulty;
 
     @Schema(description = "점수", example = "100")
