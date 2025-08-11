@@ -298,7 +298,6 @@ public class TestController {
             }
         }
 
-        // 결과 응답
         Map<String, Object> response = new HashMap<>();
         response.put("message", "테스트 데이터가 생성되었습니다.");
         response.put("brandsCreated", brandsCreated);

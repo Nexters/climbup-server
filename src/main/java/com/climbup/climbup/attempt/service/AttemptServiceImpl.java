@@ -344,7 +344,6 @@ public class AttemptServiceImpl implements AttemptService {
                 log.info("Thumbnail uploaded successfully: {}", thumbnailUrl);
             }
 
-            // 업로드 성공 시 URL 저장
             attempt.setVideoUrl(videoUrl);
             if (thumbnailUrl != null) {
                 attempt.setThumbnailUrl(thumbnailUrl);

@@ -41,10 +41,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             CustomOAuth2User oauth2User = (CustomOAuth2User) authentication.getPrincipal();
             log.info("✅ 로그인 성공: userId={}", oauth2User.getUserId());
 
-            // 토큰 생성
             TokenResponse tokenResponse = tokenService.createTokens(oauth2User.getUserId());
 
-            // 저장된 redirect URI 가져오기
             String targetRedirectUri = determineTargetUrl(request);
 
             String targetUrl = targetRedirectUri +
