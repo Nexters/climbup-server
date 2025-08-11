@@ -2,10 +2,7 @@ package com.climbup.climbup.attempt.service;
 
 import com.climbup.climbup.attempt.dto.LevelSRReward;
 import com.climbup.climbup.attempt.dto.request.CreateAttemptRequest;
-import com.climbup.climbup.attempt.dto.response.AttemptStatusResponse;
-import com.climbup.climbup.attempt.dto.response.CreateAttemptResponse;
-import com.climbup.climbup.attempt.dto.response.SessionAttemptResponse;
-import com.climbup.climbup.attempt.dto.response.UserMissionAttemptResponse;
+import com.climbup.climbup.attempt.dto.response.*;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.attempt.exception.*;
 import com.climbup.climbup.attempt.repository.UserMissionAttemptRepository;
@@ -374,14 +371,14 @@ public class AttemptServiceImpl implements AttemptService {
     @Override
     @Transactional(readOnly = true)
     public SessionAttemptResponse getSessionAttempts(Long userId, Long sessionId) {
-        List<SessionAttemptResponse.SessionAttemptDetail> allAttempts =
+        List<SessionAttemptDetail> allAttempts =
                 attemptRepository.findSessionAttemptsWithGymLevel(userId, sessionId);
 
-        List<SessionAttemptResponse.SessionAttemptDetail> successfulAttempts = allAttempts.stream()
+        List<SessionAttemptDetail> successfulAttempts = allAttempts.stream()
                 .filter(attempt -> attempt.getSuccess())
                 .toList();
 
-        List<SessionAttemptResponse.SessionAttemptDetail> failedAttempts = allAttempts.stream()
+        List<SessionAttemptDetail> failedAttempts = allAttempts.stream()
                 .filter(attempt -> !attempt.getSuccess())
                 .toList();
 
