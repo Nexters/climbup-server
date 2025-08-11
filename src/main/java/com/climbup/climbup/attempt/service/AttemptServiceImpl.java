@@ -36,6 +36,7 @@ import com.climbup.climbup.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -246,6 +247,18 @@ public class AttemptServiceImpl implements AttemptService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateUploadSessionStatus(UUID uploadId, UploadStatus status) {
+        UploadSession uploadSession = uploadSessionRepository.findById(uploadId)
+                .orElse(null);
+        if (uploadSession != null) {
+            uploadSession.setStatus(status);
+            uploadSessionRepository.save(uploadSession);
+            log.info("Upload session status updated to {} for session: {}", status, uploadId);
+        }
+    }
+
+    @Override
     @Transactional
     public RouteMissionUploadChunkResponse uploadChunk(UUID uploadId, RouteMissionUploadChunkRequest request) {
 
@@ -278,9 +291,11 @@ public class AttemptServiceImpl implements AttemptService {
         } catch (IOException e) {
             log.error("Failed to store chunk {} for upload session {}", request.getIndex(), uploadId, e);
 
-            // 청크 저장 실패 시 업로드 상태를 FAILED로 변경
-            uploadSession.setStatus(UploadStatus.FAILED);
-            uploadSessionRepository.save(uploadSession);
+            try {
+                updateUploadSessionStatus(uploadId, UploadStatus.FAILED);
+            } catch (Exception statusUpdateException) {
+                log.error("Failed to update upload session status to FAILED", statusUpdateException);
+            }
 
             throw new UploadSessionChunkIncompleteException();
         }
@@ -310,8 +325,7 @@ public class AttemptServiceImpl implements AttemptService {
         int expectedChunks = uploadSession.getChunkLength();
 
         if (receivedChunks != expectedChunks) {
-            uploadSession.setStatus(UploadStatus.FAILED);
-            uploadSessionRepository.save(uploadSession);
+            updateUploadSessionStatus(uploadId, UploadStatus.FAILED);
             throw new UploadSessionChunkIncompleteException();
         }
 
@@ -353,9 +367,11 @@ public class AttemptServiceImpl implements AttemptService {
         } catch (Exception e) {
             log.error("Upload session failed: {}", uploadId, e);
 
-            // 업로드 실패 시 상태를 FAILED로 변경
-            uploadSession.setStatus(UploadStatus.FAILED);
-            uploadSessionRepository.save(uploadSession);
+            try {
+                updateUploadSessionStatus(uploadId, UploadStatus.FAILED);
+            } catch (Exception statusUpdateException) {
+                log.error("Failed to update upload session status to FAILED", statusUpdateException);
+            }
 
             throw new VideoUploadFailedException(e);
 
