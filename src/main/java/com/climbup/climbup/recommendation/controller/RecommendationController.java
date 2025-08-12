@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/recommendations")
+@RequestMapping("/api/recommendations")
 @Tag(name = "Route Mission Recommendations", description = "루트 미션 추천 관련 API")
 @RequiredArgsConstructor
 public class RecommendationController {

@@ -21,6 +21,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -49,6 +50,9 @@ dependencies {
 
     // ncp
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.470'
+
+    // discord
+    implementation 'com.github.napstr:logback-discord-appender:1.0.0'
 }
 
 tasks.named('test') {

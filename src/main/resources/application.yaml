@@ -2,6 +2,9 @@ spring:
   application:
     name: climbup-server
 
+  profiles:
+    active: ${SPRING_PROFILE_ACTIVE}
+
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/climbup_db}
     username: ${DB_USERNAME:root}
@@ -16,7 +19,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
 
   flyway:
@@ -81,3 +84,9 @@ ncp:
     endpoint: https://kr.object.ncloudstorage.com
     bucket-name: holdy
     base-url: https://kr.object.ncloudstorage.com/holdy
+
+discord:
+  webhook:
+    error-url: ${DISCORD_ERROR_WEBHOOK_URL}
+    notification-url: ${DISCORD_NOTIFICATION_WEBHOOK_URL}
+  enabled: ${DISCORD_ENABLED}

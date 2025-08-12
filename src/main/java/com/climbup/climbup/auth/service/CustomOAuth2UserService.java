@@ -4,19 +4,19 @@ import com.climbup.climbup.auth.dto.CustomOAuth2User;
 import com.climbup.climbup.auth.dto.KakaoOAuth2UserInfo;
 import com.climbup.climbup.auth.exception.NicknameGenerationException;
 import com.climbup.climbup.auth.util.RandomNicknameGenerator;
+import com.climbup.climbup.global.discord.SignUpEvent;
 import com.climbup.climbup.user.entity.User;
 import com.climbup.climbup.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +27,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private int maxRetries;
 
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -65,7 +66,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .gym(null)
                 .build();
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        eventPublisher.publishEvent(new SignUpEvent(this, nickname, savedUser.getId()));
+
+        return savedUser;
     }
 
     private String generateUniqueNickname() {

@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/attempts")
+@RequestMapping("/api/attempts")
 @Tag(name = "Attempts", description = "루트 미션 도전 관련 API")
 @RequiredArgsConstructor
 public class AttemptController {
