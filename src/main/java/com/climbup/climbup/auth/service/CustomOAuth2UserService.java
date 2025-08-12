@@ -66,9 +66,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .gym(null)
                 .build();
 
-        eventPublisher.publishEvent(new SignUpEvent(this, nickname, user.getId()));
+        User savedUser = userRepository.save(user);
 
-        return userRepository.save(user);
+        eventPublisher.publishEvent(new SignUpEvent(this, nickname, savedUser.getId()));
+
+        return savedUser;
     }
 
     private String generateUniqueNickname() {
