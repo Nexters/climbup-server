@@ -55,15 +55,39 @@ public class DiscordService {
 
         try {
             Map<String, Object> embed = createErrorEmbed(sanitizedMessage, className, methodName);
-            Map<String, Object> payload = Map.of(
-                    "embeds", List.of(embed)
-            );
+            Map<String, Object> payload = Map.of("embeds", List.of(embed));
 
-            sendWebhookMessage(discordConfig.getWebhook().getErrorUrl(), payload);
-            log.debug("Discord 에러 알림 전송 완료");
+            boolean success = sendWebhookMessageWithRetry(discordConfig.getWebhook().getErrorUrl(), payload);
+
+            if (!success) {
+                log.error("⚠️ CRITICAL: Discord 에러 알림 전송 완전 실패 - 수동 확인 필요. Error: {}", errorMessage);
+            }
         } catch (Exception e) {
             log.error("Discord 에러 알림 전송 실패", e);
         }
+    }
+
+    private boolean sendWebhookMessageWithRetry(String webhookUrl, Map<String, Object> payload) {
+        int maxRetries = 3;
+
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                sendWebhookMessage(webhookUrl, payload);
+                return true;
+            } catch (Exception e) {
+                log.warn("Discord 알림 전송 실패 (시도 {}/{}): {}", attempt, maxRetries, e.getMessage());
+
+                if (attempt < maxRetries) {
+                    try {
+                        Thread.sleep(1000 * attempt);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Async
