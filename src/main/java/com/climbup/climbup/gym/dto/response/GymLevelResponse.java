@@ -54,6 +54,7 @@ public class GymLevelResponse {
                 .description(gymLevel.getLevel().getDescription())
                 .srMin(gymLevel.getSrMin())
                 .srMax(gymLevel.getSrMax())
+                .imageUrl(gymLevel.getImageUrl())
                 .sortOrder(gymLevel.getSortOrder())
                 .build();
     }

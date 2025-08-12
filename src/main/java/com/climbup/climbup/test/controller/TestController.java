@@ -422,4 +422,9 @@ public class TestController {
 
         return tempFilePath.toString();
     }
+
+    @GetMapping("/error")
+    public String testError() {
+        throw new RuntimeException("테스트 에러입니다!");
+    }
 }
