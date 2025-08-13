@@ -32,6 +32,13 @@
             <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
                 <level>ERROR</level>
             </filter>
+            <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+                <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                    <marker>EXCLUDE_DISCORD</marker>
+                </evaluator>
+                <onMatch>DENY</onMatch>
+                <onMismatch>NEUTRAL</onMismatch>
+            </filter>
         </appender>
 
         <root level="INFO">
@@ -63,6 +70,13 @@
             <appender-ref ref="DISCORD" />
             <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
                 <level>ERROR</level>
+            </filter>
+            <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+                <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                    <marker>EXCLUDE_DISCORD</marker>
+                </evaluator>
+                <onMatch>DENY</onMatch>
+                <onMismatch>NEUTRAL</onMismatch>
             </filter>
         </appender>
 

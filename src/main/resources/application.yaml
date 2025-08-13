@@ -67,10 +67,23 @@ app:
 
 logging:
   level:
+    root: INFO
     com.climbup.climbup: DEBUG
-    org.springframework.security: TRACE
+    org.springframework.security: DEBUG
+    org.springframework.web.servlet.resource: WARN
     org.hibernate.SQL: DEBUG
-    root: ERROR
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+    org.apache.catalina.core: WARN
+    org.springframework.web.servlet.PageNotFound: WARN
+
+# 운영
+# logging:
+#   level:
+#     root: INFO
+#     com.climbup.climbup: INFO
+#     org.springframework.security: WARN
+#     org.springframework.web.servlet.resource: ERROR
+#     org.hibernate.SQL: WARN
 
 auth:
   nickname:
