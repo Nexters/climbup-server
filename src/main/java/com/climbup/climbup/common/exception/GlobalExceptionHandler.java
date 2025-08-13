@@ -141,6 +141,19 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(ErrorCode.ILLEGAL_ARGUMENT, request.getRequestURI(), ex.getMessage()));
     }
 
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+        public ResponseEntity<ErrorResponse> handleNoResourceFoundException(
+                org.springframework.web.servlet.resource.NoResourceFoundException ex, 
+                HttpServletRequest request) {
+
+        log.debug("Failed Static Resource Request: {} {}", 
+                request.getMethod(), request.getRequestURI());
+        
+        return ResponseEntity
+                .status(ErrorCode.RESOURCE_NOT_FOUND.getHttpStatus())
+                .body(ErrorResponse.of(ErrorCode.RESOURCE_NOT_FOUND, request.getRequestURI()));
+        }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex, HttpServletRequest request) {
