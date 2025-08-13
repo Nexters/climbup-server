@@ -154,6 +154,16 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(ErrorCode.RESOURCE_NOT_FOUND, request.getRequestURI()));
         }
 
+        @ExceptionHandler(org.springframework.web.context.request.async.AsyncRequestNotUsableException.class)
+        public ResponseEntity<ErrorResponse> handleAsyncRequestNotUsableException(
+                org.springframework.web.context.request.async.AsyncRequestNotUsableException ex, 
+                HttpServletRequest request) {
+
+        log.debug("Async Request Not Usable: {}", ex.getMessage());
+        
+        return null;
+        }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex, HttpServletRequest request) {
