@@ -3,6 +3,7 @@ package com.climbup.climbup.recommendation.dto.response;
 import com.climbup.climbup.attempt.dto.response.UserMissionAttemptResponse;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.gym.entity.ClimbingGym;
+import com.climbup.climbup.gym.dto.response.GymLevelResponse;
 import com.climbup.climbup.recommendation.entity.ChallengeRecommendation;
 import com.climbup.climbup.route.entity.RouteMission;
 import com.climbup.climbup.sector.dto.SectorResponse;
@@ -30,6 +31,9 @@ public class RouteMissionRecommendationResponse {
 
     @Schema(description = "섹터 데이터")
     private SectorResponse sector;
+
+    @Schema(description = "암장 난이도")
+    private GymLevelResponse gymLevel;
 
     @Schema(description = "루트미션 난이도", example = "BLUE")
     private String difficulty;
@@ -59,6 +63,7 @@ public class RouteMissionRecommendationResponse {
                 .attempts(attempts.stream().map(UserMissionAttemptResponse::toDto).toList())
                 .sector(SectorResponse.toDto(sector))
                 .difficulty(recommendation.getDifficulty())
+                .gymLevel(GymLevelResponse.fromEntity(mission.getGymLevel()))
                 .score(mission.getScore())
                 .imageUrl(mission.getImageUrl())
                 .videoUrl(mission.getVideoUrl())

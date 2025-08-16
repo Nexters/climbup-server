@@ -1,5 +1,6 @@
 package com.climbup.climbup.route.dto.response;
 
+import com.climbup.climbup.gym.dto.response.GymLevelResponse;
 import com.climbup.climbup.route.entity.RouteMission;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +26,9 @@ public class RouteMissionListResponse {
     @Schema(description = "난이도", example = "BLUE")
     private String difficulty;
 
+    @Schema(description = "암장 난이도")
+    private GymLevelResponse gymLevel;
+
     @Schema(description = "점수", example = "100")
     private Integer score;
 
@@ -44,6 +48,7 @@ public class RouteMissionListResponse {
                 .gymName(mission.getGym().getName())
                 .sectorName(mission.getSector().getName())
                 .difficulty(mission.getDifficulty())
+                .gymLevel(GymLevelResponse.fromEntity(mission.getGymLevel()))
                 .score(mission.getScore())
                 .imageUrl(mission.getImageUrl())
                 .thumbnailUrl(mission.getThumbnailUrl())
