@@ -12,6 +12,9 @@ import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSession
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadSessionInitializeResponse;
 import com.climbup.climbup.attempt.upload.dto.response.RouteMissionUploadStatusResponse;
 import com.climbup.climbup.attempt.upload.enums.UploadStatus;
+import com.climbup.climbup.attempt.dto.response.AttemptResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -31,6 +34,8 @@ public interface AttemptService {
     RouteMissionUploadSessionFinalizeResponse finalizeUploadSession(UUID uploadId, MultipartFile thumbnailFile);
 
     SessionAttemptResponse getSessionAttempts(Long userId, Long sessionId);
+
+    Page<AttemptResponse> getAttempts(Long userId, Long gymId, Boolean success, Pageable pageable);
 
     AttemptStatusResponse getAttemptStatus(Long attemptId);
 

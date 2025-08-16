@@ -2,10 +2,7 @@ package com.climbup.climbup.attempt.controller;
 
 
 import com.climbup.climbup.attempt.dto.request.CreateAttemptRequest;
-import com.climbup.climbup.attempt.dto.response.AttemptStatusResponse;
-import com.climbup.climbup.attempt.dto.response.CreateAttemptResponse;
-import com.climbup.climbup.attempt.dto.response.SessionAttemptResponse;
-import com.climbup.climbup.attempt.dto.response.UserMissionAttemptResponse;
+import com.climbup.climbup.attempt.dto.response.*;
 import com.climbup.climbup.attempt.service.AttemptService;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadChunkRequest;
 import com.climbup.climbup.attempt.upload.dto.request.RouteMissionUploadSessionInitializeRequest;
@@ -18,6 +15,7 @@ import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.recommendation.dto.response.RouteMissionRecommendationResponse;
 import com.climbup.climbup.recommendation.service.RecommendationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,8 +24,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -180,6 +183,39 @@ public class AttemptController {
         SessionAttemptResponse response = attemptService.getSessionAttempts(userId, sessionId);
 
         return ResponseEntity.ok(ApiResult.success(response));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @Operation(
+            summary = "성공한 도전 기록 조회",
+            description = "사용자가 성공한 모든 도전 기록들을 최신순으로 조회합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponse(responseCode = "200", description = "조회 성공")
+    @GetMapping
+    public ResponseEntity<ApiResult<Page<AttemptResponse>>> getAttempts(
+            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+
+            @Parameter(description = "페이지 크기", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "암장 ID (선택사항 - 입력 시 해당 암장만 필터링)", example = "1")
+            @RequestParam(required = false) Long gymId,
+
+            @Parameter(description = "성공 여부 (기본값: true)", example = "true")
+            @RequestParam(defaultValue = "true") Boolean success
+    ) {
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<AttemptResponse> response = attemptService.getAttempts(userId, gymId, success, pageable);
+
+        String message = success ? "성공한 도전 기록이 조회되었습니다." : "실패한 도전 기록이 조회되었습니다.";
+        return ResponseEntity.ok(
+                ApiResult.success(message, response)
+        );
     }
 
     @Operation(summary = "특정 도전 기록의 상태 조회", description = "도전 기록의 현재 상태를 확인합니다.", security = @SecurityRequirement(name = "bearerAuth"))

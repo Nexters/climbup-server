@@ -1,4 +1,4 @@
-package com.climbup.climbup.gym.dto.response;
+package com.climbup.climbup.attempt.dto.response;
 
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,10 +11,13 @@ import java.util.List;
 @Getter
 @Builder
 @Schema(description = "암장 도전 기록 응답")
-public class GymAttemptResponse {
+public class AttemptResponse {
 
     @Schema(description = "도전 기록 ID", example = "1")
     private Long attemptId;
+
+    @Schema(description = "암장 ID", example = "1")
+    private Long gymId;
 
     @Schema(description = "브랜드명", example = "더클라임")
     private String brandName;
@@ -46,9 +49,10 @@ public class GymAttemptResponse {
     @Schema(description = "루트 점수", example = "100")
     private Integer routeScore;
 
-    public static GymAttemptResponse fromEntity(UserMissionAttempt attempt) {
-        return GymAttemptResponse.builder()
+    public static AttemptResponse fromEntity(UserMissionAttempt attempt) {
+        return AttemptResponse.builder()
                 .attemptId(attempt.getId())
+                .gymId(attempt.getMission().getGym().getId())
                 .brandName(attempt.getMission().getGym().getBrand().getName())
                 .branchName(attempt.getMission().getGym().getBranchName())
                 .gymLevelName(attempt.getUser().getGymLevel().getName())
