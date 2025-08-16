@@ -3,6 +3,8 @@ package com.climbup.climbup.attempt.repository;
 import com.climbup.climbup.attempt.dto.response.SessionAttemptDetail;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.attempt.upload.enums.UploadStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -53,4 +55,24 @@ public interface UserMissionAttemptRepository extends JpaRepository<UserMissionA
     List<SessionAttemptDetail> findSessionAttemptsWithGymLevel(
             @Param("userId") Long userId,
             @Param("sessionId") Long sessionId);
+
+    @Query("""
+    SELECT a
+    FROM UserMissionAttempt a
+    JOIN FETCH a.mission rm
+    JOIN FETCH rm.gym gym
+    JOIN FETCH gym.brand
+    JOIN FETCH rm.sector s
+    JOIN FETCH a.user u
+    JOIN FETCH u.gymLevel gl
+    WHERE gym.id = :gymId 
+    AND a.user.id = :userId
+    AND a.success = true
+    ORDER BY a.createdAt DESC
+    """)
+    Page<UserMissionAttempt> findSuccessfulAttemptsByGymIdAndUserId(
+            @Param("gymId") Long gymId,
+            @Param("userId") Long userId,
+            Pageable pageable
+    );
 }

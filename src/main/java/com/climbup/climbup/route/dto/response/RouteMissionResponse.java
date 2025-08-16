@@ -25,7 +25,7 @@ public class RouteMissionResponse {
     @Schema(description = "섹터 ID", example = "1")
     private Long sectorId;
 
-    @Schema(description = "섹터 이름", example = "A구역")
+    @Schema(description = "섹터 이름", example = "1·2")
     private String sectorName;
 
     @Schema(description = "난이도", example = "BLUE")
