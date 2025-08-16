@@ -3,13 +3,13 @@ package com.climbup.climbup.route.entity;
 import com.climbup.climbup.attempt.entity.UserMissionAttempt;
 import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.gym.entity.ClimbingGym;
+import com.climbup.climbup.gym.entity.GymLevel;
 import com.climbup.climbup.recommendation.entity.ChallengeRecommendation;
 import com.climbup.climbup.sector.entity.Sector;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +39,10 @@ public class RouteMission extends BaseEntity {
 
     @Column(name = "score", nullable = false)
     private Integer score;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gym_level_id", nullable = false)
+    private GymLevel gymLevel;
 
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageUrl;
