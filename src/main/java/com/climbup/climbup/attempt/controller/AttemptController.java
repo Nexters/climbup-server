@@ -204,7 +204,7 @@ public class AttemptController {
             @RequestParam(required = false) Long gymId,
 
             @Parameter(description = "성공 여부 (기본값: true)", example = "true")
-            @RequestParam(defaultValue = "true") Boolean success
+            @RequestParam(defaultValue = "true") boolean success
     ) {
         Long userId = SecurityUtil.getCurrentUserId();
 

@@ -418,6 +418,8 @@ public class AttemptServiceImpl implements AttemptService {
 
         if (gymId != null) {
             // 특정 암장의 도전기록 조회 (성공/실패 여부 포함)
+            ClimbingGym gym = gymRepository.findById(gymId)
+                    .orElseThrow(GymNotFoundException::new);
             attempts = attemptRepository.findAttemptsByGymIdAndUserIdAndSuccess(gymId, userId, success, pageable);
         } else {
             // 모든 암장의 도전기록 조회 (성공/실패 여부 포함)
