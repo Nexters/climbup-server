@@ -46,6 +46,12 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+  servlet:
+    multipart:
+      max-file-size: 10MB      # 개별 파일 최대 크기
+      max-request-size: 10MB   # 전체 요청 최대 크기
+      enabled: true
+
 server:
   forward-headers-strategy: native
   port: 9090
