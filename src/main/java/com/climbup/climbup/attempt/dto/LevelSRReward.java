@@ -16,7 +16,11 @@ public enum LevelSRReward {
     V7("V7", 400),
     V8("V8", 500),
     V9("V9", 600),
-    V10("V10", 700);
+    V10("V10", 700),
+    GREEN("GREEN", 10),
+    BLUE("BLUE", 30),
+    RED("RED", 100),
+    PURPLE("PURPLE", 200);
 
     private final String levelName;
     private final Integer srReward;
