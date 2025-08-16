@@ -1,6 +1,7 @@
 package com.climbup.climbup.gym.entity;
 
 import com.climbup.climbup.brand.entity.Brand;
+import com.climbup.climbup.common.converter.StringListConverter;
 import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.level.entity.Level;
 import jakarta.persistence.*;
@@ -9,6 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.List;
 
 @Entity
 @Table(name = "gym_levels")
@@ -39,8 +44,9 @@ public class GymLevel extends BaseEntity {
     @Column(name = "sr_max")
     private Integer srMax;
 
-    @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
-    private String imageUrl;
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "image_urls", nullable = false, columnDefinition = "JSON")
+    private List<String> imageUrls;
 
     @Column(name = "sort_order", nullable = false)
     private Integer sortOrder;

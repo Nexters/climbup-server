@@ -2,7 +2,6 @@ package com.climbup.climbup.gym.controller;
 
 import com.climbup.climbup.common.dto.ApiResult;
 import com.climbup.climbup.gym.dto.response.GymResponse;
-import com.climbup.climbup.gym.dto.response.GymLevelResponse;
 import com.climbup.climbup.gym.service.GymService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

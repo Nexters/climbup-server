@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @Builder
 @Schema(description = "암장별 레벨 정보 응답")
@@ -37,8 +39,8 @@ public class GymLevelResponse {
     @Schema(description = "최대 SR", example = "649")
     private Integer srMax;
 
-    @Schema(description = "암장별 레벨 이미지 URL", example = "https://example.com/orange.png")
-    private String imageUrl;
+    @Schema(description = "암장별 레벨 이미지 URL 목록", example = "[\"https://example.com/orange1.png\", \"https://example.com/orange2.png\", \"https://example.com/orange3.png\", \"https://example.com/orange4.png\"]")
+    private List<String> imageUrls;
 
     @Schema(description = "정렬 순서", example = "1")
     private Integer sortOrder;
@@ -54,7 +56,7 @@ public class GymLevelResponse {
                 .description(gymLevel.getLevel().getDescription())
                 .srMin(gymLevel.getSrMin())
                 .srMax(gymLevel.getSrMax())
-                .imageUrl(gymLevel.getImageUrl())
+                .imageUrls(gymLevel.getImageUrls())
                 .sortOrder(gymLevel.getSortOrder())
                 .build();
     }

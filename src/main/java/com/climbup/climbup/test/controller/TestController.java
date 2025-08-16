@@ -75,12 +75,7 @@ public class TestController {
                     Brand.builder()
                             .name("더클라임")
                             .description("국내 최대 클라이밍 체인")
-                            .logoUrl("https://kr.object.ncloudstorage.com/holdy/images/brands/1754827291538_0d3a6d65.jpg")
-                            .build(),
-                    Brand.builder()
-                            .name("클라이밍파크")
-                            .description("프리미엄 클라이밍 센터")
-                            .logoUrl("https://kr.object.ncloudstorage.com/holdy/images/brands/1754827291538_0d3a6d65.jpg")
+                            .logoUrl("https://kr.object.ncloudstorage.com/holdy/images/brands/1755341339359_4ce3bc1f.png")
                             .build()
             ));
             brandsCreated = brands.size();
@@ -147,29 +142,21 @@ public class TestController {
         // 3. 암장 데이터 생성
         if (climbingGymRepository.count() == 0) {
             Brand theClimb = brandRepository.findByName("더클라임").orElseThrow();
-            Brand climbingPark = brandRepository.findByName("클라이밍파크").orElseThrow();
 
             List<ClimbingGym> gyms = climbingGymRepository.saveAll(List.of(
                     ClimbingGym.builder()
                             .brand(theClimb)
                             .branchName("강남점")
-                            .address("서울특별시 강남구 테헤란로8길 21 지하 1층")
-                            .sectorInfo("지하1층~3층, 총 4개층")
-                            .imageUrl("https://example.com/gym1.jpg")
+                            .address("서울특별시 강남구 테헤란로 8길 21 화인강남빌딩 지하 1층")
+                            .sectorInfo("강남역 도보 4분 거리")
+                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gyms/1755341292898_83b3b52b.png")
                             .build(),
                     ClimbingGym.builder()
                             .brand(theClimb)
-                            .branchName("홍대점")
-                            .address("서울특별시 마포구 353-5 경남관광빌딩 2층")
-                            .sectorInfo("지하1층~2층, 총 3개층")
-                            .imageUrl("https://example.com/gym2.jpg")
-                            .build(),
-                    ClimbingGym.builder()
-                            .brand(climbingPark)
-                            .branchName("잠실점")
-                            .address("서울특별시 송파구 올림픽로 300")
-                            .sectorInfo("1층~3층, 총 3개층")
-                            .imageUrl("https://example.com/gym3.jpg")
+                            .branchName("논현점")
+                            .address("서울 서초구 강남대로 519, B1")
+                            .sectorInfo("논혁연 4번 출구 도보 1분")
+                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gyms/1755341319225_5837fa93.png")
                             .build()
             ));
             gymsCreated = gyms.size();
@@ -178,7 +165,6 @@ public class TestController {
         // 4. 브랜드별 레벨 체계 생성
         if (gymLevelRepository.count() == 0) {
             Brand theClimb = brandRepository.findByName("더클라임").orElseThrow();
-            Brand climbingPark = brandRepository.findByName("클라이밍파크").orElseThrow();
 
             Level v0 = levelRepository.findAll().stream()
                     .filter(l -> l.getName().equals("입문자 단계")).findFirst().orElseThrow();
@@ -200,7 +186,12 @@ public class TestController {
                             .srMin(600)
                             .srMax(649)
                             .sortOrder(1)
-                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1754827060631_fed8b32d.jpg")
+                            .imageUrls(List.of(
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342816150_5faf82cd.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342828908_e4ea3ea8.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342842270_7e69777c.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342852399_074c9866.png"
+                            ))
                             .build(),
                     GymLevel.builder()
                             .brand(theClimb)
@@ -209,7 +200,12 @@ public class TestController {
                             .srMin(650)
                             .srMax(999)
                             .sortOrder(2)
-                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1754827112115_23d7cdaa.jpg")
+                            .imageUrls(List.of(
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342767408_19d0bfab.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342783033_cc8b9215.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342794384_08cfbc8d.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342804402_98c6eb82.png"
+                            ))
                             .build(),
                     GymLevel.builder()
                             .brand(theClimb)
@@ -218,7 +214,12 @@ public class TestController {
                             .srMin(1000)
                             .srMax(1999)
                             .sortOrder(3)
-                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1754827128436_d46cb155.jpg")
+                            .imageUrls(List.of(
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342705645_f06c1397.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342726345_829842c6.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342740697_0d9ad769.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342752100_186f7d40.png"
+                            ))
                             .build(),
                     GymLevel.builder()
                             .brand(theClimb)
@@ -227,7 +228,12 @@ public class TestController {
                             .srMin(2000)
                             .srMax(2999)
                             .sortOrder(4)
-                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1754827153698_29dfb9bf.jpg")
+                            .imageUrls(List.of(
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342931077_45be128c.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342943430_3d801d8f.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342954921_90b458ae.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342972102_f6ecbc16.png"
+                            ))
                             .build(),
                     GymLevel.builder()
                             .brand(theClimb)
@@ -236,7 +242,12 @@ public class TestController {
                             .srMin(3000)
                             .srMax(null)
                             .sortOrder(5)
-                            .imageUrl("https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1754827166592_1786a40d.jpg")
+                            .imageUrls(List.of(
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342867309_7cb84915.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342891482_a9b43fee.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342902606_a7d0f7d7.png",
+                                    "https://kr.object.ncloudstorage.com/holdy/images/gymlevels/1755342915042_66aadbe0.png"
+                            ))
                             .build()
             );
 

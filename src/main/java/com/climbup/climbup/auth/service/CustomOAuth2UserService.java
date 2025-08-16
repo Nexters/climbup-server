@@ -52,15 +52,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private User createUser(KakaoOAuth2UserInfo userInfo) {
         String nickname = generateUniqueNickname();
-        String defaultImageUrl = "https://kr.object.ncloudstorage.com/holdy/images/profiles/1754827510083_0e67edf8.jpg";
+        String defaultImageUrl = "https://kr.object.ncloudstorage.com/holdy/images/profiles/1755341390125_ce8dddcc.png";
 
         User user = User.builder()
                 .kakaoId(userInfo.getId())
                 .name(userInfo.getName())
                 .nickname(nickname)
-                .imageUrl(userInfo.getProfileImageUrl() != null ?
-                        userInfo.getProfileImageUrl() :
-                        defaultImageUrl)
+                .imageUrl(defaultImageUrl)
                 .sr(600)
                 .gymLevel(null)
                 .gym(null)
