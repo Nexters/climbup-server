@@ -28,8 +28,17 @@ public class UserStatusResponse {
     @Schema(description = "온보딩 완료 여부", example = "false")
     private boolean onboardingCompleted;
 
+    @Schema(description = "도전 성공 횟수", example = "15")
+    private Long successCount;
+
+    @Schema(description = "도전 실패 횟수", example = "5")
+    private Long failureCount;
+
+    @Schema(description = "총 도전 횟수", example = "20")
+    private Long totalAttempts;
+
     @Schema(description = "선택된 레벨 정보")
-    private GymLevelInfo gymLevel; // 기존 level에서 gymLevel로 변경
+    private GymLevelInfo gymLevel;
 
     @Schema(description = "선택된 암장 정보")
     private GymInfo gym;
@@ -92,6 +101,17 @@ public class UserStatusResponse {
         boolean hasGym = user.getGym() != null;
         boolean hasGymLevel = user.getGymLevel() != null;
 
+        // 도전 기록 통계 계산
+        long successCount = user.getAttempts().stream()
+                .filter(attempt -> attempt.getSuccess() != null && attempt.getSuccess())
+                .count();
+
+        long failureCount = user.getAttempts().stream()
+                .filter(attempt -> attempt.getSuccess() != null && !attempt.getSuccess())
+                .count();
+
+        long totalAttempts = successCount + failureCount;
+
         return UserStatusResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -99,6 +119,9 @@ public class UserStatusResponse {
                 .imageUrl(user.getImageUrl())
                 .sr(user.getSr())
                 .onboardingCompleted(user.hasCompletedOnboarding())
+                .successCount(successCount)
+                .failureCount(failureCount)
+                .totalAttempts(totalAttempts)
                 .gymLevel(hasGymLevel ? GymLevelInfo.builder()
                         .id(user.getGymLevel().getId())
                         .brandName(user.getGymLevel().getBrand().getName())
