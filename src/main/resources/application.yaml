@@ -5,6 +5,12 @@ spring:
   profiles:
     active: ${SPRING_PROFILE_ACTIVE}
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 60MB
+      file-size-threshold: 2KB
+
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/climbup_db}
     username: ${DB_USERNAME:root}
