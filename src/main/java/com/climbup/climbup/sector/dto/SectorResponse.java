@@ -13,7 +13,7 @@ public class SectorResponse {
     @Schema(description = "섹터 ID", example = "1")
     private Long id;
 
-    @Schema(description = "섹터 이름", example = "A 섹터")
+    @Schema(description = "섹터 이름", example = "1·2")
     private String name;
 
     @Schema(description = "섹터 이미지 URL", example = "https://example.com/sector1.jpg")

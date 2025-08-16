@@ -19,7 +19,7 @@ public class RouteMissionListResponse {
     @Schema(description = "클라이밍장 이름", example = "더클라임 강남점")
     private String gymName;
 
-    @Schema(description = "섹터 이름", example = "A구역")
+    @Schema(description = "섹터 이름", example = "1·2")
     private String sectorName;
 
     @Schema(description = "난이도", example = "BLUE")

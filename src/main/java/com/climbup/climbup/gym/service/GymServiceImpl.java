@@ -1,10 +1,15 @@
 package com.climbup.climbup.gym.service;
 
+import com.climbup.climbup.attempt.entity.UserMissionAttempt;
+import com.climbup.climbup.attempt.repository.UserMissionAttemptRepository;
+import com.climbup.climbup.gym.dto.response.GymAttemptResponse;
 import com.climbup.climbup.gym.dto.response.GymResponse;
 import com.climbup.climbup.gym.entity.ClimbingGym;
 import com.climbup.climbup.gym.exception.GymNotFoundException;
 import com.climbup.climbup.gym.repository.ClimbingGymRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +20,7 @@ import java.util.List;
 public class GymServiceImpl implements GymService {
 
     private final ClimbingGymRepository climbingGymRepository;
+    private final UserMissionAttemptRepository attemptRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -40,5 +46,16 @@ public class GymServiceImpl implements GymService {
         return gyms.stream()
                 .map(GymResponse::fromEntity)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<GymAttemptResponse> getSuccessfulAttemptsByGym(Long gymId, Long userId, Pageable pageable) {
+        ClimbingGym gym = climbingGymRepository.findById(gymId)
+                .orElseThrow(() -> new GymNotFoundException());
+
+        Page<UserMissionAttempt> attempts = attemptRepository.findSuccessfulAttemptsByGymIdAndUserId(gymId, userId, pageable);
+
+        return attempts.map(GymAttemptResponse::fromEntity);
     }
 }
