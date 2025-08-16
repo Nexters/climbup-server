@@ -64,10 +64,6 @@ public class OnboardingServiceImpl implements OnboardingService {
     public void setUserGym(Long userId, Long gymId) {
         User user = findUserById(userId);
 
-        if (user.hasCompletedOnboarding()) {
-            throw new UserOnboardingAlreadyCompleteException("이미 암장을 선택한 사용자입니다.");
-        }
-
         ClimbingGym gym = findGymById(gymId);
         user.selectGym(gym);
 
@@ -84,10 +80,6 @@ public class OnboardingServiceImpl implements OnboardingService {
     @Transactional
     public void setUserGymLevel(Long userId, Long gymLevelId) {
         User user = findUserById(userId);
-
-        if (user.hasCompletedOnboarding()) {
-            throw new UserOnboardingAlreadyCompleteException("이미 암장 레벨을 선택한 사용자입니다.");
-        }
 
         // 레벨 설정 시 암장이 선택되어 있어야 함
         if (user.getGym() == null) {
