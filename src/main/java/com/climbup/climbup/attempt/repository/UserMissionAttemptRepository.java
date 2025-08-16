@@ -67,12 +67,32 @@ public interface UserMissionAttemptRepository extends JpaRepository<UserMissionA
     JOIN FETCH u.gymLevel gl
     WHERE gym.id = :gymId 
     AND a.user.id = :userId
-    AND a.success = true
+    AND a.success = :success
     ORDER BY a.createdAt DESC
     """)
-    Page<UserMissionAttempt> findSuccessfulAttemptsByGymIdAndUserId(
+    Page<UserMissionAttempt> findAttemptsByGymIdAndUserIdAndSuccess(
             @Param("gymId") Long gymId,
             @Param("userId") Long userId,
+            @Param("success") Boolean success,
+            Pageable pageable
+    );
+
+    @Query("""
+    SELECT a
+    FROM UserMissionAttempt a
+    JOIN FETCH a.mission rm
+    JOIN FETCH rm.gym gym
+    JOIN FETCH gym.brand
+    JOIN FETCH rm.sector s
+    JOIN FETCH a.user u
+    JOIN FETCH u.gymLevel gl
+    WHERE a.user.id = :userId
+    AND a.success = :success
+    ORDER BY a.createdAt DESC
+    """)
+    Page<UserMissionAttempt> findAttemptsByUserIdAndSuccess(
+            @Param("userId") Long userId,
+            @Param("success") Boolean success,
             Pageable pageable
     );
 }

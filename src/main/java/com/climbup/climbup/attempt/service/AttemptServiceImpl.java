@@ -22,6 +22,10 @@ import com.climbup.climbup.attempt.upload.service.UploadService;
 import com.climbup.climbup.common.exception.CommonBusinessException;
 import com.climbup.climbup.common.exception.ErrorCode;
 import com.climbup.climbup.common.exception.ValidationException;
+import com.climbup.climbup.attempt.dto.response.AttemptResponse;
+import com.climbup.climbup.gym.entity.ClimbingGym;
+import com.climbup.climbup.gym.exception.GymNotFoundException;
+import com.climbup.climbup.gym.repository.ClimbingGymRepository;
 import com.climbup.climbup.route.entity.RouteMission;
 import com.climbup.climbup.route.exception.RouteNotFoundException;
 import com.climbup.climbup.route.repository.RouteMissionRepository;
@@ -35,6 +39,8 @@ import com.climbup.climbup.user.exception.UserNotFoundException;
 import com.climbup.climbup.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +67,7 @@ public class AttemptServiceImpl implements AttemptService {
     private final UploadSessionRepository uploadSessionRepository;
     private final ChunkRepository chunkRepository;
     private final UploadService uploadService;
+    private final ClimbingGymRepository gymRepository;
 
     private Path getUploadSessionDirectory(UUID uploadId) {
         return Paths.get("uploads", uploadId.toString(), "chunks");
@@ -401,6 +408,25 @@ public class AttemptServiceImpl implements AttemptService {
                 .successfulAttempts(successfulAttempts)
                 .failedAttempts(failedAttempts)
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AttemptResponse> getAttempts(Long userId, Long gymId, Boolean success, Pageable pageable) {
+
+        Page<UserMissionAttempt> attempts;
+
+        if (gymId != null) {
+            // 특정 암장의 도전기록 조회 (성공/실패 여부 포함)
+            ClimbingGym gym = gymRepository.findById(gymId)
+                    .orElseThrow(GymNotFoundException::new);
+            attempts = attemptRepository.findAttemptsByGymIdAndUserIdAndSuccess(gymId, userId, success, pageable);
+        } else {
+            // 모든 암장의 도전기록 조회 (성공/실패 여부 포함)
+            attempts = attemptRepository.findAttemptsByUserIdAndSuccess(userId, success, pageable);
+        }
+
+        return attempts.map(AttemptResponse::fromEntity);
     }
 
     @Override
