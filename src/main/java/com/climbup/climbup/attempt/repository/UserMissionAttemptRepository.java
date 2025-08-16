@@ -33,7 +33,7 @@ public interface UserMissionAttemptRepository extends JpaRepository<UserMissionA
     @Query("SELECT new com.climbup.climbup.attempt.dto.response.SessionAttemptDetail(" +
             "uma.success, " +
             "m.difficulty, " +
-            "gl.imageUrl, " +
+            "gl.imageUrls, " +
             "m.removedAt, " +
             "m.thumbnailUrl, " +
             "m.videoUrl, " +

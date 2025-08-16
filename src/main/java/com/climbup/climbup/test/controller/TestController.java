@@ -254,60 +254,60 @@ public class TestController {
             gymLevelRepository.saveAll(theClimbLevels);
             gymLevelsCreated = theClimbLevels.size();
         }
-
-        // 5. 섹터 데이터 생성
-        if (sectorRepository.count() == 0) {
-            List<Sector> sectors = sectorRepository.saveAll(List.of(
-                    Sector.builder()
-                            .name("A구역")
-                            .imageUrl("https://example.com/sector-a.jpg")
-                            .build(),
-                    Sector.builder()
-                            .name("B구역")
-                            .imageUrl("https://example.com/sector-b.jpg")
-                            .build(),
-                    Sector.builder()
-                            .name("C구역")
-                            .imageUrl("https://example.com/sector-c.jpg")
-                            .build(),
-                    Sector.builder()
-                            .name("D구역")
-                            .imageUrl("https://example.com/sector-d.jpg")
-                            .build()
-            ));
-            sectorsCreated = sectors.size();
-        }
-
-        // 6. 루트 미션 30개 생성
-        if (routeMissionRepository.count() == 0) {
-            List<ClimbingGym> gyms = climbingGymRepository.findAll();
-            List<Sector> sectors = sectorRepository.findAll();
-            
-            if (!gyms.isEmpty() && !sectors.isEmpty()) {
-                String[] difficulties = {"ORANGE", "GREEN", "BLUE", "RED", "PURPLE"};
-                
-                List<RouteMission> routeMissions = new ArrayList<>();
-                for (int i = 1; i <= 30; i++) {
-                    ClimbingGym gym = gyms.get((i - 1) % gyms.size());
-                    Sector sector = sectors.get((i - 1) % sectors.size());
-                    String difficulty = difficulties[(i - 1) % difficulties.length];
-                    
-                    routeMissions.add(RouteMission.builder()
-                            .gym(gym)
-                            .sector(sector)
-                            .difficulty(difficulty)
-                            .score(600 + (i - 1) * 50)
-                            .imageUrl("https://example.com/route-mission-" + i + ".jpg")
-                            .thumbnailUrl("https://example.com/route-mission-" + i + "-thumb.jpg")
-                            .videoUrl("https://example.com/route-mission-" + i + ".mp4")
-                            .postedAt(LocalDateTime.now().minusDays(30 - i))
-                            .build());
-                }
-                
-                routeMissionRepository.saveAll(routeMissions);
-                routeMissionsCreated = routeMissions.size();
-            }
-        }
+//
+//        // 5. 섹터 데이터 생성
+//        if (sectorRepository.count() == 0) {
+//            List<Sector> sectors = sectorRepository.saveAll(List.of(
+//                    Sector.builder()
+//                            .name("A구역")
+//                            .imageUrl("https://example.com/sector-a.jpg")
+//                            .build(),
+//                    Sector.builder()
+//                            .name("B구역")
+//                            .imageUrl("https://example.com/sector-b.jpg")
+//                            .build(),
+//                    Sector.builder()
+//                            .name("C구역")
+//                            .imageUrl("https://example.com/sector-c.jpg")
+//                            .build(),
+//                    Sector.builder()
+//                            .name("D구역")
+//                            .imageUrl("https://example.com/sector-d.jpg")
+//                            .build()
+//            ));
+//            sectorsCreated = sectors.size();
+//        }
+//
+//        // 6. 루트 미션 30개 생성
+//        if (routeMissionRepository.count() == 0) {
+//            List<ClimbingGym> gyms = climbingGymRepository.findAll();
+//            List<Sector> sectors = sectorRepository.findAll();
+//
+//            if (!gyms.isEmpty() && !sectors.isEmpty()) {
+//                String[] difficulties = {"ORANGE", "GREEN", "BLUE", "RED", "PURPLE"};
+//
+//                List<RouteMission> routeMissions = new ArrayList<>();
+//                for (int i = 1; i <= 30; i++) {
+//                    ClimbingGym gym = gyms.get((i - 1) % gyms.size());
+//                    Sector sector = sectors.get((i - 1) % sectors.size());
+//                    String difficulty = difficulties[(i - 1) % difficulties.length];
+//
+//                    routeMissions.add(RouteMission.builder()
+//                            .gym(gym)
+//                            .sector(sector)
+//                            .difficulty(difficulty)
+//                            .score(600 + (i - 1) * 50)
+//                            .imageUrl("https://example.com/route-mission-" + i + ".jpg")
+//                            .thumbnailUrl("https://example.com/route-mission-" + i + "-thumb.jpg")
+//                            .videoUrl("https://example.com/route-mission-" + i + ".mp4")
+//                            .postedAt(LocalDateTime.now().minusDays(30 - i))
+//                            .build());
+//                }
+//
+//                routeMissionRepository.saveAll(routeMissions);
+//                routeMissionsCreated = routeMissions.size();
+//            }
+//        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "테스트 데이터가 생성되었습니다.");
@@ -315,8 +315,8 @@ public class TestController {
         response.put("levelsCreated", levelsCreated);
         response.put("gymsCreated", gymsCreated);
         response.put("gymLevelsCreated", gymLevelsCreated);
-        response.put("sectorsCreated", sectorsCreated);
-        response.put("routeMissionsCreated", routeMissionsCreated);
+//        response.put("sectorsCreated", sectorsCreated);
+//        response.put("routeMissionsCreated", routeMissionsCreated);
         response.put("timestamp", LocalDateTime.now());
 
         return ResponseEntity.ok(ApiResult.success(response));
@@ -347,13 +347,13 @@ public class TestController {
         long levelCount = levelRepository.count();
         long gymCount = climbingGymRepository.count();
         long gymLevelCount = gymLevelRepository.count();
-        long sectorCount = sectorRepository.count();
-        long routeMissionCount = routeMissionRepository.count();
+//        long sectorCount = sectorRepository.count();
+//        long routeMissionCount = routeMissionRepository.count();
 
-        routeMissionRepository.deleteAll();
+//        routeMissionRepository.deleteAll();
         gymLevelRepository.deleteAll();
         climbingGymRepository.deleteAll();
-        sectorRepository.deleteAll();
+//        sectorRepository.deleteAll();
         levelRepository.deleteAll();
         brandRepository.deleteAll();
 
@@ -363,8 +363,8 @@ public class TestController {
         response.put("deletedLevels", levelCount);
         response.put("deletedGyms", gymCount);
         response.put("deletedGymLevels", gymLevelCount);
-        response.put("deletedSectors", sectorCount);
-        response.put("deletedRouteMissions", routeMissionCount);
+//        response.put("deletedSectors", sectorCount);
+//        response.put("deletedRouteMissions", routeMissionCount);
         response.put("timestamp", LocalDateTime.now());
 
         return ResponseEntity.ok(ApiResult.success(response));

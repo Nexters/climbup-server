@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Schema(description = "세션 도전기록 상세")
@@ -15,8 +16,8 @@ public class SessionAttemptDetail {
     @Schema(description = "난이도", example = "BLUE")
     private String difficulty;
 
-    @Schema(description = "난이도 이미지 URL", example = "https://example.com/BLUE.png")
-    private String difficultyImageUrl;
+    @Schema(description = "난이도 이미지 URL 목록", example = "[\"https://example.com/blue1.png\", \"https://example.com/blue2.png\", \"https://example.com/blue3.png\", \"https://example.com/blue4.png\"]")
+    private List<String> difficultyImageUrls;
 
     @Schema(description = "루트미션 탈거일", example = "2025-08-15T10:00:00")
     private LocalDateTime removedAt;
@@ -39,12 +40,12 @@ public class SessionAttemptDetail {
     @Schema(description = "도전기록 비디오 URL", example = "https://example.com/attempt_video.mp4")
     private String attemptVideoUrl;
 
-    public SessionAttemptDetail(Boolean success, String difficulty, String difficultyImageUrl,
+    public SessionAttemptDetail(Boolean success, String difficulty, List<String> difficultyImageUrls,
                                 LocalDateTime removedAt, String guideThumbnailUrl, String guideVideoUrl,
                                 String sectorName, Integer score, String attemptThumbnailUrl, String attemptVideoUrl) {
         this.success = success;
         this.difficulty = difficulty;
-        this.difficultyImageUrl = difficultyImageUrl;
+        this.difficultyImageUrls = difficultyImageUrls;
         this.removedAt = removedAt;
         this.guideThumbnailUrl = guideThumbnailUrl;
         this.guideVideoUrl = guideVideoUrl;

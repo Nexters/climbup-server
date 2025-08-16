@@ -1,7 +1,6 @@
 package com.climbup.climbup.gym.entity;
 
 import com.climbup.climbup.brand.entity.Brand;
-import com.climbup.climbup.common.converter.StringListConverter;
 import com.climbup.climbup.common.entity.BaseEntity;
 import com.climbup.climbup.level.entity.Level;
 import jakarta.persistence.*;
@@ -44,8 +43,8 @@ public class GymLevel extends BaseEntity {
     @Column(name = "sr_max")
     private Integer srMax;
 
-    @Convert(converter = StringListConverter.class)
-    @Column(name = "image_urls", nullable = false, columnDefinition = "JSON")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "image_urls", nullable = false, columnDefinition = "jsonb")
     private List<String> imageUrls;
 
     @Column(name = "sort_order", nullable = false)
