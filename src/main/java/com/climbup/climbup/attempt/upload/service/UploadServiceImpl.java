@@ -1,6 +1,7 @@
 package com.climbup.climbup.attempt.upload.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.climbup.climbup.attempt.upload.util.FileUtils;
@@ -51,6 +52,7 @@ public class UploadServiceImpl implements UploadService {
                         bucketName, fileName, fis, metadata
                 );
 
+                putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
                 amazonS3.putObject(putObjectRequest);
 
                 String fileUrl = baseUrl + "/" + fileName;
@@ -90,6 +92,7 @@ public class UploadServiceImpl implements UploadService {
                         bucketName, fileName, inputStream, metadata
                 );
 
+                putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
                 amazonS3.putObject(putObjectRequest);
 
                 String fileUrl = baseUrl + "/" + fileName;
