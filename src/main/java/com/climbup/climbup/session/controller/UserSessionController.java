@@ -6,6 +6,9 @@ import com.climbup.climbup.session.dto.response.UserSessionResponses;
 import com.climbup.climbup.session.entity.UserSession;
 import com.climbup.climbup.session.repository.UserSessionRepository;
 import com.climbup.climbup.session.service.UserSessionService;
+import com.climbup.climbup.user.entity.User;
+import com.climbup.climbup.user.repository.UserRepository;
+import com.climbup.climbup.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserSessionController {
     private final UserSessionService userSessionService;
+    private final UserService userService;
 
     @Operation(summary = "오늘의 세션 시작하기", description = "유저의 오늘의 세션을 시작", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -40,7 +44,7 @@ public class UserSessionController {
                                                 "errorCode": "SESSION_003",
                                                 "message": "아직 마무리되지 않은 세션이 존재합니다.",
                                                 "timestamp": "2025-07-25T10:30:00",
-                                                "path": "/api/user-sessions"
+                                                "path": "/api/sessions"
                                             }
                                             """
                             )
@@ -72,7 +76,7 @@ public class UserSessionController {
                                                 "errorCode": "SESSION_001",
                                                 "message": "세션이 존재하지 않습니다.",
                                                 "timestamp": "2025-07-25T10:30:00",
-                                                "path": "/api/user-sessions/{id}"
+                                                "path": "/api/sessions/{id}"
                                             }
                                             """
                             )
@@ -89,7 +93,7 @@ public class UserSessionController {
                                                 "errorCode": "SESSION_003",
                                                 "message": "해당 세션이 아직 진행중입니다.",
                                                 "timestamp": "2025-07-25T10:30:00",
-                                                "path": "/api/user-sessions/{id}"
+                                                "path": "/api/sessions/{id}"
                                             }
                                             """
                             )
@@ -104,7 +108,9 @@ public class UserSessionController {
         Long userId = SecurityUtil.getCurrentUserId();
 
         UserSession session = userSessionService.getSession(userId, id);
-        UserSessionResponses.UserSessionState response = UserSessionResponses.UserSessionState.toDto(session);
+        User user = userService.getUserById(userId);
+
+        UserSessionResponses.UserSessionState response = UserSessionResponses.UserSessionState.toDto(session, user);
 
         return ResponseEntity.ok(ApiResult.success(response));
     }
@@ -123,7 +129,7 @@ public class UserSessionController {
                                                 "errorCode": "SESSION_001",
                                                 "message": "세션이 존재하지 않습니다.",
                                                 "timestamp": "2025-07-25T10:30:00",
-                                                "path": "/api/user-sessions/{id}"
+                                                "path": "/api/sessions/{id}"
                                             }
                                             """
                             )
@@ -140,7 +146,7 @@ public class UserSessionController {
                                                 "errorCode": "SESSION_002",
                                                 "message": "이미 종료된 세션입니다.",
                                                 "timestamp": "2025-07-25T10:30:00",
-                                                "path": "/api/user-sessions/{id}"
+                                                "path": "/api/sessions/{id}"
                                             }
                                             """
                             )
@@ -157,6 +163,39 @@ public class UserSessionController {
         UserSession session = userSessionService.finishSession(userId, sessionId);
         UserSessionResponses.FinishUserSession response = UserSessionResponses.FinishUserSession.toDto(session);
         
+        return ResponseEntity.ok(ApiResult.success(response));
+    }
+
+
+    @Operation(summary = "진행중인 세션 받아오기", description = "유저의 진행중인 세션 받아오기", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공적으로 세션을 반환"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "진행중인 세션이 존재하지 않는 경우",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                                "errorCode": "SESSION_001",
+                                                "message": "세션이 존재하지 않습니다.",
+                                                "timestamp": "2025-07-25T10:30:00",
+                                                "path": "/api/sessions"
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResult<UserSessionResponses.UserActiveSession>> getCurrentUserSession() {
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        UserSession session = userSessionService.getActiveSession(userId);
+        UserSessionResponses.UserActiveSession response = UserSessionResponses.UserActiveSession.toDto(session);
+
         return ResponseEntity.ok(ApiResult.success(response));
     }
 }
