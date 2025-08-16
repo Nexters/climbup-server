@@ -24,10 +24,10 @@ public class FileUtils {
 
     public static String getFileExtension(String filename) {
         if (filename == null || filename.isEmpty()) {
-            return "tmp";
+            return "mp4";
         }
         int lastDotIndex = filename.lastIndexOf('.');
-        return lastDotIndex == -1 ? "tmp" : filename.substring(lastDotIndex + 1);
+        return lastDotIndex == -1 ? "mp4" : filename.substring(lastDotIndex + 1);
     }
 
     public static String getContentType(String fileExtension) {
