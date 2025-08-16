@@ -64,8 +64,8 @@ public class UserSessionResponses {
             response.endedAt = session.getEndedAt();
             response.totalDuration = session.getTotalDuration();
             response.srGained = session.getSrGained();
-            response.currentSr = user.getSr() + session.getSrGained();
-            response.previousSr = user.getSr();
+            response.currentSr = user.getSr();
+            response.previousSr = user.getSr() - session.getSrGained();
             response.completedCount = session.getCompletedCount();
             response.attemptedCount = session.getAttemptedCount();
             return response;

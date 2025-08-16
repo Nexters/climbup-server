@@ -97,7 +97,7 @@ public class UserSessionServiceImpl implements UserSessionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public UserSession getActiveSession(Long userId) {
         return userSessionRepository.findByUserIdAndEndedAtIsNull(userId).orElseThrow(UserSessionNotFoundException::new);
     }

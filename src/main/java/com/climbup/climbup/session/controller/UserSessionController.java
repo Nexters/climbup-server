@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserSessionController {
     private final UserSessionService userSessionService;
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @Operation(summary = "오늘의 세션 시작하기", description = "유저의 오늘의 세션을 시작", security = @SecurityRequirement(name = "bearerAuth"))
