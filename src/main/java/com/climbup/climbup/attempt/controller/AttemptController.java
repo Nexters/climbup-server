@@ -161,7 +161,7 @@ public class AttemptController {
 
     @Operation(summary = "해당 도전의 영상 업로드 세션 마무리", description = "해당 도전의 영상 업로드 세션을 마무리하고 썸네일을 함께 업로드합니다.", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponse(responseCode = "201", description = "해당 도전의 영상 업로드 세션 마무리")
-    @PostMapping(value = "/{attemptId}/upload/{uploadId}/finalize", consumes = "multipart/form-data")
+    @PostMapping(value = "/{attemptId}/upload/{uploadId}/finalize")
     public ResponseEntity<ApiResult<RouteMissionUploadSessionFinalizeResponse>> finalizeRouteMissionUploadSession(
             @PathVariable(name = "attemptId") Long attemptId,
             @PathVariable(name = "uploadId") UUID uploadId,
