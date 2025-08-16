@@ -24,7 +24,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserStatusResponse getUserStatus(Long userId) {
-        User user = getUserById(userId);
+        User user = userRepository.findByIdWithAttempts(userId)
+                .orElseThrow(() -> new UserNotFoundException());
         return UserStatusResponse.fromEntity(user);
     }
 }
