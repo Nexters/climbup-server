@@ -1,6 +1,7 @@
 package com.climbup.climbup.global.config;
 
 import com.climbup.climbup.auth.filter.JwtAuthenticationFilter;
+import com.climbup.climbup.auth.handler.CustomAuthenticationEntryPoint;
 import com.climbup.climbup.auth.handler.OAuth2SuccessHandler;
 import com.climbup.climbup.auth.service.CustomOAuth2UserService;
 import io.swagger.v3.oas.models.Components;
@@ -26,6 +27,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -55,6 +57,9 @@ public class SecurityConfig {
                         )
                         .successHandler(oAuth2SuccessHandler)
                         .failureUrl("/login?error")
+                )
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
