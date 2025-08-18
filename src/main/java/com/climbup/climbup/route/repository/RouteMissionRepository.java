@@ -11,7 +11,18 @@ import java.util.Optional;
 
 @Repository
 public interface RouteMissionRepository extends JpaRepository<RouteMission, Long> {
-    @Query("SELECT rm from RouteMission rm LEFT JOIN rm.attempts uma on uma.user.id = :userId WHERE uma.id IS NULL")
+
+    @Query("""
+        SELECT rm
+        FROM RouteMission rm
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM UserMissionAttempt a
+            WHERE a.mission = rm
+              AND a.user.id = :userId
+              AND a.success = TRUE
+        )
+    """)
     List<RouteMission> findUnattemptedRouteMissionsByUser(@Param("userId") Long userId);
 
     Optional<RouteMission> findByIdAndRemovedAtIsNull(Long id);

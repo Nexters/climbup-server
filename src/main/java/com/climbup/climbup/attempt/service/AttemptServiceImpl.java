@@ -168,10 +168,14 @@ public class AttemptServiceImpl implements AttemptService {
 
         attempt = attemptRepository.save(attempt);
 
+        activeSession.setAttemptedCount(activeSession.getAttemptedCount() + 1);
+
+
         Integer srGained = 0;
         Integer currentSr = user.getSr();
 
         if (request.getSuccess()) {
+            activeSession.setCompletedCount(activeSession.getCompletedCount() + 1);
             try {
                 LevelSRReward reward = LevelSRReward.fromLevelName(mission.getDifficulty());
                 srGained = reward.getSrReward();
@@ -181,6 +185,8 @@ public class AttemptServiceImpl implements AttemptService {
 
                 user.updateSr(srAfter);
                 currentSr = srAfter;
+
+                activeSession.setSrGained(activeSession.getSrGained() + srGained);
 
                 SRHistory srHistory = SRHistory.builder()
                         .user(user)
@@ -199,6 +205,8 @@ public class AttemptServiceImpl implements AttemptService {
                 throw new ValidationException(ErrorCode.INVALID_DIFFICULTY_LEVEL, mission.getDifficulty());
             }
         }
+
+        sessionRepository.save(activeSession);
 
         return CreateAttemptResponse.builder()
                 .missionAttemptId(attempt.getId())

@@ -15,7 +15,6 @@ import com.climbup.climbup.session.entity.UserSession;
 import com.climbup.climbup.session.exception.UserSessionNotFoundException;
 import com.climbup.climbup.session.repository.UserSessionRepository;
 import com.climbup.climbup.user.entity.User;
-import com.climbup.climbup.user.exception.UserNotFoundException;
 import com.climbup.climbup.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -67,7 +66,7 @@ public class RecommendationServiceImpl implements RecommendationService{
     public List<RouteMissionRecommendationResponse> getRecommendationsByUserActiveSession(Long userId) {
         UserSession session = userSessionRepository.findByUserIdAndEndedAtIsNull(userId).orElseThrow(UserSessionNotFoundException::new);
 
-        List<ChallengeRecommendation> recommendations = recommendationRepository.findBySession(session);
+        List<ChallengeRecommendation> recommendations = recommendationRepository.findNotSolvedRecommendationsBySession(session);
 
         return recommendations.stream().map(recommendation -> {
             RouteMission routeMission = recommendation.getMission();
@@ -86,7 +85,7 @@ public class RecommendationServiceImpl implements RecommendationService{
 
         UserSession session = attempt.getSession();
 
-        List<ChallengeRecommendation> recommendations = recommendationRepository.findBySession(session);
+        List<ChallengeRecommendation> recommendations = recommendationRepository.findNotSolvedRecommendationsBySession(session);
 
         ChallengeRecommendation targetRecommendation = recommendations.stream()
             .filter(recommendation -> recommendation.getMission().getId().equals(attempt.getMission().getId()))
