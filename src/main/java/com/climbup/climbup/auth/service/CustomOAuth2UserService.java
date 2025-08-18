@@ -18,6 +18,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Random;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -52,13 +54,23 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private User createUser(KakaoOAuth2UserInfo userInfo) {
         String nickname = generateUniqueNickname();
-        String defaultImageUrl = "https://kr.object.ncloudstorage.com/holdy/images/profiles/1755341390125_ce8dddcc.png";
+
+        String[] defaultImageUrls = {
+                "https://kr.object.ncloudstorage.com/holdy/images/profiles/1755526990460_c0e1f830.png",
+                "https://kr.object.ncloudstorage.com/holdy/images/profiles/1755527043121_1787397c.png",
+                "https://kr.object.ncloudstorage.com/holdy/images/profiles/1755527087381_fadb90c0.png",
+                "https://kr.object.ncloudstorage.com/holdy/images/profiles/1755527100828_869dc21f.png",
+                "https://kr.object.ncloudstorage.com/holdy/images/profiles/1755527118289_902514cd.png"
+        };
+
+        Random random = new Random();
+        String selectedImageUrl = defaultImageUrls[random.nextInt(defaultImageUrls.length)];
 
         User user = User.builder()
                 .kakaoId(userInfo.getId())
                 .name(userInfo.getName())
                 .nickname(nickname)
-                .imageUrl(defaultImageUrl)
+                .imageUrl(selectedImageUrl)
                 .sr(600)
                 .gymLevel(null)
                 .gym(null)
