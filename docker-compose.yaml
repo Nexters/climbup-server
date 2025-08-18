@@ -5,6 +5,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-db}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
       - POSTGRES_USER=${POSTGRES_USER:-root}
+      - TZ=Asia/Seoul
     volumes:
       - ./climbup-db-data:/var/lib/postgresql/data
     ports:
@@ -17,6 +18,8 @@ services:
 
   redis:
     image: redis:7-alpine
+    environment:
+      - TZ=Asia/Seoul
     ports:
       - 6379:6379
     volumes:
