@@ -1,10 +1,12 @@
 package com.climbup.climbup.auth.handler;
 
-import com.climbup.climbup.common.dto.ApiResult;
+import com.climbup.climbup.common.dto.ErrorResponse;
+import com.climbup.climbup.common.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -27,7 +29,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        ApiResult<Void> errorResponse = ApiResult.error("AUTH_001", "인증이 필요합니다.");
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_TOKEN, request.getRequestURI());
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
