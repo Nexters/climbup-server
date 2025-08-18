@@ -39,29 +39,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        try {
-            String token = extractTokenFromRequest(request);
+        String token = extractTokenFromRequest(request);
 
-            if (StringUtils.hasText(token) && jwtUtil.isTokenValid(token)) {
-                if (!jwtUtil.isAccessToken(token)) {
-                    log.debug("Access Token이 아닌 토큰으로 인증 시도: {}", jwtUtil.getTokenType(token));
-                    SecurityContextHolder.clearContext();
-                } else {
+        if (StringUtils.hasText(token)) {
+            try {
+                if (jwtUtil.isTokenValid(token) && jwtUtil.isAccessToken(token)) {
                     authenticateUser(request, token);
                 }
+            } catch (TokenExpiredException | InvalidTokenException e) {
+                log.debug("토큰 검증 실패: {}", e.getMessage());
+            } catch (UserNotFoundException e) {
+                log.warn("토큰은 유효하지만 사용자를 찾을 수 없음: {}", e.getMessage());
+            } catch (Exception e) {
+                log.error("JWT 인증 처리 중 예상치 못한 오류 발생: {}", e.getClass().getSimpleName(), e);
             }
-        } catch (InvalidTokenException e) {
-            log.debug("유효하지 않은 토큰으로 인한 인증 실패: {}", e.getMessage());
-            SecurityContextHolder.clearContext();
-        } catch (TokenExpiredException e) {
-            log.debug("만료된 토큰으로 인한 인증 실패: {}", e.getMessage());
-            SecurityContextHolder.clearContext();
-        } catch (UserNotFoundException e) {
-            log.warn("토큰은 유효하지만 사용자를 찾을 수 없음: {}", e.getMessage());
-            SecurityContextHolder.clearContext();
-        } catch (Exception e) {
-            log.error("JWT 인증 처리 중 예상치 못한 오류 발생: {}", e.getClass().getSimpleName(), e);
-            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
@@ -116,7 +107,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
 
-        // 정적 리소스나 공개 API는 검증하지 않음
         return path.startsWith("/css/") ||
                 path.startsWith("/js/") ||
                 path.startsWith("/images/") ||
