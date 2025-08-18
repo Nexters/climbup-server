@@ -21,12 +21,6 @@ public class ApiResult<T> {
     @Schema(description = "에러 코드", example = "AUTH_001")
     private String errorCode;
 
-    @Schema(description = "타임스탬프", example = "2024-01-15T10:30:00")
-    private String timestamp;
-
-    @Schema(description = "요청 경로", example = "/api/users")
-    private String path;
-
     public static <T> ApiResult<T> success(T data) {
         return ApiResult.<T>builder()
                 .success(true)
