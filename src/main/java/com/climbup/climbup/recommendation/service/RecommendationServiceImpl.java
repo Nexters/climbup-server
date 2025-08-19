@@ -41,7 +41,7 @@ public class RecommendationServiceImpl implements RecommendationService{
     public void generateRecommendationsForSession(UserSession session){
         User user = session.getUser();
 
-        List<RouteMission> routeMissions = routeMissionRepository.findUnattemptedRouteMissionsByUser(user.getId());
+        List<RouteMission> routeMissions = routeMissionRepository.findNotSucceededMissionsByUser(user.getId());
 
         AtomicInteger index = new AtomicInteger(0);
 
@@ -66,7 +66,7 @@ public class RecommendationServiceImpl implements RecommendationService{
     public List<RouteMissionRecommendationResponse> getRecommendationsByUserActiveSession(Long userId) {
         UserSession session = userSessionRepository.findByUserIdAndEndedAtIsNull(userId).orElseThrow(UserSessionNotFoundException::new);
 
-        List<ChallengeRecommendation> recommendations = recommendationRepository.findNotSolvedRecommendationsBySession(session);
+        List<ChallengeRecommendation> recommendations = recommendationRepository.findBySession(session);
 
         return recommendations.stream().map(recommendation -> {
             RouteMission routeMission = recommendation.getMission();
@@ -85,7 +85,7 @@ public class RecommendationServiceImpl implements RecommendationService{
 
         UserSession session = attempt.getSession();
 
-        List<ChallengeRecommendation> recommendations = recommendationRepository.findNotSolvedRecommendationsBySession(session);
+        List<ChallengeRecommendation> recommendations = recommendationRepository.findBySession(session);
 
         ChallengeRecommendation targetRecommendation = recommendations.stream()
             .filter(recommendation -> recommendation.getMission().getId().equals(attempt.getMission().getId()))

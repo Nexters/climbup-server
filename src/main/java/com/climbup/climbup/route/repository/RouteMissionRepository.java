@@ -18,12 +18,12 @@ public interface RouteMissionRepository extends JpaRepository<RouteMission, Long
         WHERE NOT EXISTS (
             SELECT 1
             FROM UserMissionAttempt a
-            WHERE a.mission = rm
+            WHERE a.mission.id = rm.id
               AND a.user.id = :userId
-              AND a.success = TRUE
+              AND a.success IS TRUE
         )
-    """)
-    List<RouteMission> findUnattemptedRouteMissionsByUser(@Param("userId") Long userId);
+    """)    
+    List<RouteMission> findNotSucceededMissionsByUser(@Param("userId") Long userId);
 
     Optional<RouteMission> findByIdAndRemovedAtIsNull(Long id);
 
