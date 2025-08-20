@@ -31,6 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -164,11 +165,11 @@ public class AttemptController {
 
     @Operation(summary = "해당 도전의 영상 업로드 세션 마무리", description = "해당 도전의 영상 업로드 세션을 마무리하고 썸네일을 함께 업로드합니다.", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponse(responseCode = "201", description = "해당 도전의 영상 업로드 세션 마무리")
-    @PostMapping(value = "/{attemptId}/upload/{uploadId}/finalize")
+    @PostMapping(value = "/{attemptId}/upload/{uploadId}/finalize", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResult<RouteMissionUploadSessionFinalizeResponse>> finalizeRouteMissionUploadSession(
             @PathVariable(name = "attemptId") Long attemptId,
             @PathVariable(name = "uploadId") UUID uploadId,
-            @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnailFile
+            @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnailFile
     ) {
         // 디버깅 로그 추가
         log.info("=== Finalize API 호출됨 ===");
