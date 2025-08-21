@@ -34,9 +34,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        log.info("🚀 === CustomOAuth2UserService.loadUser 호출됨 ===");
-        log.info("Provider: {}", userRequest.getClientRegistration().getRegistrationId());
-        log.info("AccessToken: {}", userRequest.getAccessToken().getTokenValue().substring(0, 10) + "...");
         OAuth2User oauth2User = super.loadUser(userRequest);
         log.info("OAuth2 사용자 정보 조회 완료: {}", oauth2User.getAttributes());
 
@@ -83,9 +80,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // userRepository.flush();
 
-        log.info("새 사용자 생성 완료: id={}, kakaoId={}", savedUser.getId(), savedUser.getKakaoId());
-
-        // eventPublisher.publishEvent(new SignUpEvent(this, nickname, savedUser.getId()));
+        eventPublisher.publishEvent(new SignUpEvent(this, nickname, savedUser.getId()));
 
         return savedUser;
     }
