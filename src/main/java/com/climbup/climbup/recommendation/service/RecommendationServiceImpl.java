@@ -71,7 +71,9 @@ public class RecommendationServiceImpl implements RecommendationService{
         return recommendations.stream().map(recommendation -> {
             RouteMission routeMission = recommendation.getMission();
             ClimbingGym gym = routeMission.getGym();
-            List<UserMissionAttempt> attempts = routeMission.getAttempts().stream().toList();
+            List<UserMissionAttempt> userAttempts = routeMission.getAttempts().stream()
+                .filter(attempt -> attempt.getUser().getId().equals(userId))
+                .toList();
             Sector sector = routeMission.getSector();
 
             return RouteMissionRecommendationResponse.toDto(recommendation, routeMission, gym, attempts, sector, recommendation.getRecommendedOrder());
@@ -84,6 +86,7 @@ public class RecommendationServiceImpl implements RecommendationService{
         UserMissionAttempt attempt = userMissionAttemptRepository.findById(attemptId).orElseThrow(AttemptNotFoundException::new);
 
         UserSession session = attempt.getSession();
+        Long userId = attempt.getUser().getId();
 
         List<ChallengeRecommendation> recommendations = recommendationRepository.findBySession(session);
 
@@ -108,7 +111,9 @@ public class RecommendationServiceImpl implements RecommendationService{
 
             RouteMission routeMission = recommendation.getMission();
             ClimbingGym gym = routeMission.getGym();
-            List<UserMissionAttempt> attempts = routeMission.getAttempts().stream().toList();
+            List<UserMissionAttempt> userAttempts = routeMission.getAttempts().stream()
+                .filter(attemptRecord -> attemptRecord.getUser().getId().equals(userId))
+                .toList();
             Sector sector = routeMission.getSector();
 
             recommendationResponseList.add(

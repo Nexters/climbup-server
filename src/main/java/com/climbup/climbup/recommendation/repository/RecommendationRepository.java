@@ -11,10 +11,8 @@ import java.util.List;
 public interface RecommendationRepository extends JpaRepository<ChallengeRecommendation, Long> {
     @Query("SELECT DISTINCT cr FROM ChallengeRecommendation cr " +
             "JOIN FETCH cr.mission rm " +
-            "LEFT JOIN FETCH rm.attempts " +
             "JOIN FETCH rm.sector " +
             "WHERE cr.session = :session " +
             "ORDER BY cr.recommendedOrder")
     List<ChallengeRecommendation> findBySession(@Param("session") UserSession session);
-
 }
