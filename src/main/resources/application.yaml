@@ -95,11 +95,15 @@ app:
 logging:
   level:
     root: INFO
-    com.climbup.climbup: INFO
-    org.springframework.security: WARN
-    org.springframework.web.servlet.resource: ERROR
+    # com.climbup.climbup: INFO
+    # org.springframework.security: WARN
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.web: DEBUG
+    com.climbup.climbup.auth: DEBUG
+    # org.springframework.web.servlet.resource: ERROR
     org.hibernate.SQL: WARN
-    com.zaxxer.hikari: DEBUG
+    # com.zaxxer.hikari: DEBUG
 
 auth:
   nickname:

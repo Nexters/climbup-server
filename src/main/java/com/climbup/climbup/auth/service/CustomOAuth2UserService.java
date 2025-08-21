@@ -34,6 +34,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        log.info("🚀 === CustomOAuth2UserService.loadUser 호출됨 ===");
+        log.info("Provider: {}", userRequest.getClientRegistration().getRegistrationId());
+        log.info("AccessToken: {}", userRequest.getAccessToken().getTokenValue().substring(0, 10) + "...");
         OAuth2User oauth2User = super.loadUser(userRequest);
         log.info("OAuth2 사용자 정보 조회 완료: {}", oauth2User.getAttributes());
 
