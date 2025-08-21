@@ -27,8 +27,8 @@ public class TokenService {
 
     public TokenResponse createTokens(Long userId) {
         // 사용자 존재 여부 확인
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        // userRepository.findById(userId)
+        //         .orElseThrow(() -> new UserNotFoundException(userId));
 
         String accessToken = jwtUtil.createAccessToken(userId);
         String refreshToken = jwtUtil.createRefreshToken(userId);
