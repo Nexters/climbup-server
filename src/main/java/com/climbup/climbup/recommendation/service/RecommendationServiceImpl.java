@@ -76,7 +76,7 @@ public class RecommendationServiceImpl implements RecommendationService{
                 .toList();
             Sector sector = routeMission.getSector();
 
-            return RouteMissionRecommendationResponse.toDto(recommendation, routeMission, gym, attempts, sector, recommendation.getRecommendedOrder());
+            return RouteMissionRecommendationResponse.toDto(recommendation, routeMission, gym, userAttempts, sector, recommendation.getRecommendedOrder());
         }).toList();
     }
 
@@ -117,7 +117,7 @@ public class RecommendationServiceImpl implements RecommendationService{
             Sector sector = routeMission.getSector();
 
             recommendationResponseList.add(
-                RouteMissionRecommendationResponse.toDto(recommendation, routeMission, gym, attempts, sector, recommendation.getRecommendedOrder())
+                RouteMissionRecommendationResponse.toDto(recommendation, routeMission, gym, userAttempts, sector, recommendation.getRecommendedOrder())
             );
             
             startingIndex++;
