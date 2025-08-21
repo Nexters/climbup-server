@@ -66,8 +66,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void authenticateUser(HttpServletRequest request, String token) {
         Long userId = jwtUtil.getUserId(token);
 
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+    var user = userRepository.findById(userId)
+            .orElseThrow(() -> {
+                log.error("사용자 조회 실패: userId={}", userId);
+                return new UserNotFoundException(userId);
+            });
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
