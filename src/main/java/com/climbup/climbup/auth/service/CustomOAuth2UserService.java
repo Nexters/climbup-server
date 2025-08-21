@@ -78,11 +78,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         User savedUser = userRepository.save(user);
 
-        userRepository.flush();
+        // userRepository.flush();
 
         log.info("새 사용자 생성 완료: id={}, kakaoId={}", savedUser.getId(), savedUser.getKakaoId());
 
-        eventPublisher.publishEvent(new SignUpEvent(this, nickname, savedUser.getId()));
+        // eventPublisher.publishEvent(new SignUpEvent(this, nickname, savedUser.getId()));
 
         return savedUser;
     }
