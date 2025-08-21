@@ -16,6 +16,11 @@ spring:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/climbup_db}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:password}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      max-lifetime: 1800000
 
   data:
     redis:
@@ -75,25 +80,26 @@ app:
     authorized-redirect-uris: ${OAUTH_AUTHORIZED_REDIRECT_URIS}
     default-redirect-uri: ${OAUTH_DEFAULT_REDIRECT_URI}
 
-logging:
-  level:
-    root: INFO
-    com.climbup.climbup: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web.servlet.resource: WARN
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: WARN
-    org.apache.catalina.core: WARN
-    org.springframework.web.servlet.PageNotFound: WARN
-
-# 운영
 # logging:
 #   level:
 #     root: INFO
-#     com.climbup.climbup: INFO
-#     org.springframework.security: WARN
-#     org.springframework.web.servlet.resource: ERROR
-#     org.hibernate.SQL: WARN
+#     com.climbup.climbup: DEBUG
+#     org.springframework.security: DEBUG
+#     org.springframework.web.servlet.resource: WARN
+#     org.hibernate.SQL: DEBUG
+#     org.hibernate.type.descriptor.sql.BasicBinder: WARN
+#     org.apache.catalina.core: WARN
+#     org.springframework.web.servlet.PageNotFound: WARN
+
+# 운영
+logging:
+  level:
+    root: INFO
+    com.climbup.climbup: INFO
+    org.springframework.security: WARN
+    org.springframework.web.servlet.resource: ERROR
+    org.hibernate.SQL: WARN
+    com.zaxxer.hikari: DEBUG
 
 auth:
   nickname:
