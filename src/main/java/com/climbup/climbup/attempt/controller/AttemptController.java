@@ -24,7 +24,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,7 +39,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/attempts")
 @Tag(name = "Attempts", description = "루트 미션 도전 관련 API")
@@ -171,13 +169,6 @@ public class AttemptController {
             @PathVariable(name = "uploadId") UUID uploadId,
             @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnailFile
     ) {
-        // 디버깅 로그 추가
-        log.info("=== Finalize API 호출됨 ===");
-        log.info("attemptId: {}, uploadId: {}", attemptId, uploadId);
-        log.info("thumbnailFile: {}", thumbnailFile != null ? "존재함" : "null");
-        if (thumbnailFile != null) {
-                log.info("thumbnail 크기: {}, 파일명: {}", thumbnailFile.getSize(), thumbnailFile.getOriginalFilename());
-        }
         RouteMissionUploadSessionFinalizeResponse response = attemptService.finalizeUploadSession(uploadId, thumbnailFile);
         return ResponseEntity.ok(ApiResult.success(response));
     }

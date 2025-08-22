@@ -89,7 +89,7 @@ public class UserSessionServiceImpl implements UserSessionService {
         session.setEndedAt(endTime);
 
         Duration duration = Duration.between(session.getStartedAt(), endTime);
-        session.setTotalDuration((int) duration.toMinutes());
+        session.setTotalDuration((int) duration.getSeconds());
         
         userSessionRepository.save(session);
 

@@ -347,29 +347,13 @@ public class AttemptServiceImpl implements AttemptService {
 
         try {
             String videoUrl = uploadService.uploadVideo(finalVideoPath, "attempts");
-            log.info("Video uploaded successfully: {}", videoUrl);
-
-            log.info("=== Service 레벨 디버깅 ===");
-            log.info("uploadId: {}", uploadId);
-            log.info("thumbnailFile null 여부: {}", thumbnailFile == null);
-
-            if (thumbnailFile != null) {
-                log.info("thumbnailFile.isEmpty(): {}", thumbnailFile.isEmpty());
-                log.info("thumbnailFile.getSize(): {}", thumbnailFile.getSize());
-                log.info("thumbnailFile.getContentType(): {}", thumbnailFile.getContentType());
-                log.info("thumbnailFile.getOriginalFilename(): {}", thumbnailFile.getOriginalFilename());
-            }
 
             String thumbnailUrl = null;
             boolean thumbnailUploaded = false;
 
             if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-                log.info("썸네일 업로드 시도 시작...");
                 thumbnailUrl = uploadService.uploadMultipartFile(thumbnailFile, "attempts", "images");
                 thumbnailUploaded = true;
-                log.info("Thumbnail uploaded successfully: {}", thumbnailUrl);
-            } else {
-                log.warn("썸네일 파일이 null이거나 비어있음");
             }
 
             attempt.setVideoUrl(videoUrl);
