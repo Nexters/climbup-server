@@ -170,36 +170,32 @@ public class AttemptServiceImpl implements AttemptService {
 
         activeSession.setAttemptedCount(activeSession.getAttemptedCount() + 1);
 
-
         Integer srGained = 0;
         Integer currentSr = user.getSr();
 
         if (request.getSuccess()) {
             activeSession.setCompletedCount(activeSession.getCompletedCount() + 1);
             try {
-                LevelSRReward reward = LevelSRReward.fromLevelName(mission.getDifficulty());
-                srGained = reward.getSrReward();
+                int gained = LevelSRReward.fromLevelName(mission.getDifficulty()).getSrReward();
 
-                Integer srBefore = user.getSr();
-                Integer srAfter = srBefore + srGained;
+                int sessionGain = (activeSession.getSrGained() == null ? 0 : activeSession.getSrGained());
+                int before = user.getSr() + sessionGain;
+                int after  = before + gained;
 
-                user.updateSr(srAfter);
-                currentSr = srAfter;
+                activeSession.setSrGained(sessionGain + gained);
 
-                activeSession.setSrGained(activeSession.getSrGained() + srGained);
-
-                SRHistory srHistory = SRHistory.builder()
+                srHistoryRepository.save(SRHistory.builder()
                         .user(user)
                         .session(activeSession)
                         .mission(mission)
-                        .srBefore(srBefore)
-                        .srAfter(srAfter)
-                        .build();
+                        .srBefore(before)
+                        .srAfter(after)
+                        .build());
 
-                srHistoryRepository.save(srHistory);
+                srGained = gained;
 
-                log.info("SR updated for user: {} from {} to {} (+{}) for difficulty: {}",
-                        userId, srBefore, srAfter, srGained, mission.getDifficulty());
+                log.info("SR pending (session accumulate): user={}, +{}, difficulty={}, sessionId={}",
+                        userId, srGained, mission.getDifficulty(), activeSession.getId());
             } catch (IllegalArgumentException e) {
                 log.warn("Invalid difficulty level: {} for mission: {}", mission.getDifficulty(), mission.getId());
                 throw new ValidationException(ErrorCode.INVALID_DIFFICULTY_LEVEL, mission.getDifficulty());

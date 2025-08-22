@@ -75,25 +75,29 @@ public class UserSessionServiceImpl implements UserSessionService {
     @Override
     @Transactional
     public UserSession finishSession(Long userId, Long sessionId) {
-        UserSession session = userSessionRepository.findById(sessionId).orElseThrow(UserSessionNotFoundException::new);
+        UserSession session = userSessionRepository.findById(sessionId)
+                .orElseThrow(UserSessionNotFoundException::new);
 
-        if(!session.getUser().getId().equals(userId)) {
+        if (!session.getUser().getId().equals(userId))
             throw new AccessDeniedException("해당 세션에 접근할 수 없습니다.");
-        }
-
-        if(session.getEndedAt() != null) {
+        if (session.getEndedAt() != null)
             throw new UserSessionAlreadyFinishedException();
-        }
 
         LocalDateTime endTime = LocalDateTime.now();
         session.setEndedAt(endTime);
 
         Duration duration = Duration.between(session.getStartedAt(), endTime);
         session.setTotalDuration((int) duration.getSeconds());
-        
-        userSessionRepository.save(session);
 
-        return session;
+        User user = session.getUser();
+        int srBefore = user.getSr();
+        int gained   = session.getSrGained() == null ? 0 : session.getSrGained();
+        int srAfter  = srBefore + gained;
+
+        user.updateSr(srAfter);
+
+        userRepository.save(user);
+        return userSessionRepository.save(session);
     }
 
     @Override
